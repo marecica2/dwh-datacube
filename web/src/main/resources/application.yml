@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:30001/tenant1
+    username: tenant1
+    password: password1
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+logging:
+  level:
+    root: info
+    org.bmsource: trace
+  file: dwh.log
+dwh:
+  property: valuesasasa

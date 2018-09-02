@@ -1,0 +1,23 @@
+version: '3.1'
+services:
+
+#  app:
+#    build: .
+#    volumes:
+#      - .:/app
+#    ports:
+#      - 3000-3005:3000-3005
+#      - 8080:8080
+#      - 9229:9229
+
+  db:
+    image: postgres:10.3
+    volumes:
+      - ./.db/pg.conf:/etc/postgresql/postgresql.conf
+      - ./.db/seeds:/.db/seeds
+    ports:
+     - 30001:5432
+    environment:
+      POSTGRES_USER: tenant1
+      POSTGRES_DB: tenant1
+      POSTGRES_PASSWORD: password1
