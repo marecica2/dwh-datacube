@@ -9,9 +9,9 @@ import javax.annotation.PostConstruct;
 
 @Profile("development")
 @Configuration
-public class DebugUserConfig {
+public class UserDevConfiguration {
 
-    Logger logger = LoggerFactory.getLogger(DebugUserConfig.class);
+    Logger logger = LoggerFactory.getLogger(UserDevConfiguration.class);
 
     @PostConstruct
     public void init() {

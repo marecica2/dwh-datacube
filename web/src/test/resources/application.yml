@@ -2,16 +2,15 @@ spring:
   profiles:
     active: development
   datasource:
-    url: jdbc:postgresql://localhost:30001/tenant1
-    username: tenant1
-    password: password1
+    url: jdbc:h2:mem:testdb
   jpa:
     hibernate:
       ddl-auto: create-drop
+  h2.console.enabled: true
 logging:
   level:
     root: info
     org.bmsource: trace
   file: dwh.log
 dwh:
-  property: valuesasasa
+  property: testvalue

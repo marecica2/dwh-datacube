@@ -8,13 +8,22 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "users")
 public class User {
-
     @Id
     @GeneratedValue
     private long id;
 
     private String firstName;
+
     private String lastName;
+
+    public User(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
+    public long getId() {
+        return id;
+    }
 
     public String getFirstName() {
         return firstName;
@@ -24,7 +33,11 @@ public class User {
         this.firstName = firstName;
     }
 
-    public long getId() {
-        return id;
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 }
