@@ -1,8 +1,10 @@
 package org.bmsource.dwh.users;
 
+import org.bmsource.dwh.DwhApplication;
 import org.bmsource.dwh.DwhConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
@@ -14,13 +16,11 @@ import javax.transaction.Transactional;
 import java.util.Optional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(
-        classes = {DwhConfiguration.class},
-        loader = AnnotationConfigContextLoader.class)
 @Transactional
+@ContextConfiguration(classes = {DwhApplication.class})
 public class UserRepositoryTest {
 
-    @Resource
+    @Autowired
     private UserRepository repository;
 
     @Test
