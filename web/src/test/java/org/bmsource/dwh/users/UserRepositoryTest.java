@@ -1,23 +1,24 @@
 package org.bmsource.dwh.users;
 
 import org.bmsource.dwh.DwhApplication;
-import org.bmsource.dwh.DwhConfiguration;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
-import org.junit.Assert;
-
-import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.util.Optional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest
 @Transactional
 @ContextConfiguration(classes = {DwhApplication.class})
+@TestPropertySource(locations = "classpath:/application.yml")
 public class UserRepositoryTest {
 
     @Autowired
@@ -25,6 +26,7 @@ public class UserRepositoryTest {
 
     @Test
     public void testInsert() {
+
         User user1 = new User("John", "Doe");
         repository.save(user1);
 
