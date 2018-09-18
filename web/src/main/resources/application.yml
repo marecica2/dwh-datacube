@@ -12,6 +12,6 @@ logging:
   level:
     root: info
     org.bmsource: trace
-  file: dwh.log
+  file: ./../logs/dwh.log
 dwh:
   property: prodvalue

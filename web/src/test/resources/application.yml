@@ -8,9 +8,10 @@ spring:
       ddl-auto: create-drop
 logging:
   level:
-    root: info
+    root: warn
+    org.springframework: warn
     org.bmsource: trace
-  file: ./../dwh-test.log
+  file: ./../logs/dwh-test.log
 dwh:
   property: testvalue
 
