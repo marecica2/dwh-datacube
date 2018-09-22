@@ -8,18 +8,10 @@ Copy the values of `.env.sample` to your `.env` file.
 Pull all docker images and build app container
 
 ```bash
-scripts/dev pull
-scripts/dev build
+mvn integration-test
 ```
 
-After that, you're ready to install and build npm dependencies
 
-```bash
-scripts/dev yarn install
-scripts/dev yarn build
-```
-
-Then you're ready to run all docker containers
 
 ```bash
 scripts/dev up -d
@@ -97,3 +89,5 @@ scripts/dev rm # remove all containers - it won't remove volumes
 scripts/dev rm db-xray # remove single container
 scripts/dev clean # remove all volumes that can be removed to free disk space (WARNING: it will erase all data)
 ``` 
+
+

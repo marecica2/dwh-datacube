@@ -7,10 +7,6 @@ spring:
       dialect: org.hibernate.dialect.H2Dialect
       ddl-auto: create-drop
 logging:
-  level:
-    root: warn
-    org.springframework: warn
-    org.bmsource: trace
   file: ./../logs/dwh-test.log
 dwh:
   property: testvalue

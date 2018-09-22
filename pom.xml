@@ -14,6 +14,7 @@
     <name>dwh</name>
     <description>Data warehouse</description>
 
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -25,6 +26,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
+        <docker.showLogs>true</docker.showLogs>
+        <docker.follow>true</docker.follow>
     </properties>
 
     <dependencies>
@@ -81,7 +84,65 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>integration-test</goal>
+                                <goal>verify</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <environmentVariables>
+                            <it-database.port>${it-database.port}</it-database.port>
+                        </environmentVariables>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>docker-maven-plugin</artifactId>
+                    <version>0.26.1</version>
+                    <executions>
+                        <execution>
+                            <id>prepare-it-database</id>
+                            <phase>pre-integration-test</phase>
+                            <goals>
+                                <goal>start</goal>
+                            </goals>
+                            <configuration>
+                                <images>
+                                    <image>
+                                        <name>postgres:10.3</name>
+                                        <alias>it-database</alias>
+                                        <run>
+                                            <ports>
+                                                <port>it-database.port:5432</port>
+                                            </ports>
+                                            <wait>
+                                                <log>(?s)database system is ready to accept connections.*database system is ready to accept connections</log>
+                                                <time>20000</time>
+                                                <exit>0</exit>
+                                            </wait>
+                                        </run>
+                                    </image>
+                                </images>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>remove-it-database</id>
+                            <phase>post-integration-test</phase>
+                            <goals>
+                                <goal>stop</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
-
-
 </project>
