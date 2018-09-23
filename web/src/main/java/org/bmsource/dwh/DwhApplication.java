@@ -7,10 +7,16 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import springfox.documentation.spring.data.rest.configuration.SpringDataRestConfiguration;
 
 @SpringBootApplication
-@EntityScan(basePackages = { "org.bmsource" })
-@Import({SecurityConfig.class, UserDevConfiguration.class})
+@EntityScan(basePackages = {"org.bmsource"})
+@Import({
+        SecurityConfig.class,
+        UserDevConfiguration.class,
+        SpringDataRestConfiguration.class,
+        SwaggerConfig.class
+})
 @EnableJpaRepositories
 @EnableTransactionManagement
 public class DwhApplication {
