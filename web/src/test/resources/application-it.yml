@@ -2,7 +2,7 @@ spring:
   datasource:
     platform: postgresql
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:${it-database.port}/postgres
-    username: postgres
-    password: postgres
+    url: jdbc:postgresql://localhost:30001/tenant1
+    username: tenant1
+    password: password1
     data: classpath:data-it.sql

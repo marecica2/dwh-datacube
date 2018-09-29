@@ -2,7 +2,8 @@ spring:
   profiles:
     active: development
   datasource:
-    url: jdbc:postgresql://localhost:30001/tenant1
+    #url: jdbc:postgresql://localhost:30001/tenant1
+    url: jdbc:postgresql://db:5432/tenant1
     username: tenant1
     password: password1
   jpa:
@@ -11,6 +12,6 @@ spring:
 logging:
   level:
     root: info
-  file: ./../logs/dwh.log
+  #file: ./../logs/dwh.log
 dwh:
   property: prodvalue

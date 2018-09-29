@@ -1,0 +1,8 @@
+
+/target/**
+
+# Ignore unnecessary files inside allowed directories
+**/*~
+**/*.log
+**/*.gz
+**/t

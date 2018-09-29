@@ -2,11 +2,13 @@ package org.bmsource.dwh.users;
 
 import org.bmsource.dwh.test.utils.AbstractRepositoryTest;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 
+@Ignore
 public class UserRepositoryTest extends AbstractRepositoryTest {
 
     @Autowired
