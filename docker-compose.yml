@@ -1,13 +1,6 @@
 version: '3.1'
 services:
 
-#  web:
-#    build:
-#      context: ./
-#      dockerfile: /web/Dockerfile
-#    ports:
-#    - 8080:8080
-
   db:
     image: postgres:10.3
     volumes:
@@ -19,7 +12,3 @@ services:
       POSTGRES_USER: tenant1
       POSTGRES_DB: tenant1
       POSTGRES_PASSWORD: password1
-
-volumes:
-  maven-repo:
-    driver: local
