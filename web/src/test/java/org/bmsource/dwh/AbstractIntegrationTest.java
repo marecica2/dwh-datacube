@@ -12,6 +12,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.containers.GenericContainer;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 @ActiveProfiles("it")
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = DwhApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -27,12 +30,16 @@ public abstract class AbstractIntegrationTest {
             TestPropertyValues values = TestPropertyValues.of(
                     "spring.datasource.platform=postgresql",
                     "spring.datasource.driver-class-name=org.testcontainers.jdbc.ContainerDatabaseDriver",
-                    "spring.datasource.url=jdbc:tc:postgresql:10.3://localhost/test",
+                    "spring.datasource.url=jdbc:tc:postgresql:10.3://localhost/test?TC_INITFUNCTION=org.bmsource.dwh.AbstractIntegrationTest::initDatabase",
                     "spring.datasource.user=postgres",
                     "spring.datasource.password=postgres"
             );
             values.applyTo(configurableApplicationContext);
         }
+    }
+
+    public static void initDatabase(Connection connection) throws SQLException {
+        System.out.println("FLYWAAAAY");
     }
 
 }
