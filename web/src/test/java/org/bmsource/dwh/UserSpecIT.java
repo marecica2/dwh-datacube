@@ -25,7 +25,6 @@ public class UserSpecIT extends AbstractIntegrationTest {
         String url = createURLWithPort("/users");
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-        System.out.println("zzzzzz");
         System.out.println(response);
     }
 
@@ -45,8 +44,8 @@ public class UserSpecIT extends AbstractIntegrationTest {
         String url = createURLWithPort("/users/1");
         HttpEntity<String> e = new HttpEntity<String>(null, headers);
         response = restTemplate.exchange(url, HttpMethod.GET, e, String.class);
-        System.out.println("ttttt");
-        System.out.println(response);
+
+        Assert.assert
     }
 
     private String createURLWithPort(String uri) {
