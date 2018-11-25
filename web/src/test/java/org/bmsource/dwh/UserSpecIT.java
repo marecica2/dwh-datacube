@@ -9,6 +9,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 
 public class UserSpecIT extends AbstractIntegrationTest {
 
@@ -38,14 +40,11 @@ public class UserSpecIT extends AbstractIntegrationTest {
                 HttpMethod.POST, entity, String.class);
 
         String location = response.getHeaders().get(HttpHeaders.LOCATION).get(0);
-        System.out.println("xxxx");
         System.out.println(location);
 
         String url = createURLWithPort("/users/1");
         HttpEntity<String> e = new HttpEntity<String>(null, headers);
         response = restTemplate.exchange(url, HttpMethod.GET, e, String.class);
-
-        Assert.assert
     }
 
     private String createURLWithPort(String uri) {

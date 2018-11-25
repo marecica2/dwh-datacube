@@ -20,6 +20,12 @@
     <logger name="org.testcontainers.shaded" level="WARN"/>
     <logger name="com.zaxxer.hikari" level="INFO"/>7
     <logger name="org.springframework" level="INFO"/>
+
+    <!--sql logging -->
+    <logger name="org.hibernate.SQL" level="TRACE"/>
+    <logger name="org.springframework.transaction" level="INFO"/>
+    <logger name="org.flywaydb.core.internal.database.ExecutableSqlScript" level="DEBUG"/>
+
     <logger name="org.bmsource" level="TRACE"/>
 
     <turboFilter class="ch.qos.logback.classic.turbo.MarkerFilter">

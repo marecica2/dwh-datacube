@@ -1,5 +1,6 @@
 package org.bmsource.dwh;
 
+import org.flywaydb.core.Flyway;
 import org.junit.ClassRule;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,7 +36,7 @@ public abstract class AbstractIntegrationTest {
             TestPropertyValues values = TestPropertyValues.of(
                     "spring.datasource.platform=postgresql",
                     "spring.datasource.driver-class-name=org.testcontainers.jdbc.ContainerDatabaseDriver",
-                    "spring.datasource.url=jdbc:tc:postgresql:10.3://"+environment.getServiceHost("db_1", PG_PORT)+"/tenant1?TC_INITFUNCTION=org.bmsource.dwh.AbstractIntegrationTest::initDatabase",
+                    "spring.datasource.url=jdbc:tc:postgresql:10.3://" + environment.getServiceHost("db_1", PG_PORT) + "/tenant1?TC_INITFUNCTION=org.bmsource.dwh.AbstractIntegrationTest::initDatabase",
                     "spring.datasource.user=tenant1",
                     "spring.datasource.password=password1"
             );
@@ -44,9 +45,8 @@ public abstract class AbstractIntegrationTest {
     }
 
     public static void initDatabase(Connection connection) throws SQLException {
-        System.out.println("FLYWAAAAY");
+        System.out.println("Some initialization here");
     }
-
 }
 
 

@@ -1,9 +1,11 @@
 package org.bmsource.dwh.users;
 
 import javax.persistence.*;
+import javax.transaction.Transactional;
 
 @Entity
 @Table(name = "users")
+@Transactional
 public class User {
 
     @Id
