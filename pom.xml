@@ -11,6 +11,7 @@
     <description>Data warehouse</description>
     <modules>
         <module>web</module>
+        <module>tests</module>
     </modules>
 
     <parent>

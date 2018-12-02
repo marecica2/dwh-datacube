@@ -9,6 +9,14 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>web</artifactId>
+    <artifactId>tests</artifactId>
 
+
+    <dependencies>
+        <dependency>
+            <artifactId>web</artifactId>
+            <groupId>org.bmsource</groupId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 </project>
