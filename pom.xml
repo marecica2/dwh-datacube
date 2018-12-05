@@ -10,7 +10,7 @@
     <name>dwh</name>
     <description>Data warehouse</description>
     <modules>
-        <module>web</module>
+        <module>multitenancy</module>
         <module>tests</module>
     </modules>
 

@@ -9,14 +9,6 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>tests</artifactId>
+    <artifactId>multitenancy</artifactId>
 
-
-    <dependencies>
-        <dependency>
-            <artifactId>multitenancy</artifactId>
-            <groupId>org.bmsource</groupId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
 </project>
