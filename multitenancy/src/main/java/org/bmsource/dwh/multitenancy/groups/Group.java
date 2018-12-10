@@ -16,9 +16,6 @@ public class Group {
 
     private String name;
 
-    @ManyToMany(mappedBy = "groups")
-    private Set<User> users = new HashSet<>();
-
     public Group(String name) {
         this.name = name;
     }

@@ -28,9 +28,6 @@ public class User {
     )
     private Set<Group> groups = new HashSet<>();
 
-
-
-
     public User() {
     }
 
