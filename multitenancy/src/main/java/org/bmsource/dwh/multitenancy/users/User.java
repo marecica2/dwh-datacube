@@ -1,15 +1,13 @@
 package org.bmsource.dwh.multitenancy.users;
 
-import org.bmsource.dwh.multitenancy.group.Group;
+import org.bmsource.dwh.multitenancy.groups.Group;
 
 import javax.persistence.*;
-import javax.transaction.Transactional;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "users")
-@Transactional
 public class User {
 
     @Id

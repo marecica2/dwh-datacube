@@ -1,15 +1,13 @@
-package org.bmsource.dwh.multitenancy.group;
+package org.bmsource.dwh.multitenancy.groups;
 
 import org.bmsource.dwh.multitenancy.users.User;
 
 import javax.persistence.*;
-import javax.transaction.Transactional;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "groups")
-@Transactional
 public class Group {
 
     @Id
@@ -27,5 +25,13 @@ public class Group {
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String toString() {
+        return "Group{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
     }
 }

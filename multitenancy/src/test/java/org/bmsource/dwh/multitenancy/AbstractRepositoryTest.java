@@ -1,4 +1,4 @@
-package org.bmsource.dwh.multitenancy.test.utils;
+package org.bmsource.dwh.multitenancy;
 
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
