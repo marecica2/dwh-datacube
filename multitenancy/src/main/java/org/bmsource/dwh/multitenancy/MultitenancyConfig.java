@@ -9,9 +9,9 @@ import javax.annotation.PostConstruct;
 
 @Configuration
 @ConfigurationProperties(prefix = "dwh")
-public class DwhConfig {
+public class MultitenancyConfig {
 
-    Logger logger = LoggerFactory.getLogger(DwhConfig.class);
+    Logger logger = LoggerFactory.getLogger(MultitenancyConfig.class);
 
     private String property;
 

@@ -10,8 +10,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EntityScan(basePackages = {"org.bmsource.dwh.multitenancy"})
 @EnableJpaRepositories
 @EnableTransactionManagement
-public class DwhApplication {
+public class MultitenancyApplication {
     public static void main(String[] args) {
-        SpringApplication.run(DwhApplication.class, args);
+        SpringApplication.run(MultitenancyApplication.class, args);
     }
 }

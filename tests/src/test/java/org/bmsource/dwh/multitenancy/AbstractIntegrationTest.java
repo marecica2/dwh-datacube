@@ -18,7 +18,7 @@ import java.sql.SQLException;
 
 @ActiveProfiles("it")
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = DwhApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = MultitenancyApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(initializers = AbstractIntegrationTest.Initializer.class)
 public abstract class AbstractIntegrationTest {
 
