@@ -8,14 +8,12 @@ spring:
   jpa:
     properties:
       hibernate:
-        temp:
-          use_jdbc_metadata_defaults: false
+        physical_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
     database-platform: org.hibernate.dialect.PostgreSQL9Dialect
     show-sql: true
     hibernate:
       ddl-auto: validate
   flyway:
-    locations: classpath:db/migration
     baseline-version: 1
 logging:
   level:
