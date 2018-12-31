@@ -9,6 +9,17 @@ services:
     ports:
     - 30001:5432
     environment:
-      POSTGRES_USER: tenant1
-      POSTGRES_DB: tenant1
-      POSTGRES_PASSWORD: password1
+      POSTGRES_DB: dwh-dev
+      POSTGRES_USER: dwh-dev
+      POSTGRES_PASSWORD: dwh-dev
+  db-test:
+    image: postgres:10.3
+    volumes:
+    - ./.db/pg.conf:/etc/postgresql/postgresql.conf
+    - ./.db/seeds:/.db/seeds
+    ports:
+    - 30002:5432
+    environment:
+      POSTGRES_DB: dwh-test
+      POSTGRES_USER: dwh
+      POSTGRES_PASSWORD: dwh

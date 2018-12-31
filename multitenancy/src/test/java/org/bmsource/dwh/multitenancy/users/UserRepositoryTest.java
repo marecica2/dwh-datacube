@@ -17,14 +17,14 @@ public class UserRepositoryTest extends AbstractRepositoryTest {
     @Autowired
     private GroupRepository groupRepository;
 
-    @Test
-    public void testInsert() {
-        User user1 = new User("John", "Doe");
-        user1 = userRepository.save(user1);
-
-        Optional<User> user2 = userRepository.findById(user1.getId());
-        Assert.assertEquals("John", user2.get().getFirstName());
-    }
+//    @Test
+//    public void testInsert() {
+//        User user1 = new User("John", "Doe");
+//        user1 = userRepository.save(user1);
+//
+//        Optional<User> user2 = userRepository.findById(user1.getId());
+//        Assert.assertEquals("John", user2.get().getFirstName());
+//    }
 
     @Test
     public void testAddToGroup() {

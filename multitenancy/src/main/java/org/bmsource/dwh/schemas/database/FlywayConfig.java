@@ -1,18 +1,20 @@
-package org.bmsource.dwh.multitenancy.database;
+package org.bmsource.dwh.schemas.database;
 
-import org.bmsource.dwh.multitenancy.database.repositories.TenantRepository;
+import org.bmsource.dwh.schemas.database.repositories.TenantRepository;
 import org.flywaydb.core.Flyway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 import javax.sql.DataSource;
 
 @Configuration
+@Profile({"!unit-test"})
 public class FlywayConfig {
 
-    public static String DEFAULT_SCHEMA = "DEFAULT_SCHEMA";
+    public static final String DEFAULT_SCHEMA = "master";
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -22,7 +24,7 @@ public class FlywayConfig {
         Flyway flyway = new Flyway();
         flyway.setLocations("db/migration/default");
         flyway.setDataSource(dataSource);
-        flyway.setSchemas("DEFAULT_SCHEMA");
+        flyway.setSchemas(DEFAULT_SCHEMA);
         flyway.migrate();
         return flyway;
     }

@@ -1,5 +1,6 @@
-package org.bmsource.dwh.multitenancy.database;
+package org.bmsource.dwh.schemas.database;
 
+import org.hibernate.engine.jdbc.connections.spi.MultiTenantConnectionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -9,12 +10,14 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 @Component
-public class TenantConnectionProvider implements
-		org.hibernate.engine.jdbc.connections.spi.MultiTenantConnectionProvider {
+public class TenantConnectionProvider implements MultiTenantConnectionProvider {
 
 	private static final long serialVersionUID = 1348353870772468815L;
+
 	private static Logger logger = LoggerFactory.getLogger(TenantConnectionProvider.class);
+
 	private String DEFAULT_TENANT = FlywayConfig.DEFAULT_SCHEMA;
+
 	private DataSource datasource;
 
 	public TenantConnectionProvider(DataSource dataSource) {

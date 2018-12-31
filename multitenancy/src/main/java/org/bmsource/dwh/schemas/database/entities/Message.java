@@ -1,28 +1,25 @@
-package org.bmsource.dwh.multitenancy.database.entities;
+package org.bmsource.dwh.schemas.database.entities;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name="tenants", schema = "DEFAULT_SCHEMA")
-public class Tenant {
+@Table(name="messages")
+public class Message {
 
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String uuid;
 
-    private String schemaName;
+    private String message;
 
-    private String tenantName;
-
+    @Column(name = "created_at")
     private Date createdAt;
 
+    @Column(name = "updated_at")
     private Date updatedAt;
 
     public String getUuid() {
@@ -33,20 +30,12 @@ public class Tenant {
         this.uuid = uuid;
     }
 
-    public String getSchemaName() {
-        return schemaName;
+    public String getMessage() {
+        return message;
     }
 
-    public void setSchemaName(String schemaName) {
-        this.schemaName = schemaName;
-    }
-
-    public String getTenantName() {
-        return tenantName;
-    }
-
-    public void setTenantName(String tenantName) {
-        this.tenantName = tenantName;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public Date getCreatedAt() {

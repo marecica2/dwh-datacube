@@ -1,4 +1,4 @@
-package org.bmsource.dwh.multitenancy.database;
+package org.bmsource.dwh.schemas.database;
 
 public class TenantContext {
 

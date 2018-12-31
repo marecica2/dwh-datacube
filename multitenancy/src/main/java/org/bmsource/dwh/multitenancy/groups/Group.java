@@ -24,6 +24,8 @@ public class Group {
         return name;
     }
 
+    public Group() {}
+
     @Override
     public String toString() {
         return "Group{" +

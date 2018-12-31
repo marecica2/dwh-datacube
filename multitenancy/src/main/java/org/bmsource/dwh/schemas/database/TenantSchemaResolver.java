@@ -1,4 +1,4 @@
-package org.bmsource.dwh.multitenancy.database;
+package org.bmsource.dwh.schemas.database;
 
 import org.hibernate.context.spi.CurrentTenantIdentifierResolver;
 import org.springframework.stereotype.Component;
@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class TenantSchemaResolver implements CurrentTenantIdentifierResolver {
 
-	private String defaultTenant ="DEFAULT_SCHEMA";
+	private String defaultTenant = FlywayConfig.DEFAULT_SCHEMA;
 
     @Override
 	public String resolveCurrentTenantIdentifier() {

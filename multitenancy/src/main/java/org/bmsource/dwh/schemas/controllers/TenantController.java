@@ -1,7 +1,7 @@
-package org.bmsource.dwh.multitenancy.controllers;
+package org.bmsource.dwh.schemas.controllers;
 
-import org.bmsource.dwh.multitenancy.database.entities.Tenant;
-import org.bmsource.dwh.multitenancy.database.repositories.TenantRepository;
+import org.bmsource.dwh.schemas.database.entities.Tenant;
+import org.bmsource.dwh.schemas.database.repositories.TenantRepository;
 import org.flywaydb.core.Flyway;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

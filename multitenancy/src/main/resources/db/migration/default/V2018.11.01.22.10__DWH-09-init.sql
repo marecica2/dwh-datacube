@@ -1,6 +1,5 @@
 CREATE SEQUENCE IF NOT EXISTS "hibernate_sequence";
 
-
 CREATE SEQUENCE IF NOT EXISTS "users_seq";
 CREATE TABLE IF NOT EXISTS users (
   id bigint DEFAULT nextval('users_seq') PRIMARY KEY,
@@ -20,4 +19,14 @@ CREATE TABLE IF NOT EXISTS "users_groups" (
   PRIMARY KEY (user_id, group_id),
   FOREIGN KEY (user_id) REFERENCES users (id),
   FOREIGN KEY (group_id) REFERENCES groups (id)
+);
+
+CREATE TABLE IF NOT EXISTS "tenants" (
+    uuid varchar(255) PRIMARY KEY,
+    tenant_name VARCHAR(255),
+    schema_name VARCHAR(255),
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    CONSTRAINT UC_TENANT_NAME UNIQUE (tenant_name) ,
+    CONSTRAINT UC_SCHEMA_NAME UNIQUE (schema_name)
 );

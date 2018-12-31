@@ -1,7 +1,7 @@
-package org.bmsource.dwh.multitenancy.controllers;
+package org.bmsource.dwh.schemas.controllers;
 
-import org.bmsource.dwh.multitenancy.database.TenantContext;
-import org.bmsource.dwh.multitenancy.database.repositories.TenantRepository;
+import org.bmsource.dwh.schemas.database.TenantContext;
+import org.bmsource.dwh.schemas.database.repositories.TenantRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class TenantInterceptor extends HandlerInterceptorAdapter {
         String tenantSchema = tenantUuid!=null? repository.findById(tenantUuid)
                 .orElseThrow(()->new RuntimeException("Tenant not found"))
                 .getSchemaName() : null;
-        logger.debug("Set TenantContext: {}",tenantSchema);
+        logger.info("Set TenantContext: {}",tenantSchema);
         TenantContext.setTenantSchema(tenantSchema);
         return true;
     }
@@ -38,7 +38,7 @@ public class TenantInterceptor extends HandlerInterceptorAdapter {
     public void postHandle(
             HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView)
             throws Exception {
-        logger.debug("Clear TenantContext: {}",TenantContext.getTenantSchema());
+        logger.info("Clear TenantContext: {}",TenantContext.getTenantSchema());
         TenantContext.setTenantSchema(null);
     }
 

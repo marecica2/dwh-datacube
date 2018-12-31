@@ -1,7 +1,7 @@
-package org.bmsource.dwh.multitenancy.controllers;
+package org.bmsource.dwh.schemas.controllers;
 
-import org.bmsource.dwh.multitenancy.database.entities.Message;
-import org.bmsource.dwh.multitenancy.database.repositories.MessageRepository;
+import org.bmsource.dwh.schemas.database.entities.Message;
+import org.bmsource.dwh.schemas.database.repositories.MessageRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;

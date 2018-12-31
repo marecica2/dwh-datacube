@@ -1,26 +1,30 @@
-package org.bmsource.dwh.multitenancy.database.entities;
+package org.bmsource.dwh.schemas.database.entities;
 
+import org.bmsource.dwh.schemas.database.FlywayConfig;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name="messages")
-public class Message {
+@Table(name="tenants", schema = FlywayConfig.DEFAULT_SCHEMA)
+public class Tenant {
 
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String uuid;
 
-    private String message;
+    @Column(name = "schema_name")
+    private String schemaName;
 
+    @Column(name = "tenant_name")
+    private String tenantName;
+
+    @Column(name = "created_at")
     private Date createdAt;
 
+    @Column(name = "updated_at")
     private Date updatedAt;
 
     public String getUuid() {
@@ -31,12 +35,20 @@ public class Message {
         this.uuid = uuid;
     }
 
-    public String getMessage() {
-        return message;
+    public String getSchemaName() {
+        return schemaName;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setSchemaName(String schemaName) {
+        this.schemaName = schemaName;
+    }
+
+    public String getTenantName() {
+        return tenantName;
+    }
+
+    public void setTenantName(String tenantName) {
+        this.tenantName = tenantName;
     }
 
     public Date getCreatedAt() {
