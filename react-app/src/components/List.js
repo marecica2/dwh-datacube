@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 const PRODUCTS = [
@@ -20,38 +20,60 @@ const PRODUCTS = [
   {category: 'Electronics', price: '$199.99', stocked: true, name: 'Nexus 7'},
 ];
 
-class ProductCategoryRow extends Component {
-  render() {
-    const {category} = this.props;
-    return (
-      <tr>
-        <th colSpan="2">
-          {category}
-        </th>
-      </tr>
-    );
-  }
+function ProductCategoryRow(props) {
+  const {category} = props;
+  return (
+    <tr>
+      <th colSpan="2">
+        {category}
+      </th>
+    </tr>
+  );
 }
 
-class ProductRow extends Component {
-  render() {
-    const {product} = this.props;
-    const name = product.stocked ?
-        product.name : (
-          <span style={{color: 'red'}}>
-            {product.name}
-          </span>
-        );
-    return (
-      <tr>
-        <td>{name}</td>
-        <td>{product.price}</td>
-      </tr>
-    );
-  }
+function ProductRow(props) {
+  const {product} = props;
+  const name = product.stocked ?
+      product.name : (
+        <span style={{color: 'red'}}>
+          {product.name}
+        </span>
+      );
+  return (
+    <tr>
+      <td>{name}</td>
+      <td>{product.price}</td>
+    </tr>
+  );
 }
 
 class ProductTable extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleProductChange = this.handleProductChange.bind(this);
+    this.handlePriceChange = this.handlePriceChange.bind(this);
+    this.handleAddProduct = this.handleAddProduct.bind(this);
+    this.state = {
+      product: null,
+      price: null,
+    };
+  }
+
+  handleProductChange(e) {
+    this.setState({ product: e.target.value });
+  }
+
+  handlePriceChange(e) {
+    this.setState({ price: e.target.value });
+    e.target.value = null;
+  }
+
+  handleAddProduct() {
+    const { product, price } = this.state;
+    this.props.onAddProduct({ category: 'Other', name: product, price, stocked: true });
+    this.setState({ product: '', price: '' });
+  }
+
   render() {
     const {filterText} = this.props;
     const {inStockOnly} = this.props;
@@ -82,7 +104,6 @@ class ProductTable extends React.Component {
       );
       lastCategory = product.category;
     });
-
     return (
       <table>
         <thead>
@@ -92,6 +113,29 @@ class ProductTable extends React.Component {
           </tr>
         </thead>
         <tbody>{rows}</tbody>
+        <tbody>
+          <tr>
+            <td>
+              <input
+                type="text"
+                value={this.state.product}
+                onChange={this.handleProductChange}
+              />
+            </td>
+            <td>
+              <input
+                type="text"
+                value={this.state.price}
+                onChange={this.handlePriceChange}
+              />
+            </td>
+            <td>
+              <button type="button" onClick={this.handleAddProduct}>Add</button>
+            </td>
+          </tr>
+,
+
+        </tbody>
       </table>
     );
   }
@@ -141,10 +185,25 @@ class FilterableProductTable extends React.Component {
     this.state = {
       filterText: '',
       inStockOnly: false,
+      products: this.props.products,
     };
 
     this.handleFilterTextChange = this.handleFilterTextChange.bind(this);
     this.handleInStockChange = this.handleInStockChange.bind(this);
+    this.onAddProduct = this.onAddProduct.bind(this);
+  }
+
+  onAddProduct(product) {
+    this.setState((state) => {
+      const products = [...state.products, product];
+      return {
+        products,
+      };
+    });
+  }
+
+  onDeleteProduct() {
+
   }
 
   handleFilterTextChange(filterText) {
@@ -169,9 +228,10 @@ class FilterableProductTable extends React.Component {
           onInStockChange={this.handleInStockChange}
         />
         <ProductTable
-          products={this.props.products}
+          products={this.state.products}
           filterText={this.state.filterText}
           inStockOnly={this.state.inStockOnly}
+          onAddProduct={this.onAddProduct}
         />
       </div>
     );
