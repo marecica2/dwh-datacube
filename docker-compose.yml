@@ -1,6 +1,11 @@
 version: '3.1'
 services:
-
+  proxy:
+    image: nginx:alpine
+    ports:
+      - 8081:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
   db:
     image: postgres:10.3
     volumes:
@@ -12,14 +17,14 @@ services:
       POSTGRES_DB: dwh-dev
       POSTGRES_USER: dwh-dev
       POSTGRES_PASSWORD: dwh-dev
-  db-test:
-    image: postgres:10.3
-    volumes:
-    - ./.db/pg.conf:/etc/postgresql/postgresql.conf
-    - ./.db/seeds:/.db/seeds
-    ports:
-    - 30002:5432
-    environment:
-      POSTGRES_DB: dwh-test
-      POSTGRES_USER: dwh
-      POSTGRES_PASSWORD: dwh
+#  db-test:
+#    image: postgres:10.3
+#    volumes:
+#    - ./.db/pg.conf:/etc/postgresql/postgresql.conf
+#    - ./.db/seeds:/.db/seeds
+#    ports:
+#    - 30002:5432
+#    environment:
+#      POSTGRES_DB: dwh-test
+#      POSTGRES_USER: dwh
+#      POSTGRES_PASSWORD: dwh

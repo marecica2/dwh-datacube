@@ -1,0 +1,9 @@
+server.port: 3000
+zuul:
+  routes:
+    api:
+      path: /api/**
+      url: http://localhost:3002/
+spring:
+  main:
+    allow-bean-definition-overriding: true

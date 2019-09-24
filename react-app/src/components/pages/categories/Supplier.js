@@ -1,5 +1,6 @@
-import React from 'react';
+import React, {Component} from 'react';
 import BarChart from '../../common/charts/BarChart';
+import axios from 'axios';
 
 const data = [{
   'country': 'USA',
@@ -62,13 +63,21 @@ const data2 = [{
   'visits': 395,
 }];
 
-function Supplier() {
-  return (
-    <div>
-      <BarChart data={data} title="Spend per supplier" />
-      <BarChart data={data2} title="Spend per supplier per Category" />
-    </div>
-  );
+class Supplier extends Component {
+  async componentDidMount() {
+    const res = await axios.get('/api/charts');
+    console.log(res.status);
+    console.log(res.data);
+  }
+
+  render() {
+    return (
+        <div>
+          <BarChart data={data} title="Spend per supplier"/>
+          <BarChart data={data2} title="Spend per supplier per Category"/>
+        </div>
+    );
+  }
 }
 
 export default Supplier;
