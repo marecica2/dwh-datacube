@@ -10,6 +10,7 @@ import Sidebar from './layout/Sidebar';
 import Home from './pages/Home';
 import Supplier from './pages/categories/Supplier';
 import ServiceType from './pages/categories/ServiceType';
+import Import from './pages/Import';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -45,6 +46,7 @@ function App() {
           <Switch>
             <Route path="/category/supplier" component={Supplier} />
             <Route path="/category/service-type" component={ServiceType} />
+            <Route path="/import" component={Import} />
             <Route path="/" strict component={Home} />
           </Switch>
         </main>

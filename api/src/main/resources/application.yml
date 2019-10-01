@@ -17,8 +17,12 @@ spring:
       ddl-auto: none
   flyway:
     baseline-version: 1
+  servlet:
+    multipart:
+      enabled: false
 dwh:
   property: prodvalue
+
 
 ---
 

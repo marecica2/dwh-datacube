@@ -123,7 +123,15 @@ function Sidebar(props) {
       </List>
 
       <List>
-        <ListItem button key='Import'>
+        <ListItem
+          button
+          key='Import'
+          to='/import'
+          activeStyle={{
+                    color: theme.palette.primary.main,
+                  }}
+          component={AdapterLink}
+        >
           <ListItemIcon><CloudUploadIcon /></ListItemIcon>
           <ListItemText primary='Import' />
         </ListItem>
