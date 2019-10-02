@@ -23,29 +23,30 @@ export default {
   },
 
   getMapping: async (transactionId, data) => {
-    const resp = await client.post(`/import/${transactionId}/mapping`, { files: data });
-    return {
-      destColumns: {
-        'transaction': { required: true },
-        'cost': { required: true,  number: true },
-        'originCity': { },
-        'originZip': { },
-        'originState': { },
-        'destinationCity': { },
-        'destinationZip': { },
-        'destinationState': { },
-      },
-      sourceColumns : {
-        'transaction': '1234',
-        'cost': 20.0,
-        'originCity': 'Boston',
-        'originZip': '896454',
-        'originState': 'Winnipeg',
-        'destinationCity': 'Atlanta',
-        'destinationZip': '854564',
-        'destinationState': 'Wyoming',
-      },
-    }
+    // return {
+    //   destColumns: {
+    //     'transaction': { required: true },
+    //     'cost': { required: true,  number: true },
+    //     'originCity': { },
+    //     'originZip': { },
+    //     'originState': { },
+    //     'destinationCity': { },
+    //     'destinationZip': { },
+    //     'destinationState': { },
+    //   },
+    //   sourceColumns : {
+    //     'transaction': '1234',
+    //     'cost': 20.0,
+    //     'originCity': 'Boston',
+    //     'originZip': '896454',
+    //     'originState': 'Winnipeg',
+    //     'destinationCity': 'Atlanta',
+    //     'destinationZip': '854564',
+    //     'destinationState': 'Wyoming',
+    //   },
+    // }
+    const response = await client.post(`/import/${transactionId}/mapping`, { files: data });
+    return response.data;
   },
 
   getPreview: async (transactionId) => {

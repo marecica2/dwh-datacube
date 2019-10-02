@@ -46,10 +46,10 @@ function MappingStep({ transaction, mapping, setMapping, uploadedFiles }) {
     setColumnMapping(prev => ({ ...prev, [name]: value }));
   };
 
-  const autoSuggestMapping = (mapping1) => {
-    const { sourceColumns, destColumns } = mapping1;
+  const autoSuggestMapping = (map) => {
+    const { sourceColumns, destinationColumns } = map;
     Object.keys(sourceColumns).forEach((key) => {
-      if(Object.keys(destColumns).includes(key)) {
+      if(Object.keys(destinationColumns).includes(key)) {
         selectColumn({ name: key, value: key});
       }
     });
@@ -59,6 +59,7 @@ function MappingStep({ transaction, mapping, setMapping, uploadedFiles }) {
     async function fetchData() {
       if(mapping == null) {
         const map = await ImportApi.getMapping(transaction, uploadedFiles);
+        console.log(map);
         autoSuggestMapping(map);
         setMapping(map);
       }
@@ -85,14 +86,14 @@ function MappingStep({ transaction, mapping, setMapping, uploadedFiles }) {
               >
                 <Typography variant="caption" display="block" className={classes.label}>Required fields</Typography>
                 {
-                  Object.entries(mapping.destColumns)
+                  Object.entries(mapping.destinationColumns)
                   .filter(([, val2]) => val2.required)
                   .filter(([col2]) => !assignedColumns.includes(col2) || columnMapping[col] === col2  )
                   .map(([ col2]) => <MenuItem key={col2} value={col2}>{col2}</MenuItem>)
                 }
                 <Typography variant="caption" display="block" className={classes.label}>Optional fields</Typography>
                 {
-                  Object.entries(mapping.destColumns)
+                  Object.entries(mapping.destinationColumns)
                   .filter(([, val2]) => val2.required == null)
                   .filter(([col2]) => !assignedColumns.includes(col2) || columnMapping[col] === col2  )
                   .map(([ col2]) => <MenuItem key={col2} value={col2}>{col2}</MenuItem>)

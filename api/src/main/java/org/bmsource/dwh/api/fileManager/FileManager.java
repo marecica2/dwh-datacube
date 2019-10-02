@@ -1,4 +1,4 @@
-package org.bmsource.dwh.api.importer.fileManager;
+package org.bmsource.dwh.api.fileManager;
 
 import java.io.IOException;
 import java.io.InputStream;

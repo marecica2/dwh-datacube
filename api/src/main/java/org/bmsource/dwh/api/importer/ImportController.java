@@ -9,10 +9,12 @@ import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.bmsource.dwh.api.importer.fileManager.FileManager;
-import org.bmsource.dwh.api.importer.fileManager.FileSystemImpl;
-import org.bmsource.dwh.api.parsers.ColumnMapping;
-import org.bmsource.dwh.api.parsers.XslxParser;
+import org.bmsource.dwh.api.fileManager.FileManager;
+import org.bmsource.dwh.api.fileManager.FileSystemImpl;
+import org.bmsource.dwh.api.model.Fact;
+import org.bmsource.dwh.api.parsers.DataReader;
+import org.bmsource.dwh.api.parsers.MappingResult;
+import org.bmsource.dwh.api.parsers.ExcelReader;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -75,21 +77,27 @@ public class ImportController {
   }
 
   @PostMapping(value = "/{transactionId}/mapping", consumes = "application/json")
-  public ColumnMapping columnMapping(
+  public MappingResponse columnMapping(
       @PathVariable("transactionId") String transactionId,
       @RequestBody MappingRequest filesParam
   ) throws Exception {
     System.out.println(filesParam);
     List<String> files = fileManager.getFiles(transactionId);
-    InputStream excelStream = fileManager.getStream(transactionId, files.get(0));
-    return XslxParser.getColumnHeaders(excelStream);
+
+    try (InputStream stream = fileManager.getStream(transactionId, files.get(0))) {
+      DataReader parser = new ExcelReader();
+      MappingResult columnMapping = parser.readHeaderRow(stream);
+      MappingResponse mappingResponse = new MappingResponse();
+      mappingResponse.setDestinationFields(Fact.class);
+      mappingResponse.setInputFields(columnMapping.getHeaderRow(), columnMapping.getPreviewRow());
+      return mappingResponse;
+    }
   }
 
   @GetMapping(value = "/{transactionId}/preview")
   public String preview(@PathVariable("transactionId") String transactionId) throws Exception {
     List<String> files = fileManager.getFiles(transactionId);
     InputStream is = fileManager.getStream(transactionId, files.get(0));
-    // XslxParser.parse(is);
     return "ok";
   }
 }

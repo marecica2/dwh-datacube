@@ -5,14 +5,24 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.springframework.util.ResourceUtils;
+import static org.assertj.core.api.Assertions.*;
 
 public class XslxParserTest {
 
   @Test
-  public void testHeadrParser() throws Exception {
+  public void testHeaderRowParser() throws Exception {
     File xlsx = ResourceUtils.getFile(this.getClass().getResource("/spends.xlsx"));
-    ColumnMapping mapping =  XslxParser.getColumnHeaders(FileUtils.openInputStream(xlsx));
-    System.out.println("Header " + mapping.getHeaderColumn());
-    System.out.println("Preview " + mapping.getPreviewColumn());
+    MappingResult mapping =  new ExcelReader().readHeaderRow(FileUtils.openInputStream(xlsx));
+    assertThat(mapping.getHeaderRow().size()).isEqualTo(38);
+    assertThat(mapping.getPreviewRow().size()).isEqualTo(38);
+    assertThat(mapping.getHeaderRow().get(4)).isEqualTo("Origin-State");
+    assertThat(mapping.getPreviewRow().get(4)).isEqualTo("Illinois");
+  }
+
+  @Test
+  public void testPreviewParser() throws Exception {
+    File xlsx = ResourceUtils.getFile(this.getClass().getResource("/spends.xlsx"));
+    List<List<Object>> rows = new ExcelReader().readPreview(FileUtils.openInputStream(xlsx), 20);
+    assertThat(rows.size()).isEqualTo(20);
   }
 }
