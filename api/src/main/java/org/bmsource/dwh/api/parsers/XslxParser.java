@@ -181,14 +181,9 @@ public class XslxParser {
     }
   }
 
-  public static void parse(String filePath) throws Exception {
-    File xlsxFile = new File(filePath);
-    if (!xlsxFile.exists()) {
-      System.err.println("Not found or not a file: " + xlsxFile.getPath());
-      return;
-    }
+  public static void parse(InputStream inputStream) throws Exception {
     int minColumns = -1;
-    try (OPCPackage p = OPCPackage.open(xlsxFile.getPath(), PackageAccess.READ)) {
+    try (OPCPackage p = OPCPackage.open(inputStream)) {
       XslxParser parser = new XslxParser(p, System.out, minColumns);
       parser.process();
     }

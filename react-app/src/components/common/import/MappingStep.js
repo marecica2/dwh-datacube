@@ -12,7 +12,6 @@ import {
 } from '@material-ui/core';
 import grey from '@material-ui/core/colors/grey';
 import ImportApi from './ImportApi';
-import {contextWrapper} from './ImportContext';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -32,7 +31,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function MappingStep({ actions, transaction, mapping }) {
+function MappingStep({ transaction, mapping, setMapping, files }) {
   const classes = useStyles();
   const [columnMapping, setColumnMapping] = React.useState({});
   const [assignedColumns, setAssignedColumns] = React.useState([]);
@@ -58,12 +57,12 @@ function MappingStep({ actions, transaction, mapping }) {
 
   useEffect(() => {
     async function fetchData() {
-      const resp = await ImportApi.getMapping(transaction);
+      const resp = await ImportApi.getMapping(transaction, files);
       autoSuggestMapping(resp);
-      actions.setProp({ mapping: resp });
+      setMapping(resp);
     }
     fetchData();
-  });
+  }, [mapping]);
 
   const renderColumns = () => {
     if(mapping && mapping.sourceColumns) {
@@ -122,4 +121,4 @@ function MappingStep({ actions, transaction, mapping }) {
   );
 }
 
-export default contextWrapper(MappingStep);
+export default MappingStep;

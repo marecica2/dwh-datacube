@@ -6,7 +6,6 @@ import {
   StepLabel,
   Button, Paper,
 } from '@material-ui/core';
-import {Provider} from './ImportContext';
 import ImportApi from './ImportApi';
 import FileUploadStep from './FileUploadStep';
 import MappingStep from './MappingStep';
@@ -32,53 +31,39 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function getStepContent(step) {
-  switch (step) {
-    case 0:
-      return <FileUploadStep />;
-    case 1:
-      return <MappingStep />;
-    case 2:
-      return <PreviewStep />;
-    case 3:
-      return <ConfigStep />;
-    default:
-      return '';
-  }
-}
-
 export default function Import() {
   const classes = useStyles();
   const steps = ['Get the data', 'Column mapping', 'Data preview', 'Options'];
   const [activeStep, setActiveStep] = React.useState(0);
-  const [importState, setImportState] = React.useState({
-    actions: {
-      setProp: (prop) => {
-        setImportState(state => ({...state, ...prop }));
-      },
-      setFiles: (files) => {
-        setImportState(state => ({...state, files }));
-      },
-    },
-    transaction: null,
-    files: [],
-    mapping: {},
-    config: {
-      skipStrategy: 'cell',
-      deleteStrategy: true,
-    },
-  });
+  const [transaction, setTransaction] = React.useState();
+  const [files, setFiles] = React.useState([]);
+  const [mapping, setMapping] = React.useState({});
+  const [config, setConfig] = React.useState({ skipStrategy: 'cell', deleteStrategy: true });
+  const globalState =  { transaction, setTransaction, files, setFiles, mapping, setMapping, config, setConfig};
+
+  const getStepContent = (step) => {
+    switch (step) {
+      case 0:
+        return <FileUploadStep {...globalState} />;
+      case 1:
+        return <MappingStep {...globalState} />;
+      case 2:
+        return <PreviewStep {...globalState} />;
+      case 3:
+        return <ConfigStep {...globalState} />;
+      default:
+        return '';
+    }
+  };
 
   useEffect(() => {
-    async function fetchData() {
-      const tx = await ImportApi.initImport();
-      setImportState(state => ({...state, transaction: tx }));
+    async function api() {
+      setTransaction(await ImportApi.initImport());
     }
-    fetchData();
-  }, []);
+    api();
+  });
 
   const handleNext = () => {
-    console.log(importState);
     setActiveStep(prevActiveStep => prevActiveStep + 1);
   };
 
@@ -91,11 +76,10 @@ export default function Import() {
   };
 
   return (
-    <Provider value={importState}>
-      <div className={classes.root}>
-        <Paper className={classes.paper}>
-          <Stepper activeStep={activeStep}>
-            {steps.map((label) => {
+    <div className={classes.root}>
+      <Paper className={classes.paper}>
+        <Stepper activeStep={activeStep}>
+          {steps.map((label) => {
                 const stepProps = {};
                 const labelProps = {};
                 return (
@@ -104,14 +88,14 @@ export default function Import() {
                   </Step>
                 );
               })}
-          </Stepper>
-          {activeStep === steps.length ? (
-            <div>
-              <FinishStep />
-              <Button onClick={handleReset} className={classes.button}>
+        </Stepper>
+        {activeStep === steps.length ? (
+          <div>
+            <FinishStep />
+            <Button onClick={handleReset} className={classes.button}>
                     Cancel
-              </Button>
-            </div>
+            </Button>
+          </div>
             ) : (
               <div>
                 {getStepContent(activeStep)}
@@ -132,8 +116,7 @@ export default function Import() {
                 </Button>
               </div>
             )}
-        </Paper>
-      </div>
-    </Provider>
+      </Paper>
+    </div>
   );
 }

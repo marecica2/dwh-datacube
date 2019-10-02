@@ -15,15 +15,15 @@ export default {
     return data;
   },
 
-  uploadFiles: async (data, onUploadProgress = () => {}) => {
-    const { data: files } = await client.post('/import', data, {
+  uploadFiles: async (transactionId, data, onUploadProgress = () => {}) => {
+    const { data: files } = await client.post(`/import/${transactionId}`, data, {
       onUploadProgress,
     });
     return files;
   },
 
-  getMapping: async (data) => {
-    const resp = await client.post('/import', data);
+  getMapping: async (transactionId, data) => {
+    const resp = await client.post(`/import/${transactionId}/mapping`, { files: data });
     console.log(resp);
     return {
       destColumns: {
@@ -49,8 +49,9 @@ export default {
     }
   },
 
-  getPreview: async (tx) => {
-    await sleep(1000);
+  getPreview: async (transactionId) => {
+    const resp = await client.post(`/import/${transactionId}/preview`);
+    console.log(resp);
     return [
         {
         'transaction': '1234',

@@ -8,7 +8,6 @@ import {
   FormGroup,
   FormLabel,
 } from '@material-ui/core';
-import {contextWrapper} from './ImportContext';
 
 const useStyles = makeStyles(theme => ({
   formControl: {
@@ -16,14 +15,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const ConfigStep = ({ actions, skipStrategy, deleteStrategy }) => {
+const ConfigStep = ({ config, setConfig }) => {
   const classes = useStyles();
 
   const handleInputChange = (event) => {
     const { target } = event;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const { name } = target;
-    actions.setProp({
+    setConfig({
       [name]: value,
     });
   };
@@ -35,7 +34,7 @@ const ConfigStep = ({ actions, skipStrategy, deleteStrategy }) => {
         <RadioGroup
           aria-label="Error processing"
           name="skipStrategy"
-          value={skipStrategy}
+          value={config.skipStrategy}
           onChange={handleInputChange}
         >
           <FormControlLabel value="row" control={<Radio />} label="Skip row" />
@@ -51,7 +50,7 @@ const ConfigStep = ({ actions, skipStrategy, deleteStrategy }) => {
         <FormControlLabel
           control={(
             <Checkbox
-              checked={deleteStrategy}
+              checked={config.deleteStrategy}
               onChange={handleInputChange}
               name="deleteStrategy"
               color="primary"
@@ -65,4 +64,4 @@ const ConfigStep = ({ actions, skipStrategy, deleteStrategy }) => {
   );
 };
 
-export default contextWrapper(ConfigStep);
+export default ConfigStep;

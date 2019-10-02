@@ -1,19 +1,15 @@
 import React from 'react';
-import {Grid, Typography} from '@material-ui/core';
-import { contextWrapper } from './ImportContext';
+import { Grid } from '@material-ui/core';
 import FileUpload from '../FileUpload';
 
-function FileUploadStep({ actions }) {
+function FileUploadStep(props) {
   return (
     <Grid container spacing={1}>
       <Grid item xs={12}>
-        <Typography variant="body1" paragraph>
-            Upload files ( .xls, .xlsx, .csv )
-        </Typography>
-        <FileUpload actions={actions} />
+        <FileUpload {...props} />
       </Grid>
     </Grid>
   );
 }
 
-export default contextWrapper(FileUploadStep);
+export default FileUploadStep;
