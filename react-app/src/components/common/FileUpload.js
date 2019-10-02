@@ -53,7 +53,7 @@ class FileUpload extends Component {
   };
 
   onUpload = async () => {
-    const { transaction, setFiles } = this.props;
+    const { transaction, setUploadedFiles } = this.props;
     const uploadedFiles = await Promise.all(this.props.files.map(async (file) => {
       const data = new FormData();
       data.append('file', file);
@@ -66,8 +66,8 @@ class FileUpload extends Component {
         });
       });
     }));
-    console.log('all uploads finished', uploadedFiles);
-    setFiles(uploadedFiles.flat());
+    console.log('all uploads finished', uploadedFiles.flat());
+    setUploadedFiles(uploadedFiles.flat());
   };
 
   render() {

@@ -37,9 +37,21 @@ export default function Import() {
   const [activeStep, setActiveStep] = React.useState(0);
   const [transaction, setTransaction] = React.useState();
   const [files, setFiles] = React.useState([]);
-  const [mapping, setMapping] = React.useState({});
+  const [uploadedFiles, setUploadedFiles] = React.useState([]);
+  const [mapping, setMapping] = React.useState();
   const [config, setConfig] = React.useState({ skipStrategy: 'cell', deleteStrategy: true });
-  const globalState =  { transaction, setTransaction, files, setFiles, mapping, setMapping, config, setConfig};
+  const globalState =  {
+    transaction,
+    setTransaction,
+    files,
+    setFiles,
+    uploadedFiles,
+    setUploadedFiles,
+    mapping,
+    setMapping,
+    config,
+    setConfig,
+  };
 
   const getStepContent = (step) => {
     switch (step) {
@@ -61,7 +73,7 @@ export default function Import() {
       setTransaction(await ImportApi.initImport());
     }
     api();
-  });
+  }, []);
 
   const handleNext = () => {
     setActiveStep(prevActiveStep => prevActiveStep + 1);

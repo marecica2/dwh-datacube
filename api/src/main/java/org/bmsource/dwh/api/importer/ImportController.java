@@ -11,6 +11,7 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.bmsource.dwh.api.importer.fileManager.FileManager;
 import org.bmsource.dwh.api.importer.fileManager.FileSystemImpl;
+import org.bmsource.dwh.api.parsers.ColumnMapping;
 import org.bmsource.dwh.api.parsers.XslxParser;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +30,13 @@ class MappingRequest {
 
   public void setFiles(List<String> files) {
     this.files = files;
+  }
+
+  @Override
+  public String toString() {
+    return "MappingRequest{" +
+        "files=" + files +
+        '}';
   }
 }
 
@@ -67,22 +75,21 @@ public class ImportController {
   }
 
   @PostMapping(value = "/{transactionId}/mapping", consumes = "application/json")
-  public String columnMapping(
+  public ColumnMapping columnMapping(
       @PathVariable("transactionId") String transactionId,
       @RequestBody MappingRequest filesParam
   ) throws Exception {
     System.out.println(filesParam);
     List<String> files = fileManager.getFiles(transactionId);
-    InputStream is = fileManager.getStream(transactionId, files.get(0));
-    XslxParser.parse(is);
-    return "ok";
+    InputStream excelStream = fileManager.getStream(transactionId, files.get(0));
+    return XslxParser.getColumnHeaders(excelStream);
   }
 
   @GetMapping(value = "/{transactionId}/preview")
   public String preview(@PathVariable("transactionId") String transactionId) throws Exception {
     List<String> files = fileManager.getFiles(transactionId);
     InputStream is = fileManager.getStream(transactionId, files.get(0));
-    XslxParser.parse(is);
+    // XslxParser.parse(is);
     return "ok";
   }
 }

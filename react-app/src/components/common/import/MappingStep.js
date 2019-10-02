@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function MappingStep({ transaction, mapping, setMapping, files }) {
+function MappingStep({ transaction, mapping, setMapping, uploadedFiles }) {
   const classes = useStyles();
   const [columnMapping, setColumnMapping] = React.useState({});
   const [assignedColumns, setAssignedColumns] = React.useState([]);
@@ -57,12 +57,14 @@ function MappingStep({ transaction, mapping, setMapping, files }) {
 
   useEffect(() => {
     async function fetchData() {
-      const resp = await ImportApi.getMapping(transaction, files);
-      autoSuggestMapping(resp);
-      setMapping(resp);
+      if(mapping == null) {
+        const map = await ImportApi.getMapping(transaction, uploadedFiles);
+        autoSuggestMapping(map);
+        setMapping(map);
+      }
     }
     fetchData();
-  }, [mapping]);
+  }, []);
 
   const renderColumns = () => {
     if(mapping && mapping.sourceColumns) {

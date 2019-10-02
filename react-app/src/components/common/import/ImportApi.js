@@ -24,7 +24,6 @@ export default {
 
   getMapping: async (transactionId, data) => {
     const resp = await client.post(`/import/${transactionId}/mapping`, { files: data });
-    console.log(resp);
     return {
       destColumns: {
         'transaction': { required: true },
