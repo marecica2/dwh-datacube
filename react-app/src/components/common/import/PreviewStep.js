@@ -1,14 +1,59 @@
-import {Grid} from '@material-ui/core';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import { Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
+import ImportApi from './ImportApi';
+import Loading from './Loading';
 
 export const stepName = 'Preview data';
 
-function PreviewStep({ mapping }) {
-    console.log(mapping);
+const useStyles = makeStyles(() => ({
+    root: {
+        display: 'flex',
+        flexWrap: 'wrap',
+    },
+}));
+
+function PreviewStep({ transaction, mapping, preview, setPreview }) {
+    const classes = useStyles();
+    const [loaded, setLoaded] = React.useState(false);
+
+    useEffect(() => {
+        async function fetchData() {
+            if (preview == null) {
+                const result = await ImportApi.getPreview(transaction, mapping);
+                setPreview(result);
+                setLoaded(true);
+            }
+        }
+        fetchData();
+    }, []);
+
+    const renderColumns = () => {
+        return (
+          <TableRow>
+            <TableCell />
+          </TableRow>
+        );
+    };
+
     return (
-      <Grid container>
-        Preview
-      </Grid>
+      <div>
+        { loaded ? (
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Column name</TableCell>
+                <TableCell>Preview</TableCell>
+                <TableCell>Mapped column</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {renderColumns()}
+            </TableBody>
+          </Table>
+            ) : <Loading />
+            }
+      </div>
     );
 }
 

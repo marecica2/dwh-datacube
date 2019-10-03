@@ -38,7 +38,9 @@ export default function Import() {
   const [transaction, setTransaction] = React.useState();
   const [files, setFiles] = React.useState([]);
   const [uploadedFiles, setUploadedFiles] = React.useState([]);
-  const [mapping, setMapping] = React.useState();
+  const [mappingConfig, setMappingConfig] = React.useState();
+  const [mapping, setMapping] = React.useState({});
+  const [preview, setPreview] = React.useState();
   const [config, setConfig] = React.useState({ skipStrategy: 'cell', deleteStrategy: true });
   const globalState =  {
     transaction,
@@ -47,8 +49,12 @@ export default function Import() {
     setFiles,
     uploadedFiles,
     setUploadedFiles,
+    mappingConfig,
+    setMappingConfig,
     mapping,
     setMapping,
+    preview,
+    setPreview,
     config,
     setConfig,
   };

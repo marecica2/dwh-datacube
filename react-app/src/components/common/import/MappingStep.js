@@ -32,22 +32,21 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export const stepName = 'Column mapping';
+export const stepName = 'Column mappingConfig';
 
-function MappingStep({transaction, mapping, setMapping, uploadedFiles}) {
+function MappingStep({transaction, mappingConfig, setMappingConfig, mapping, setMapping, uploadedFiles}) {
   const classes = useStyles();
   const [loaded, setLoaded] = React.useState(false);
-  const [columnMapping, setColumnMapping] = React.useState({});
   const [assignedColumns, setAssignedColumns] = React.useState([]);
 
   const selectColumn = ({name, value}) => {
-    const prevValue = columnMapping[name];
+    const prevValue = mapping[name];
     if (value === '') {
       setAssignedColumns(prev => prev.filter(item => item !== prevValue));
     } else {
       setAssignedColumns(prev => ([...prev, value]));
     }
-    setColumnMapping(prev => ({...prev, [name]: value}));
+    setMapping(prev => ({...prev, [name]: value}));
   };
 
   const autoSuggestMapping = (map) => {
@@ -58,19 +57,31 @@ function MappingStep({transaction, mapping, setMapping, uploadedFiles}) {
 
   useEffect(() => {
     async function fetchData() {
-      if (mapping == null) {
-        const map = await ImportApi.getMapping(transaction, uploadedFiles);
-        setMapping(map);
-        autoSuggestMapping(map.mapping);
+      if (mappingConfig == null) {
+        const result = await ImportApi.getMapping(transaction, uploadedFiles);
+        setMappingConfig(result);
+        autoSuggestMapping(result.mapping);
         setLoaded(true);
       }
     }
     fetchData();
   }, []);
 
+  const renderMenuItems = (col, comparator = val => val.required) => {
+    return Object.entries(mappingConfig.destinationColumns)
+      .filter(([, val2]) => comparator(val2))
+      .filter(([col2]) => !assignedColumns.includes(col2)
+          || mapping[col] === col2)
+      .map(([col2, val2]) => (
+        <MenuItem key={col2} value={col2}>
+          {val2.label}
+        </MenuItem>
+      ));
+  };
+
   const renderColumns = () => {
-    if (mapping && mapping.sourceColumns) {
-      return Object.entries(mapping.sourceColumns).map(([col, val]) => (
+    if (mappingConfig && mappingConfig.sourceColumns) {
+      return Object.entries(mappingConfig.sourceColumns).map(([col, val]) => (
         <TableRow key={col}>
           <TableCell>
             {col}
@@ -80,38 +91,18 @@ function MappingStep({transaction, mapping, setMapping, uploadedFiles}) {
           </TableCell>
           <TableCell>
             <FormControl className={classes.formControl}>
-              <Select name={col} value={columnMapping[col] || ''} onChange={e => selectColumn(e.target)}>
+              <Select name={col} value={mapping[col] || ''} onChange={e => selectColumn(e.target)}>
+                <MenuItem value="">
+                  None
+                </MenuItem>
                 <Typography variant="caption" display="block" className={classes.label}>
                       Required fields
                 </Typography>
-                {
-                    Object.entries(mapping.destinationColumns)
-                    .filter(([, val2]) => val2.required)
-                    .filter(([col2]) => !assignedColumns.includes(col2)
-                        || columnMapping[col] === col2)
-                    .map(([col2, val2]) => (
-                      <MenuItem key={col2} value={col2}>
-                        {val2.label}
-                      </MenuItem>
-                    ))
-                  }
+                {renderMenuItems(col)}
                 <Typography variant="caption" display="block" className={classes.label}>
                       Optional fields
                 </Typography>
-                {
-                    Object.entries(mapping.destinationColumns)
-                    .filter(([, val2]) => val2.required == null)
-                    .filter(([col2]) => !assignedColumns.includes(col2)
-                        || columnMapping[col] === col2)
-                    .map(([col2, val2]) => (
-                      <MenuItem key={col2} value={col2}>
-                        {val2.label}
-                      </MenuItem>
-                    ))
-                  }
-                <MenuItem value="" style={{color: grey[500]}}>
-                  Unmapped
-                </MenuItem>
+                {renderMenuItems(col, v => v.required == null)}
               </Select>
             </FormControl>
           </TableCell>
