@@ -1,12 +1,15 @@
 import {Grid} from '@material-ui/core';
 import React from 'react';
 
-function PreviewStep() {
-  return (
-    <Grid container>
+export const stepName = 'Preview data';
+
+function PreviewStep({ mapping }) {
+    console.log(mapping);
+    return (
+      <Grid container>
         Preview
-    </Grid>
-  );
+      </Grid>
+    );
 }
 
 export default PreviewStep;

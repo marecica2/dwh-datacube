@@ -11,6 +11,7 @@ import {
   Select, Typography,
 } from '@material-ui/core';
 import grey from '@material-ui/core/colors/grey';
+import Loading from './Loading';
 import ImportApi from './ImportApi';
 
 const useStyles = makeStyles(theme => ({
@@ -31,8 +32,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+export const stepName = 'Column mapping';
+
 function MappingStep({transaction, mapping, setMapping, uploadedFiles}) {
   const classes = useStyles();
+  const [loaded, setLoaded] = React.useState(false);
   const [columnMapping, setColumnMapping] = React.useState({});
   const [assignedColumns, setAssignedColumns] = React.useState([]);
 
@@ -58,9 +62,9 @@ function MappingStep({transaction, mapping, setMapping, uploadedFiles}) {
         const map = await ImportApi.getMapping(transaction, uploadedFiles);
         setMapping(map);
         autoSuggestMapping(map.mapping);
+        setLoaded(true);
       }
     }
-
     fetchData();
   }, []);
 
@@ -118,18 +122,23 @@ function MappingStep({transaction, mapping, setMapping, uploadedFiles}) {
   };
 
   return (
-    <Table>
-      <TableHead>
-        <TableRow>
-          <TableCell>Column name</TableCell>
-          <TableCell>Preview</TableCell>
-          <TableCell>Mapped column</TableCell>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {renderColumns()}
-      </TableBody>
-    </Table>
+    <div>
+      { loaded ? (
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Column name</TableCell>
+              <TableCell>Preview</TableCell>
+              <TableCell>Mapped column</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {renderColumns()}
+          </TableBody>
+        </Table>
+      ) : <Loading />
+      }
+    </div>
   );
 }
 

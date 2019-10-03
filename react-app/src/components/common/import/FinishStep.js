@@ -9,6 +9,8 @@ import React from 'react';
 const useStyles = makeStyles(() => ({
 }));
 
+export const stepName = 'Import in progress';
+
 export default function FinishStep() {
   const classes = useStyles();
   return (

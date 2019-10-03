@@ -7,10 +7,10 @@ import {
   Button, Paper,
 } from '@material-ui/core';
 import ImportApi from './ImportApi';
-import FileUploadStep from './FileUploadStep';
-import MappingStep from './MappingStep';
-import PreviewStep from './PreviewStep';
-import ConfigStep from './ConfigStep';
+import FileUploadStep, { stepName as fileUploadStepDescription } from './FileUploadStep';
+import MappingStep, { stepName as mappingStepDescription } from './MappingStep';
+import PreviewStep, { stepName as previewStepDescription } from './PreviewStep';
+import ConfigStep, { stepName as configStepDescription } from './ConfigStep';
 import FinishStep from './FinishStep';
 
 const useStyles = makeStyles(theme => ({
@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function Import() {
   const classes = useStyles();
-  const steps = ['Get the data', 'Column mapping', 'Data preview', 'Options'];
+  const steps = [fileUploadStepDescription, mappingStepDescription, previewStepDescription, configStepDescription];
   const [activeStep, setActiveStep] = React.useState(0);
   const [transaction, setTransaction] = React.useState();
   const [files, setFiles] = React.useState([]);
@@ -65,6 +65,17 @@ export default function Import() {
         return <ConfigStep {...globalState} />;
       default:
         return '';
+    }
+  };
+
+  const isNextEnabled = (step) => {
+    switch (step) {
+      case 0:
+        return files.length > 0;
+      case 1:
+        return mapping != null;
+      default:
+        return true;
     }
   };
 
@@ -101,33 +112,23 @@ export default function Import() {
                 );
               })}
         </Stepper>
+        {activeStep === steps.length ? <FinishStep /> : getStepContent(activeStep)}
         {activeStep === steps.length ? (
-          <div>
-            <FinishStep />
+          <p>
             <Button onClick={handleReset} className={classes.button}>
                     Cancel
             </Button>
-          </div>
+          </p>
             ) : (
-              <div>
-                {getStepContent(activeStep)}
-                <Button
-                  disabled={activeStep === 0}
-                  onClick={handleBack}
-                  className={classes.button}
-                >
-                    Back
+              <p>
+                <Button disabled={activeStep === 0} onClick={handleBack} className={classes.button}>
+                Back
                 </Button>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleNext}
-                  className={classes.button}
-                >
+                <Button disabled={!isNextEnabled(activeStep)} variant="contained" color="primary" onClick={handleNext} className={classes.button}>
                   {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
                 </Button>
-              </div>
-            )}
+              </p>
+        )}
       </Paper>
     </div>
   );

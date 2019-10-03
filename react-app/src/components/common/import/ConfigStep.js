@@ -15,6 +15,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+export const stepName = 'Import Options';
+
 const ConfigStep = ({ config, setConfig }) => {
   const classes = useStyles();
 

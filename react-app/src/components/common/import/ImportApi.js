@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+// function sleep(ms) {
+//   return new Promise(resolve => setTimeout(resolve, ms));
+// }
 
 const client = axios.create({
   baseURL: '/api',
@@ -15,56 +15,20 @@ export default {
     return data;
   },
 
-  uploadFiles: async (transactionId, data, onUploadProgress = () => {}) => {
-    const { data: files } = await client.post(`/import/${transactionId}`, data, {
+  uploadFiles: async (transactionId, files, onUploadProgress = () => {}) => {
+    const { data } = await client.post(`/import/${transactionId}`, files, {
       onUploadProgress,
     });
-    return files;
+    return data;
   },
 
-  getMapping: async (transactionId, data) => {
-    // return {
-    //   destColumns: {
-    //     'transaction': { required: true },
-    //     'cost': { required: true,  number: true },
-    //     'originCity': { },
-    //     'originZip': { },
-    //     'originState': { },
-    //     'destinationCity': { },
-    //     'destinationZip': { },
-    //     'destinationState': { },
-    //   },
-    //   sourceColumns : {
-    //     'transaction': '1234',
-    //     'cost': 20.0,
-    //     'originCity': 'Boston',
-    //     'originZip': '896454',
-    //     'originState': 'Winnipeg',
-    //     'destinationCity': 'Atlanta',
-    //     'destinationZip': '854564',
-    //     'destinationState': 'Wyoming',
-    //   },
-    // }
-    const response = await client.post(`/import/${transactionId}/mapping`, { files: data });
-    return response.data;
+  getMapping: async (transactionId, files) => {
+    const { data } = await client.post(`/import/${transactionId}/mapping`, { files });
+    return data;
   },
 
-  getPreview: async (transactionId) => {
-    const resp = await client.post(`/import/${transactionId}/preview`);
-    console.log(resp);
-    return [
-        {
-        'transaction': '1234',
-        'cost': 20.0,
-        'origin': 'Chicago',
-        'destination': 'Atlanta',
-        },
-        {
-        'transaction': '1237',
-        'cost': 80.0,
-        'origin': 'Boston',
-        'destination': 'New Jersey',
-        },
-    ];
+  getPreview: async (transactionId, mapping) => {
+    const { data } = await client.post(`/import/${transactionId}/preview`, { mapping });
+    return data;
   },
 }
