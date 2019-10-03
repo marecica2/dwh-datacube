@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.validation.constraints.NotNull;
 
 public class Fact {
+
   String transactionId;
 
   String supplierName;
@@ -50,11 +51,21 @@ public class Fact {
   @NotNull
   BigDecimal cost;
 
+  String accessorialService1;
+
+  String accessorialService2;
+
+  String accessorialService3;
+
   BigDecimal accessorialCharge1;
 
   BigDecimal accessorialCharge2;
 
+  BigDecimal accessorialCharge3;
+
   Double discount;
+
+  Double distance;
 
   public String getTransactionId() {
     return transactionId;
@@ -246,5 +257,21 @@ public class Fact {
 
   public void setDiscount(Double discount) {
     this.discount = discount;
+  }
+
+  public BigDecimal getAccessorialCharge3() {
+    return accessorialCharge3;
+  }
+
+  public void setAccessorialCharge3(BigDecimal accessorialCharge3) {
+    this.accessorialCharge3 = accessorialCharge3;
+  }
+
+  public Double getDistance() {
+    return distance;
+  }
+
+  public void setDistance(Double distance) {
+    this.distance = distance;
   }
 }

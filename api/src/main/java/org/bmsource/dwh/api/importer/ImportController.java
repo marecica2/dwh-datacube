@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 class MappingRequest {
+
   List<String> files;
 
   public List<String> getFiles() {
@@ -54,8 +55,11 @@ public class ImportController {
   }
 
   @PostMapping("/{transactionId}")
-  public List<String> handleUpload(HttpServletRequest request, @PathVariable("transactionId") String transactionId) throws IOException,
-      FileUploadException {
+  public List<String> handleUpload(
+      HttpServletRequest request,
+      @PathVariable("transactionId"
+      ) String transactionId)
+      throws IOException, FileUploadException {
     List<String> files = new ArrayList<>();
 
     if (ServletFileUpload.isMultipartContent(request)) {
@@ -64,7 +68,6 @@ public class ImportController {
       while (fileItemIterator.hasNext()) {
         FileItemStream fis = fileItemIterator.next();
         String name = fis.getName();
-        System.out.println("Upload started for " + name);
         try (InputStream stream = fis.openStream()) {
           if (!fis.isFormField()) {
             fileManager.addFile(transactionId, name, stream);
@@ -81,23 +84,27 @@ public class ImportController {
       @PathVariable("transactionId") String transactionId,
       @RequestBody MappingRequest filesParam
   ) throws Exception {
-    System.out.println(filesParam);
     List<String> files = fileManager.getFiles(transactionId);
 
     try (InputStream stream = fileManager.getStream(transactionId, files.get(0))) {
       DataReader parser = new ExcelReader();
       MappingResult columnMapping = parser.readHeaderRow(stream);
-      MappingResponse mappingResponse = new MappingResponse();
-      mappingResponse.setDestinationFields(Fact.class);
-      mappingResponse.setInputFields(columnMapping.getHeaderRow(), columnMapping.getPreviewRow());
-      return mappingResponse;
+      return MappingResponse
+          .builder()
+          .setSourceFields(columnMapping.getHeaderRow(), columnMapping.getPreviewRow())
+          .setFactModel(Fact.class)
+          .autoSuggestionMapping()
+          .build();
     }
   }
 
-  @GetMapping(value = "/{transactionId}/preview")
-  public String preview(@PathVariable("transactionId") String transactionId) throws Exception {
+  @PostMapping(value = "/{transactionId}/preview", consumes = "application/json")
+  public List<Fact> preview(
+      @PathVariable("transactionId") String transactionId,
+      @RequestBody MappingRequest filesParam
+  ) throws Exception {
     List<String> files = fileManager.getFiles(transactionId);
     InputStream is = fileManager.getStream(transactionId, files.get(0));
-    return "ok";
+    return new ArrayList<Fact>();
   }
 }
