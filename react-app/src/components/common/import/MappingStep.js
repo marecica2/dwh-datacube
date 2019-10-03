@@ -67,66 +67,69 @@ function MappingStep({transaction, mapping, setMapping, uploadedFiles}) {
   const renderColumns = () => {
     if (mapping && mapping.sourceColumns) {
       return Object.entries(mapping.sourceColumns).map(([col, val]) => (
-          <TableRow key={col}>
-            <TableCell>
-              {col}
-            </TableCell>
-            <TableCell>
-              {val}
-            </TableCell>
-            <TableCell>
-              <FormControl className={classes.formControl}>
-                <Select
-                    name={col}
-                    value={columnMapping[col] || ''}
-                    onChange={e => selectColumn(e.target)}
-                >
-                  <Typography variant="caption" display="block"
-                              className={classes.label}>Required
-                    fields</Typography>
-                  {
+        <TableRow key={col}>
+          <TableCell>
+            {col}
+          </TableCell>
+          <TableCell>
+            {val}
+          </TableCell>
+          <TableCell>
+            <FormControl className={classes.formControl}>
+              <Select name={col} value={columnMapping[col] || ''} onChange={e => selectColumn(e.target)}>
+                <Typography variant="caption" display="block" className={classes.label}>
+                      Required fields
+                </Typography>
+                {
                     Object.entries(mapping.destinationColumns)
                     .filter(([, val2]) => val2.required)
                     .filter(([col2]) => !assignedColumns.includes(col2)
                         || columnMapping[col] === col2)
-                    .map(([col2, val2]) => <MenuItem key={col2}
-                                                     value={col2}>{val2.label}</MenuItem>)
+                    .map(([col2, val2]) => (
+                      <MenuItem key={col2} value={col2}>
+                        {val2.label}
+                      </MenuItem>
+                    ))
                   }
-                  <Typography variant="caption" display="block"
-                              className={classes.label}>Optional
-                    fields</Typography>
-                  {
+                <Typography variant="caption" display="block" className={classes.label}>
+                      Optional fields
+                </Typography>
+                {
                     Object.entries(mapping.destinationColumns)
                     .filter(([, val2]) => val2.required == null)
                     .filter(([col2]) => !assignedColumns.includes(col2)
                         || columnMapping[col] === col2)
-                    .map(([col2, val2]) => <MenuItem key={col2}
-                                                     value={col2}>{val2.label}</MenuItem>)
+                    .map(([col2, val2]) => (
+                      <MenuItem key={col2} value={col2}>
+                        {val2.label}
+                      </MenuItem>
+                    ))
                   }
-                  <MenuItem value=""
-                            style={{color: grey[500]}}>Unmapped</MenuItem>
-                </Select>
-              </FormControl>
-            </TableCell>
-          </TableRow>
+                <MenuItem value="" style={{color: grey[500]}}>
+                  Unmapped
+                </MenuItem>
+              </Select>
+            </FormControl>
+          </TableCell>
+        </TableRow>
       ));
     }
     return null;
   };
 
   return (
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Column name</TableCell>
-            <TableCell>Preview</TableCell>
-            <TableCell>Mapped column</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {renderColumns()}
-        </TableBody>
-      </Table>
+    <Table>
+      <TableHead>
+        <TableRow>
+          <TableCell>Column name</TableCell>
+          <TableCell>Preview</TableCell>
+          <TableCell>Mapped column</TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {renderColumns()}
+      </TableBody>
+    </Table>
   );
 }
 
