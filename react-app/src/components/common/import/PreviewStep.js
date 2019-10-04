@@ -21,9 +21,13 @@ function PreviewStep({ transaction, mapping, preview, setPreview }) {
 
     const renderColumns = () => {
         return (
-          <TableRow>
-            <TableCell />
-          </TableRow>
+            preview.map(item => (
+              <TableRow key={item.transactionId}>
+                <TableCell>{item.transactionId}</TableCell>
+                <TableCell>{item.supplierName}</TableCell>
+                <TableCell>{item.serviceType}</TableCell>
+              </TableRow>
+            ))
         );
     };
 
@@ -33,9 +37,9 @@ function PreviewStep({ transaction, mapping, preview, setPreview }) {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Column name</TableCell>
-                <TableCell>Preview</TableCell>
-                <TableCell>Mapped column</TableCell>
+                <TableCell>Transaction Id</TableCell>
+                <TableCell>Supplier name</TableCell>
+                <TableCell>Service type</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>

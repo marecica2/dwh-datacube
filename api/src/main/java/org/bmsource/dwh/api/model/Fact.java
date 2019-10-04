@@ -30,26 +30,26 @@ public class Fact {
 
   String zone;
 
-  Date shipmentDate;
+  String shipmentDate;
 
-  Date deliveryDate;
+  String deliveryDate;
 
   @NotNull
   String serviceType;
 
   @NotNull
-  Double billableWeight;
+  String billableWeight;
 
-  Double actualWeight;
+  String actualWeight;
 
-  Double length;
+  String length;
 
-  Double width;
+  String width;
 
-  Double height;
+  String height;
 
   @NotNull
-  BigDecimal cost;
+  String cost;
 
   String accessorialService1;
 
@@ -57,15 +57,15 @@ public class Fact {
 
   String accessorialService3;
 
-  BigDecimal accessorialCharge1;
+  String accessorialCharge1;
 
-  BigDecimal accessorialCharge2;
+  String accessorialCharge2;
 
-  BigDecimal accessorialCharge3;
+  String accessorialCharge3;
 
-  Double discount;
+  String discount;
 
-  Double distance;
+  String distance;
 
   public String getTransactionId() {
     return transactionId;
@@ -163,19 +163,19 @@ public class Fact {
     this.zone = zone;
   }
 
-  public Date getShipmentDate() {
+  public String getShipmentDate() {
     return shipmentDate;
   }
 
-  public void setShipmentDate(Date shipmentDate) {
+  public void setShipmentDate(String shipmentDate) {
     this.shipmentDate = shipmentDate;
   }
 
-  public Date getDeliveryDate() {
+  public String getDeliveryDate() {
     return deliveryDate;
   }
 
-  public void setDeliveryDate(Date deliveryDate) {
+  public void setDeliveryDate(String deliveryDate) {
     this.deliveryDate = deliveryDate;
   }
 
@@ -187,91 +187,115 @@ public class Fact {
     this.serviceType = serviceType;
   }
 
-  public Double getBillableWeight() {
+  public String getBillableWeight() {
     return billableWeight;
   }
 
-  public void setBillableWeight(Double billableWeight) {
+  public void setBillableWeight(String billableWeight) {
     this.billableWeight = billableWeight;
   }
 
-  public Double getActualWeight() {
+  public String getActualWeight() {
     return actualWeight;
   }
 
-  public void setActualWeight(Double actualWeight) {
+  public void setActualWeight(String actualWeight) {
     this.actualWeight = actualWeight;
   }
 
-  public Double getLength() {
+  public String getLength() {
     return length;
   }
 
-  public void setLength(Double length) {
+  public void setLength(String length) {
     this.length = length;
   }
 
-  public Double getWidth() {
+  public String getWidth() {
     return width;
   }
 
-  public void setWidth(Double width) {
+  public void setWidth(String width) {
     this.width = width;
   }
 
-  public Double getHeight() {
+  public String getHeight() {
     return height;
   }
 
-  public void setHeight(Double height) {
+  public void setHeight(String height) {
     this.height = height;
   }
 
-  public BigDecimal getCost() {
+  public String getCost() {
     return cost;
   }
 
-  public void setCost(BigDecimal cost) {
+  public void setCost(String cost) {
     this.cost = cost;
   }
 
-  public BigDecimal getAccessorialCharge1() {
+  public String getAccessorialService1() {
+    return accessorialService1;
+  }
+
+  public void setAccessorialService1(String accessorialService1) {
+    this.accessorialService1 = accessorialService1;
+  }
+
+  public String getAccessorialService2() {
+    return accessorialService2;
+  }
+
+  public void setAccessorialService2(String accessorialService2) {
+    this.accessorialService2 = accessorialService2;
+  }
+
+  public String getAccessorialService3() {
+    return accessorialService3;
+  }
+
+  public void setAccessorialService3(String accessorialService3) {
+    this.accessorialService3 = accessorialService3;
+  }
+
+  public String getAccessorialCharge1() {
     return accessorialCharge1;
   }
 
-  public void setAccessorialCharge1(BigDecimal accessorialCharge1) {
+  public void setAccessorialCharge1(String accessorialCharge1) {
     this.accessorialCharge1 = accessorialCharge1;
   }
 
-  public BigDecimal getAccessorialCharge2() {
+  public String getAccessorialCharge2() {
     return accessorialCharge2;
   }
 
-  public void setAccessorialCharge2(BigDecimal accessorialCharge2) {
+  public void setAccessorialCharge2(String accessorialCharge2) {
     this.accessorialCharge2 = accessorialCharge2;
   }
 
-  public Double getDiscount() {
-    return discount;
-  }
-
-  public void setDiscount(Double discount) {
-    this.discount = discount;
-  }
-
-  public BigDecimal getAccessorialCharge3() {
+  public String getAccessorialCharge3() {
     return accessorialCharge3;
   }
 
-  public void setAccessorialCharge3(BigDecimal accessorialCharge3) {
+  public void setAccessorialCharge3(String accessorialCharge3) {
     this.accessorialCharge3 = accessorialCharge3;
   }
 
-  public Double getDistance() {
+  public String getDiscount() {
+    return discount;
+  }
+
+  public void setDiscount(String discount) {
+    this.discount = discount;
+  }
+
+  public String getDistance() {
     return distance;
   }
 
-  public void setDistance(Double distance) {
+  public void setDistance(String distance) {
     this.distance = distance;
   }
 }

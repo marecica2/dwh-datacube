@@ -1,4 +1,4 @@
-package org.bmsource.dwh.api.parsers;
+package org.bmsource.dwh.api.reader;
 
 import java.util.List;
 
