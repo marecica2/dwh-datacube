@@ -36,8 +36,8 @@ export default function Import() {
   const steps = [fileUploadStepDescription, mappingStepDescription, previewStepDescription, configStepDescription];
   const [activeStep, setActiveStep] = React.useState(0);
   const [transaction, setTransaction] = React.useState();
-  const [files, setFiles] = React.useState([]);
-  const [uploadedFiles, setUploadedFiles] = React.useState([]);
+  const [files, setFiles] = React.useState({});
+  const [uploadInProgress, setUploadInProgress] = React.useState(false);
   const [mappingConfig, setMappingConfig] = React.useState();
   const [mapping, setMapping] = React.useState({});
   const [preview, setPreview] = React.useState();
@@ -47,8 +47,8 @@ export default function Import() {
     setTransaction,
     files,
     setFiles,
-    uploadedFiles,
-    setUploadedFiles,
+    uploadInProgress,
+    setUploadInProgress,
     mappingConfig,
     setMappingConfig,
     mapping,
@@ -77,7 +77,7 @@ export default function Import() {
   const isNextEnabled = (step) => {
     switch (step) {
       case 0:
-        return files.length > 0;
+        return Object.keys(files).length > 0 && !uploadInProgress;
       case 1:
         return mapping != null;
       default:

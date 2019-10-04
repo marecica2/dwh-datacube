@@ -1,20 +1,11 @@
 import React, { useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
 import ImportApi from './ImportApi';
 import Loading from './Loading';
 
 export const stepName = 'Preview data';
 
-const useStyles = makeStyles(() => ({
-    root: {
-        display: 'flex',
-        flexWrap: 'wrap',
-    },
-}));
-
 function PreviewStep({ transaction, mapping, preview, setPreview }) {
-    const classes = useStyles();
     const [loaded, setLoaded] = React.useState(false);
 
     useEffect(() => {
@@ -26,7 +17,7 @@ function PreviewStep({ transaction, mapping, preview, setPreview }) {
             }
         }
         fetchData();
-    }, []);
+    }, [transaction, mapping, preview, setPreview]);
 
     const renderColumns = () => {
         return (

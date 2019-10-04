@@ -1,5 +1,5 @@
-import React, {useEffect} from 'react';
-import {makeStyles} from '@material-ui/core/styles';
+import React, { useEffect, useCallback } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import {
   Table,
   TableBody,
@@ -32,14 +32,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export const stepName = 'Column mappingConfig';
+export const stepName = 'Column mapping';
 
-function MappingStep({transaction, mappingConfig, setMappingConfig, mapping, setMapping, uploadedFiles}) {
+function MappingStep({transaction, mappingConfig, setMappingConfig, mapping, setMapping, files}) {
   const classes = useStyles();
   const [loaded, setLoaded] = React.useState(false);
   const [assignedColumns, setAssignedColumns] = React.useState([]);
 
-  const selectColumn = ({name, value}) => {
+  const selectColumn = useCallback(({name, value}) => {
     const prevValue = mapping[name];
     if (value === '') {
       setAssignedColumns(prev => prev.filter(item => item !== prevValue));
@@ -47,25 +47,25 @@ function MappingStep({transaction, mappingConfig, setMappingConfig, mapping, set
       setAssignedColumns(prev => ([...prev, value]));
     }
     setMapping(prev => ({...prev, [name]: value}));
-  };
-
-  const autoSuggestMapping = (map) => {
-    Object.entries(map).forEach(([k, v]) => {
-      selectColumn({name: k, value: v});
-    });
-  };
+  }, [mapping, setMapping, setAssignedColumns]);
 
   useEffect(() => {
+    const autoSuggestMapping = (map) => {
+      Object.entries(map).forEach(([k, v]) => {
+        selectColumn({name: k, value: v});
+      });
+    };
+
     async function fetchData() {
       if (mappingConfig == null) {
-        const result = await ImportApi.getMapping(transaction, uploadedFiles);
+        const result = await ImportApi.getMapping(transaction, Object.keys(files));
         setMappingConfig(result);
         autoSuggestMapping(result.mapping);
         setLoaded(true);
       }
     }
     fetchData();
-  }, []);
+  }, [transaction, mappingConfig, setMappingConfig, files, setLoaded, selectColumn]);
 
   const renderMenuItems = (col, comparator = val => val.required) => {
     return Object.entries(mappingConfig.destinationColumns)
