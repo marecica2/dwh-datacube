@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.FileUploadException;
@@ -25,86 +26,82 @@ import org.springframework.web.bind.annotation.RestController;
 
 class MappingRequest {
 
-  List<String> files;
+    List<String> files;
 
-  public List<String> getFiles() {
-    return files;
-  }
+    public List<String> getFiles() {
+        return files;
+    }
 
-  public void setFiles(List<String> files) {
-    this.files = files;
-  }
+    public void setFiles(List<String> files) {
+        this.files = files;
+    }
 
-  @Override
-  public String toString() {
-    return "MappingRequest{" +
-        "files=" + files +
-        '}';
-  }
+    @Override
+    public String toString() {
+        return "MappingRequest{" +
+            "files=" + files +
+            '}';
+    }
 }
 
 @RestController()
 @RequestMapping("/import")
 public class ImportController {
+    private FileManager fileManager = new FileSystemImpl();
 
-  private FileManager fileManager = new FileSystemImpl();
+    @GetMapping
+    public String init() {
+        return fileManager.createTransaction();
+    }
 
-  @GetMapping
-  public String init() {
-    return fileManager.createTransaction();
-  }
+    @PostMapping("/{transactionId}")
+    public List<String> handleUpload(HttpServletRequest request, @PathVariable("transactionId") String transactionId)
+        throws IOException, FileUploadException {
+        List<String> files = new ArrayList<>();
 
-  @PostMapping("/{transactionId}")
-  public List<String> handleUpload(
-      HttpServletRequest request,
-      @PathVariable("transactionId"
-      ) String transactionId)
-      throws IOException, FileUploadException {
-    List<String> files = new ArrayList<>();
+        if (ServletFileUpload.isMultipartContent(request)) {
+            ServletFileUpload upload = new ServletFileUpload();
+            FileItemIterator fileItemIterator = upload.getItemIterator(request);
 
-    if (ServletFileUpload.isMultipartContent(request)) {
-      ServletFileUpload upload = new ServletFileUpload();
-      FileItemIterator fileItemIterator = upload.getItemIterator(request);
-      while (fileItemIterator.hasNext()) {
-        FileItemStream fis = fileItemIterator.next();
-        String name = fis.getName();
-        try (InputStream stream = fis.openStream()) {
-          if (!fis.isFormField()) {
-            fileManager.addFile(transactionId, name, stream);
-            files.add(name);
-          }
+            while (fileItemIterator.hasNext()) {
+                FileItemStream fis = fileItemIterator.next();
+                String name = fis.getName();
+                try (InputStream stream = fis.openStream()) {
+                    if (!fis.isFormField()) {
+                        fileManager.addFile(transactionId, name, stream);
+                        files.add(name);
+                    }
+                }
+            }
         }
-      }
+        return files;
     }
-    return files;
-  }
 
-  @PostMapping(value = "/{transactionId}/mapping", consumes = "application/json")
-  public MappingResponse columnMapping(
-      @PathVariable("transactionId") String transactionId,
-      @RequestBody MappingRequest filesParam
-  ) throws Exception {
-    List<String> files = fileManager.getFiles(transactionId);
+    @PostMapping(value = "/{transactionId}/mapping", consumes = "application/json")
+    public MappingResponse columnMapping(@PathVariable("transactionId") String transactionId,
+                                         @RequestBody MappingRequest filesParam
+    ) throws Exception {
+        List<String> files = fileManager.getFiles(transactionId);
 
-    try (InputStream stream = fileManager.getStream(transactionId, files.get(0))) {
-      DataReader parser = new ExcelReader();
-      MappingResult columnMapping = parser.readHeaderRow(stream);
-      return MappingResponse
-          .builder()
-          .setSourceFields(columnMapping.getHeaderRow(), columnMapping.getPreviewRow())
-          .setFactModel(Fact.class)
-          .autoSuggestionMapping()
-          .build();
+        try (InputStream stream = fileManager.getStream(transactionId, files.get(0))) {
+            DataReader parser = new ExcelReader();
+            MappingResult columnMapping = parser.readHeaderRow(stream);
+            return MappingResponse
+                .builder()
+                .setSourceFields(columnMapping.getHeaderRow(), columnMapping.getPreviewRow())
+                .setFactModel(Fact.class)
+                .autoSuggestionMapping()
+                .build();
+        }
     }
-  }
 
-  @PostMapping(value = "/{transactionId}/preview", consumes = "application/json")
-  public List<Fact> preview(
-      @PathVariable("transactionId") String transactionId,
-      @RequestBody MappingRequest filesParam
-  ) throws Exception {
-    List<String> files = fileManager.getFiles(transactionId);
-    InputStream is = fileManager.getStream(transactionId, files.get(0));
-    return new ArrayList<Fact>();
-  }
+    @PostMapping(value = "/{transactionId}/preview", consumes = "application/json")
+    public List<Fact> preview(@PathVariable("transactionId") String transactionId, @RequestBody MappingRequest filesParam) throws Exception {
+        List<String> files = fileManager.getFiles(transactionId);
+        try (InputStream inputStream = fileManager.getStream(transactionId, files.get(0))) {
+            DataReader reader = new ExcelReader();
+            List<List<Object>> previewData = reader.readContent(inputStream, 100);
+            return null;
+        }
+    }
 }

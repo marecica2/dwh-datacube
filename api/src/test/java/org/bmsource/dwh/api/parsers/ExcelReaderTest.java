@@ -3,11 +3,11 @@ package org.bmsource.dwh.api.parsers;
 import java.io.File;
 import java.util.List;
 import org.apache.commons.io.FileUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.util.ResourceUtils;
 import static org.assertj.core.api.Assertions.*;
 
-public class XslxParserTest {
+public class ExcelReaderTest {
 
   @Test
   public void testHeaderRowParser() throws Exception {
