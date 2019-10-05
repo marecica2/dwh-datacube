@@ -18,7 +18,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function FileUpload({ transaction, files, setFiles, setUploadInProgress }) {
+function FileUpload({ transaction, files, setFiles, setUploadInProgress, setMappingConfig, setPreview }) {
   const classes = useStyles();
   const [progresses, setProgresses] = React.useState({});
 
@@ -40,8 +40,9 @@ function FileUpload({ transaction, files, setFiles, setUploadInProgress }) {
             [file.name]: file,
           }
         });
-
         setUploadInProgress(true);
+        setMappingConfig(null);
+        setPreview(null);
 
         await ImportApi.uploadFiles(transaction, data, (ProgressEvent) => {
           setProgresses( (prev) => {
@@ -79,7 +80,7 @@ function FileUpload({ transaction, files, setFiles, setUploadInProgress }) {
     return Object.values(files).map((file) => {
       const progress = progresses[file.name] || 0;
 
-      const progressIndicator = progress === 100 ?
+      const progressIndicator = (progress === 100 || file.uploadFinished) ?
         <CheckIcon className={classes.successIcon} /> :
         <CircularProgress variant="static" value={progress} size='1.5rem' />;
 
@@ -98,7 +99,7 @@ function FileUpload({ transaction, files, setFiles, setUploadInProgress }) {
 
   return (
     <Grid container spacing={2}>
-      <Grid item xs={files.length === 0 ? 12 : 6}>
+      <Grid item xs={Object.keys(files).length === 0 ? 12 : 6}>
         <DropzoneArea
           filesLimit={10}
           dropzoneClass="dropzone"

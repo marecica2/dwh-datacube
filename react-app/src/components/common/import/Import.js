@@ -40,9 +40,12 @@ export default function Import() {
   const [uploadInProgress, setUploadInProgress] = React.useState(false);
   const [mappingConfig, setMappingConfig] = React.useState();
   const [mapping, setMapping] = React.useState({});
+  const [assignedColumns, setAssignedColumns] = React.useState([]);
   const [preview, setPreview] = React.useState();
   const [config, setConfig] = React.useState({ skipStrategy: 'cell', deleteStrategy: true });
   const globalState =  {
+    activeStep,
+    setActiveStep,
     transaction,
     setTransaction,
     files,
@@ -53,6 +56,8 @@ export default function Import() {
     setMappingConfig,
     mapping,
     setMapping,
+    assignedColumns,
+    setAssignedColumns,
     preview,
     setPreview,
     config,
@@ -86,11 +91,11 @@ export default function Import() {
   };
 
   useEffect(() => {
-    async function api() {
+    async function fetch() {
       setTransaction(await ImportApi.initImport());
     }
-    api();
-  }, []);
+    fetch();
+  }, [setTransaction]);
 
   const handleNext = () => {
     setActiveStep(prevActiveStep => prevActiveStep + 1);
@@ -109,31 +114,32 @@ export default function Import() {
       <Paper className={classes.paper}>
         <Stepper activeStep={activeStep}>
           {steps.map((label) => {
-                const stepProps = {};
-                const labelProps = {};
-                return (
-                  <Step key={label} {...stepProps}>
-                    <StepLabel {...labelProps}>{label}</StepLabel>
-                  </Step>
-                );
-              })}
+            const stepProps = {};
+            const labelProps = {};
+            return (
+              <Step key={label} {...stepProps}>
+                <StepLabel {...labelProps}>{label}</StepLabel>
+              </Step>
+            );
+          })}
         </Stepper>
-        {activeStep === steps.length ? <FinishStep /> : getStepContent(activeStep)}
+        {activeStep === steps.length ?
+          <FinishStep /> :
+          getStepContent(activeStep)
+        }
         {activeStep === steps.length ? (
           <p>
-            <Button onClick={handleReset} className={classes.button}>
-                    Cancel
+            <Button onClick={handleReset} className={classes.button}>Cancel</Button>
+          </p>
+        ) : (
+          <p>
+            <Button disabled={activeStep === 0} onClick={handleBack} className={classes.button}>
+            Back
+            </Button>
+            <Button disabled={!isNextEnabled(activeStep)} variant="contained" color="primary" onClick={handleNext} className={classes.button}>
+              {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
             </Button>
           </p>
-            ) : (
-              <p>
-                <Button disabled={activeStep === 0} onClick={handleBack} className={classes.button}>
-                Back
-                </Button>
-                <Button disabled={!isNextEnabled(activeStep)} variant="contained" color="primary" onClick={handleNext} className={classes.button}>
-                  {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-                </Button>
-              </p>
         )}
       </Paper>
     </div>

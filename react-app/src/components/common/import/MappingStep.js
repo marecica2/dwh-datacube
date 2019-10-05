@@ -11,14 +11,10 @@ import {
   Select, Typography,
 } from '@material-ui/core';
 import grey from '@material-ui/core/colors/grey';
-import Loading from './Loading';
+import Loader from '../Loader';
 import ImportApi from './ImportApi';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
   formControl: {
     margin: theme.spacing(1),
     minWidth: 200,
@@ -26,18 +22,28 @@ const useStyles = makeStyles(theme => ({
   selectEmpty: {
     marginTop: theme.spacing(2),
   },
+  tableWrapper: {
+    maxHeight: '50vh',
+    overflow: 'auto',
+  },
   label: {
     margin: theme.spacing(2),
     color: grey[500],
+  },
+  head: {
+    backgroundColor: 'white',
+    position: 'sticky',
+    zIndex: '999',
+    top: 0,
   },
 }));
 
 export const stepName = 'Column mapping';
 
-function MappingStep({transaction, mappingConfig, setMappingConfig, mapping, setMapping, files}) {
+function MappingStep({transaction, mappingConfig, setMappingConfig, mapping, setMapping, files, setPreview, assignedColumns, setAssignedColumns}) {
   const classes = useStyles();
   const [loaded, setLoaded] = React.useState(false);
-  const [assignedColumns, setAssignedColumns] = React.useState([]);
+
 
   const selectColumn = useCallback(({name, value}) => {
     const prevValue = mapping[name];
@@ -47,6 +53,7 @@ function MappingStep({transaction, mappingConfig, setMappingConfig, mapping, set
       setAssignedColumns(prev => ([...prev, value]));
     }
     setMapping(prev => ({...prev, [name]: value}));
+    setPreview(null);
   }, [mapping, setMapping, setAssignedColumns]);
 
   useEffect(() => {
@@ -58,14 +65,15 @@ function MappingStep({transaction, mappingConfig, setMappingConfig, mapping, set
 
     async function fetchData() {
       if (mappingConfig == null) {
+        setLoaded(false);
         const result = await ImportApi.getMapping(transaction, Object.keys(files));
         setMappingConfig(result);
         autoSuggestMapping(result.mapping);
-        setLoaded(true);
       }
+      setLoaded(true);
     }
     fetchData();
-  }, [transaction, mappingConfig, setMappingConfig, files, setLoaded, selectColumn]);
+  }, [transaction, mappingConfig, setMappingConfig, files, setLoaded, selectColumn, setAssignedColumns]);
 
   const renderMenuItems = (col, comparator = val => val.required) => {
     return Object.entries(mappingConfig.destinationColumns)
@@ -113,21 +121,23 @@ function MappingStep({transaction, mappingConfig, setMappingConfig, mapping, set
   };
 
   return (
-    <div>
+    <div className={classes.root}>
       { loaded ? (
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Column name</TableCell>
-              <TableCell>Preview</TableCell>
-              <TableCell>Mapped column</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {renderColumns()}
-          </TableBody>
-        </Table>
-      ) : <Loading />
+        <div className={classes.tableWrapper}>
+          <Table stickyHeader>
+            <TableHead>
+              <TableRow>
+                <TableCell className={classes.head}>Column name</TableCell>
+                <TableCell className={classes.head}>Preview</TableCell>
+                <TableCell className={classes.head}>Mapped column</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {renderColumns()}
+            </TableBody>
+          </Table>
+        </div>
+      ) : <Loader />
       }
     </div>
   );
