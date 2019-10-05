@@ -3,6 +3,7 @@ package org.bmsource.dwh.api.importer;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -93,8 +94,8 @@ public class ImportController {
         List<String> files = fileManager.getFiles(transactionId);
 
         try (InputStream stream = fileManager.getStream(transactionId, files.get(0))) {
-            DataReader parser = new ExcelReader();
-            MappingResult columnMapping = parser.readHeaderRow(stream);
+            DataReader reader = new ExcelReader();
+            MappingResult columnMapping = reader.readHeaderRow(stream);
             return MappingResponse
                 .builder()
                 .setSourceFields(columnMapping.getHeaderRow(), columnMapping.getPreviewRow())
@@ -107,11 +108,15 @@ public class ImportController {
     @PostMapping(value = "/{transactionId}/preview", consumes = "application/json")
     public List<Fact> preview(@PathVariable("transactionId") String transactionId, @RequestBody PreviewRequest mappingParam) throws Exception {
         List<String> files = fileManager.getFiles(transactionId);
-        try (InputStream inputStream = fileManager.getStream(transactionId, files.get(0))) {
+        try (
+            InputStream stream1 = fileManager.getStream(transactionId, files.get(0));
+            InputStream stream2 = fileManager.getStream(transactionId, files.get(0));
+        ) {
             DataReader reader = new ExcelReader();
-            FactModelMapper mapper = new FactModelMapper(mappingParam.getMapping());
+            MappingResult columnMapping = reader.readHeaderRow(stream1);
+            FactModelMapper mapper = new FactModelMapper(columnMapping.getHeaderRow(), mappingParam.getMapping());
             return reader
-                .readContent(inputStream, 100)
+                .readContent(stream2, 100)
                 .stream()
                 .map(row -> mapper.mapRow(row))
                 .collect(Collectors.toList());
