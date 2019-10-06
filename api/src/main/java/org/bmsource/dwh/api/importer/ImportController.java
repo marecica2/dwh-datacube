@@ -3,7 +3,6 @@ package org.bmsource.dwh.api.importer;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -20,15 +19,12 @@ import org.bmsource.dwh.api.model.FactModelMapper;
 import org.bmsource.dwh.api.reader.DataReader;
 import org.bmsource.dwh.api.reader.MappingResult;
 import org.bmsource.dwh.api.reader.ExcelReader;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 
-class MappingRequest {
+class MappingRequestBody {
 
     List<String> files;
 
@@ -41,9 +37,32 @@ class MappingRequest {
     }
 }
 
-class PreviewRequest {
+class PreviewRequestBody {
 
     Map<String, String> mapping;
+
+    public Map<String, String> getMapping() {
+        return mapping;
+    }
+
+    public void setMapping(Map<String, String> mapping) {
+        this.mapping = mapping;
+    }
+}
+
+class UploadRequestBody {
+
+    Map<String, Object> config;
+
+    Map<String, String> mapping;
+
+    public Map<String, Object> getConfig() {
+        return config;
+    }
+
+    public void setConfig(Map<String, Object> config) {
+        this.config = config;
+    }
 
     public Map<String, String> getMapping() {
         return mapping;
@@ -89,7 +108,7 @@ public class ImportController {
 
     @PostMapping(value = "/{transactionId}/mapping", consumes = "application/json")
     public MappingResponse columnMapping(@PathVariable("transactionId") String transactionId,
-                                         @RequestBody MappingRequest filesParam
+                                         @RequestBody MappingRequestBody filesParam
     ) throws Exception {
         List<String> files = fileManager.getFiles(transactionId);
 
@@ -106,7 +125,7 @@ public class ImportController {
     }
 
     @PostMapping(value = "/{transactionId}/preview", consumes = "application/json")
-    public List<Fact> preview(@PathVariable("transactionId") String transactionId, @RequestBody PreviewRequest mappingParam) throws Exception {
+    public List<Fact> preview(@PathVariable("transactionId") String transactionId, @RequestBody PreviewRequestBody mappingParam) throws Exception {
         List<String> files = fileManager.getFiles(transactionId);
         try (
             InputStream stream1 = fileManager.getStream(transactionId, files.get(0));
@@ -121,5 +140,28 @@ public class ImportController {
                 .map(row -> mapper.mapRow(row))
                 .collect(Collectors.toList());
         }
+    }
+
+    @PostMapping(value = "/{transactionId}/upload", consumes = "application/json")
+    public ResponseEntity preview(@PathVariable("transactionId") String transactionId, @RequestBody UploadRequestBody uploadRequestBody) throws Exception {
+        List<String> files = fileManager.getFiles(transactionId);
+        for (String file : files) {
+            try (
+                InputStream stream = fileManager.getStream(transactionId, file);
+            ) {
+                DataReader reader = new ExcelReader();
+                reader
+                    .readContent(stream, (items, header, rowsCount) -> {
+                        FactModelMapper mapper = new FactModelMapper(header, uploadRequestBody.getMapping());
+                        List<Fact> facts = items.stream()
+                            .map(row -> mapper.mapRow(row))
+                            .collect(Collectors.toList());
+                        System.out.println(uploadRequestBody);
+                        System.out.println("Writing to db " + facts.size());
+                    });
+            }
+        }
+        return ResponseEntity.status(HttpStatus.OK)
+            .body("some body ");
     }
 }

@@ -26,35 +26,40 @@ public class ExcelReader implements DataReader {
 
       int totalRows = 0;
       List<List<Object>> rows = new LinkedList<>();
-      if(headerExcluded) {
-        rowIterator.next();
+      List<Object> headerRow = readSingleRow(rowIterator);
+      if(!headerExcluded) {
+        rows.add(headerRow);
       }
       while((rowIterator.hasNext()) && (totalRows < rowsLimit || rowsLimit == -1)) {
-        List<Object> rowContainer = new LinkedList<>();
-        int prevCellIndex = 0;
-
-        Row sheetRow = rowIterator.next();
-        for (Cell sheetCell : sheetRow) {
-          int currentIndex = sheetCell.getColumnIndex();
-          fillGaps(rowContainer, prevCellIndex, currentIndex);
-          rowContainer.add(sheetCell.getStringCellValue());
-          prevCellIndex = currentIndex;
-        }
-        rows.add(rowContainer);
+        rows.add(readSingleRow(rowIterator));
         totalRows++;
         if(totalRows % batchSize == 0) {
-          rowsHandler.handleRows(rows);
+          rowsHandler.handleRows(rows, headerRow, totalRows);
           rows = new LinkedList<>();
         }
       }
-      rowsHandler.handleRows(rows);
+      rowsHandler.handleRows(rows, headerRow, totalRows);
     }
+  }
+
+  private List<Object> readSingleRow(Iterator<Row> rowIterator) {
+    List<Object> rowContainer = new LinkedList<>();
+    int prevCellIndex = 0;
+
+    Row sheetRow = rowIterator.next();
+    for (Cell sheetCell : sheetRow) {
+      int currentIndex = sheetCell.getColumnIndex();
+      fillGaps(rowContainer, prevCellIndex, currentIndex);
+      rowContainer.add(sheetCell.getStringCellValue());
+      prevCellIndex = currentIndex;
+    }
+    return rowContainer;
   }
 
   @Override
   public MappingResult readHeaderRow(InputStream inputStream) throws Exception {
     List<List<Object>> header = new ArrayList<>();
-    readExcelStream(inputStream, rows -> {
+    readExcelStream(inputStream, (rows, headerRow, totalRows) -> {
       header.addAll(rows);
     }, 2, 2, false);
     return new MappingResult(header.get(0), header.get(1));
@@ -76,7 +81,7 @@ public class ExcelReader implements DataReader {
       throw new IllegalArgumentException("Rows to read must not be greater than 10000");
     }
     List<List<Object>> result = new ArrayList<>();
-    readExcelStream(inputStream, rows -> {
+    readExcelStream(inputStream, (rows, header, rowsCount) -> {
       result.addAll(rows);
     }, rowsToRead, rowsToRead, true);
     return result;
