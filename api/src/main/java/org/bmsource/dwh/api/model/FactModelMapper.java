@@ -5,6 +5,7 @@ import org.apache.commons.beanutils.BeanUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class FactModelMapper {
 
@@ -24,12 +25,20 @@ public class FactModelMapper {
         Fact fact = new Fact();
         this.indexMapping.forEach((index, attribute) -> {
             try {
-                BeanUtils.setProperty(fact, attribute, row.get(index));
+                if (row.size() > index) {
+                    BeanUtils.setProperty(fact, attribute, row.get(index));
+                }
             } catch (InvocationTargetException | IllegalAccessException e) {
                 e.printStackTrace();
             }
         });
         return fact;
+    }
+
+    public List<Fact> mapList(List<List<Object>> rows) {
+        return rows.stream()
+            .map(row -> mapRow(row))
+            .collect(Collectors.toList());
     }
 
 }

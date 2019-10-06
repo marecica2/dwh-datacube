@@ -133,16 +133,12 @@ public class ImportController {
         ) {
             DataReader reader = new ExcelReader();
             MappingResult columnMapping = reader.readHeaderRow(stream1);
-            FactModelMapper mapper = new FactModelMapper(columnMapping.getHeaderRow(), mappingParam.getMapping());
-            return reader
-                .readContent(stream2, 100)
-                .stream()
-                .map(row -> mapper.mapRow(row))
-                .collect(Collectors.toList());
+            return new FactModelMapper(columnMapping.getHeaderRow(), mappingParam.getMapping())
+                .mapList(reader.readContent(stream2, 100));
         }
     }
 
-    @PostMapping(value = "/{transactionId}/upload", consumes = "application/json")
+    @PostMapping(value = "/{transactionId}/start", consumes = "application/json")
     public ResponseEntity preview(@PathVariable("transactionId") String transactionId, @RequestBody UploadRequestBody uploadRequestBody) throws Exception {
         List<String> files = fileManager.getFiles(transactionId);
         for (String file : files) {
@@ -152,12 +148,13 @@ public class ImportController {
                 DataReader reader = new ExcelReader();
                 reader
                     .readContent(stream, (items, header, rowsCount) -> {
-                        FactModelMapper mapper = new FactModelMapper(header, uploadRequestBody.getMapping());
-                        List<Fact> facts = items.stream()
-                            .map(row -> mapper.mapRow(row))
-                            .collect(Collectors.toList());
-                        System.out.println(uploadRequestBody);
-                        System.out.println("Writing to db " + facts.size());
+                        List<Fact> facts = new FactModelMapper(header, uploadRequestBody.getMapping()).mapList(items);
+                        System.out.println("Writing to db " + facts.size() + " total " + rowsCount);
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     });
             }
         }

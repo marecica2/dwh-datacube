@@ -31,4 +31,9 @@ export default {
     const { data } = await client.post(`/import/${transactionId}/preview`, { mapping });
     return data;
   },
+
+  doImport: async (transactionId, mapping, config) => {
+    const { data } = await client.post(`/import/${transactionId}/start`, { mapping, config });
+    return data;
+  },
 }

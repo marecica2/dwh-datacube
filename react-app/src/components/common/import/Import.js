@@ -124,23 +124,18 @@ export default function Import() {
           })}
         </Stepper>
         {activeStep === steps.length ?
-          <FinishStep /> :
+          <FinishStep {...globalState} /> :
           getStepContent(activeStep)
         }
-        {activeStep === steps.length ? (
-          <p>
-            <Button onClick={handleReset} className={classes.button}>Cancel</Button>
-          </p>
-        ) : (
-          <p>
-            <Button disabled={activeStep === 0} onClick={handleBack} className={classes.button}>
+        <p style={{ display: 'flex' }}>
+          <Button disabled={activeStep === 0} onClick={handleBack} className={classes.button} style={{ flex: 0 }}>
             Back
-            </Button>
-            <Button disabled={!isNextEnabled(activeStep)} variant="contained" color="primary" onClick={handleNext} className={classes.button}>
-              {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-            </Button>
-          </p>
-        )}
+          </Button>
+          <Button disabled={!isNextEnabled(activeStep)} variant="contained" color="primary" onClick={handleNext} className={classes.button} style={{ flex: 0 }}>
+            {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+          </Button>
+          <Button onClick={handleReset} className={classes.button} style={{ flex: 2 }}>Cancel</Button>
+        </p>
       </Paper>
     </div>
   );
