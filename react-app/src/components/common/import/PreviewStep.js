@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
-import ImportApi from './ImportApi';
+import ImportApi from '../../../shared/api/import.api';
 import Loader from '../Loader';
 
 export const stepName = 'Preview data';

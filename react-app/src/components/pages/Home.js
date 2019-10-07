@@ -1,5 +1,5 @@
-import React from 'react';
-import {makeStyles} from '@material-ui/core/styles';
+import React, { useContext } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import {
   Typography,
   Grid,
@@ -7,8 +7,9 @@ import {
   Table,
   TableCell,
   TableRow,
-  TableBody,
+  TableBody, LinearProgress,
 } from '@material-ui/core';
+import AppContext from '../context/AppContext';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -34,12 +35,15 @@ const importStats = [
   },
 ];
 
-function Supplier() {
+function Home() {
   const classes = useStyles();
+  const appContext = useContext(AppContext);
+  const { importStatus } = appContext.jobs;
+
   return (
     <div>
       <Typography variant="h6" paragraph>
-          Datacube Dashboard
+        Datacube Dashboard
       </Typography>
       <Grid container spacing={3}>
         <Grid item xs={6}>
@@ -54,13 +58,31 @@ function Supplier() {
                     <TableCell scope="row">{row.label}</TableCell>
                     <TableCell align="right">{row.value}</TableCell>
                   </TableRow>
-                  ))}
+                ))}
               </TableBody>
             </Table>
           </Paper>
         </Grid>
         <Grid item xs={6}>
-          <Paper className={classes.paper}>Background jobs</Paper>
+          <Paper className={classes.paper}>
+            <Typography variant="h6">
+              Backgroud jobs
+            </Typography>
+            {importStatus && importStatus.running && (
+              <div>
+                <p>{`${importStatus.currentFile + 1}. of ${importStatus.files} files`}</p>
+                <LinearProgress
+                  variant="determinate"
+                  value={(importStatus.currentFile + 1 / importStatus.files) * 100}
+                />
+                <p>{`Reading ${importStatus.currentFileName}, ${importStatus.currentRows} rows of ${importStatus.totalRows} rows`}</p>
+                <LinearProgress
+                  variant="determinate" color="secondary"
+                  value={(importStatus.currentRows / importStatus.totalRows) * 100}
+                />
+              </div>
+            )}
+          </Paper>
         </Grid>
         <Grid item xs={12}>
           <Paper className={classes.paper}>Event log</Paper>
@@ -70,4 +92,4 @@ function Supplier() {
   );
 }
 
-export default Supplier;
+export default Home;

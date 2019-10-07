@@ -3,7 +3,7 @@ import {
     LinearProgress,
 } from '@material-ui/core';
 import React, { useEffect } from 'react';
-import ImportApi from './ImportApi';
+import ImportApi from '../../../shared/api/import.api';
 import Loader from '../Loader';
 
 export const stepName = 'Import in progress';
@@ -17,7 +17,7 @@ export default function ImportProgressStep({ transaction, config, mapping, impor
             }
         }
         api();
-    }, [transaction, mapping, config]);
+    }, [transaction, mapping, importStatus, config]);
 
   return (
     <div style={{ textAlign: 'center'}}>
@@ -27,12 +27,15 @@ export default function ImportProgressStep({ transaction, config, mapping, impor
       {importStatus.currentFile != null && (
         <div>
           <p>{`${importStatus.currentFile + 1}. of ${importStatus.files} files`}</p>
-          <LinearProgress variant="determinate" value={(importStatus.currentFile + 1 / importStatus.files) * 100} />
+          <LinearProgress variant="determinate" value={(importStatus.currentFile + 1 / importStatus.files) * 100}/>
           <p>{`Reading ${importStatus.currentFileName}, ${importStatus.currentRows} rows of ${importStatus.totalRows} rows`}</p>
-          <LinearProgress variant="determinate" color="secondary" value={(importStatus.currentRows / importStatus.totalRows ) * 100} />
+          <LinearProgress
+            variant="determinate" color="secondary"
+            value={(importStatus.currentRows / importStatus.totalRows) * 100}
+          />
         </div>
         )}
-        <Loader />
+      <Loader />
     </div>
   );
 }

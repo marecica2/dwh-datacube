@@ -12,7 +12,7 @@ import {
 } from '@material-ui/core';
 import grey from '@material-ui/core/colors/grey';
 import Loader from '../Loader';
-import ImportApi from './ImportApi';
+import ImportApi from '../../../shared/api/import.api';
 
 const useStyles = makeStyles(theme => ({
   formControl: {

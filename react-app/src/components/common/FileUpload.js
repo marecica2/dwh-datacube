@@ -4,7 +4,6 @@ import {Typography, CircularProgress, Grid, TableBody, Table, TableRow, TableCel
 import CheckIcon from '@material-ui/icons/Check';
 import lightGreen from '@material-ui/core/colors/lightGreen';
 import { DropzoneArea } from 'material-ui-dropzone'
-import ImportApi from './import/ImportApi';
 
 const types = ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'text/csv'];
 
@@ -18,7 +17,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function FileUpload({ transaction, files, setFiles, setUploadInProgress, setMappingConfig, setPreview }) {
+function FileUpload({ api, transaction, files, setFiles, setUploadInProgress, setMappingConfig, setPreview }) {
   const classes = useStyles();
   const [progresses, setProgresses] = React.useState({});
 
@@ -44,7 +43,7 @@ function FileUpload({ transaction, files, setFiles, setUploadInProgress, setMapp
         setMappingConfig(null);
         setPreview(null);
 
-        await ImportApi.uploadFiles(transaction, data, (ProgressEvent) => {
+        await api.uploadFiles(transaction, data, (ProgressEvent) => {
           setProgresses( (prev) => {
             return {
               ...prev,
@@ -65,7 +64,7 @@ function FileUpload({ transaction, files, setFiles, setUploadInProgress, setMapp
       setUploadInProgress(false);
     }
       fetchData();
-  }, [transaction, files, setFiles, setUploadInProgress, setMappingConfig, setPreview, progresses]);
+  }, [api, transaction, files, setFiles, setUploadInProgress, setMappingConfig, setPreview, progresses]);
 
   const handleChange = (newFiles) => {
     const addedFiles = newFiles

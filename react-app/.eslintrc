@@ -34,6 +34,8 @@
     "jsx-a11y/no-autofocus": "off",
     "react/jsx-max-props-per-line": [1, { "maximum": 5, "when": "always" }],
     "jsx-a11y/no-static-element-interactions": "off",
+    "react/jsx-curly-spacing": "off",
+    "react/jsx-tag-spacing": "off",
     "max-len": ["warn", {"code": 120, "ignoreStrings": true}],
     "no-await-in-loop": "warn",
     "no-only-tests/no-only-tests": "error",

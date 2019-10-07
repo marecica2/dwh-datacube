@@ -168,8 +168,8 @@ public class ImportController {
         }
     }
 
-    @GetMapping("/{transactionId}/status")
-    public SseEmitter streamEvents(@PathVariable("transactionId") String transactionId) {
+    @GetMapping("/status")
+    public SseEmitter streamEvents(){
         return notificationService.initSseEmitters();
     }
 }
