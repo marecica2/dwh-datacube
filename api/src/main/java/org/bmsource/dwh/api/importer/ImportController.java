@@ -11,6 +11,9 @@ import org.bmsource.dwh.api.model.FactModelMapper;
 import org.bmsource.dwh.api.reader.DataReader;
 import org.bmsource.dwh.api.reader.ExcelReader;
 import org.bmsource.dwh.api.reader.MappingResult;
+import org.bmsource.dwh.api.sse.AppStatus;
+import org.bmsource.dwh.api.sse.ImportStatus;
+import org.bmsource.dwh.api.sse.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
@@ -78,7 +81,7 @@ class UploadRequestBody {
 public class ImportController {
 
     @Autowired
-    NotificationServiceImpl notificationService;
+    NotificationService notificationService;
 
     private FileManager fileManager = new FileSystemImpl();
 
@@ -157,7 +160,6 @@ public class ImportController {
                         System.out.println("Parsed from file " + file + " " + rowsCount + " of total " + totalRowsCount);
                         AppStatus status = new AppStatus(new ImportStatus(true, file.length(), files.indexOf(file), file, rowsCount, totalRowsCount));
                         notificationService.sendSseEvent(status);
-                        Thread.sleep(100);
                     }, () -> {
                         AppStatus status = new AppStatus(new ImportStatus(false));
                         notificationService.sendSseEvent(status);

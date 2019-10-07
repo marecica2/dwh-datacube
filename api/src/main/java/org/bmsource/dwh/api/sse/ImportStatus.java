@@ -1,4 +1,4 @@
-package org.bmsource.dwh.api.importer;
+package org.bmsource.dwh.api.sse;
 
 public class ImportStatus {
 

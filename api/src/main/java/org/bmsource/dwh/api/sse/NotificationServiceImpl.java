@@ -1,5 +1,6 @@
-package org.bmsource.dwh.api.importer;
+package org.bmsource.dwh.api.sse;
 
+import org.bmsource.dwh.api.sse.AppStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -10,17 +11,19 @@ import java.util.Collections;
 import java.util.List;
 
 @Service
-public class NotificationServiceImpl {
+public class NotificationServiceImpl implements NotificationService {
     public static final List<SseEmitter> emitters = Collections.synchronizedList(new ArrayList<>());
 
+    @Override
     public SseEmitter initSseEmitters() {
-        SseEmitter emitter = new SseEmitter();
+        SseEmitter emitter = new SseEmitter(new Long(1000 * 60 * 60));
         emitters.add(emitter);
         emitter.onCompletion(() -> emitters.remove(emitter));
         return emitter;
     }
 
-    public void sendSseEvent(AppStatus message) {
+    @Override
+    public <M extends Object> void sendSseEvent(M message) {
         List<SseEmitter> sseEmitterListToRemove = new ArrayList<>();
         this.emitters.forEach((SseEmitter emitter) -> {
             try {
