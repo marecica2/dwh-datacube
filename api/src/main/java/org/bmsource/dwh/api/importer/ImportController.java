@@ -1,13 +1,5 @@
 package org.bmsource.dwh.api.importer;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.FileUploadException;
@@ -17,11 +9,19 @@ import org.bmsource.dwh.api.fileManager.FileSystemImpl;
 import org.bmsource.dwh.api.model.Fact;
 import org.bmsource.dwh.api.model.FactModelMapper;
 import org.bmsource.dwh.api.reader.DataReader;
-import org.bmsource.dwh.api.reader.MappingResult;
 import org.bmsource.dwh.api.reader.ExcelReader;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.bmsource.dwh.api.reader.MappingResult;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 
 class MappingRequestBody {
@@ -76,6 +76,10 @@ class UploadRequestBody {
 @RestController()
 @RequestMapping("/import")
 public class ImportController {
+
+    @Autowired
+    NotificationServiceImpl notificationService;
+
     private FileManager fileManager = new FileSystemImpl();
 
     @GetMapping
@@ -138,8 +142,9 @@ public class ImportController {
         }
     }
 
+    @Async("asyncExecutor")
     @PostMapping(value = "/{transactionId}/start", consumes = "application/json")
-    public ResponseEntity preview(@PathVariable("transactionId") String transactionId, @RequestBody UploadRequestBody uploadRequestBody) throws Exception {
+    public void start(@PathVariable("transactionId") String transactionId, @RequestBody UploadRequestBody uploadRequestBody) throws Exception {
         List<String> files = fileManager.getFiles(transactionId);
         for (String file : files) {
             try (
@@ -147,18 +152,22 @@ public class ImportController {
             ) {
                 DataReader reader = new ExcelReader();
                 reader
-                    .readContent(stream, (items, header, rowsCount) -> {
+                    .readContent(stream, (items, header, rowsCount, totalRowsCount) -> {
                         List<Fact> facts = new FactModelMapper(header, uploadRequestBody.getMapping()).mapList(items);
-                        System.out.println("Writing to db " + facts.size() + " total " + rowsCount);
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                        System.out.println("Parsed from file " + file + " " + rowsCount + " of total " + totalRowsCount);
+                        AppStatus status = new AppStatus(new ImportStatus(true, file.length(), files.indexOf(file), file, rowsCount, totalRowsCount));
+                        notificationService.sendSseEvent(status);
+                        Thread.sleep(100);
+                    }, () -> {
+                        AppStatus status = new AppStatus(new ImportStatus(false));
+                        notificationService.sendSseEvent(status);
                     });
             }
         }
-        return ResponseEntity.status(HttpStatus.OK)
-            .body("some body ");
+    }
+
+    @GetMapping("/{transactionId}/status")
+    public SseEmitter streamEvents(@PathVariable("transactionId") String transactionId) {
+        return notificationService.initSseEmitters();
     }
 }

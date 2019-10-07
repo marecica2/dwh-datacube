@@ -32,9 +32,9 @@ public class ExcelReaderTest {
   public void testBatchParsing() throws Exception {
     File xlsx = ResourceUtils.getFile(this.getClass().getResource("/spends.xlsx"));
     AtomicInteger rowsCount = new AtomicInteger();
-    new ExcelReader().readContent(FileUtils.openInputStream(xlsx), (rows, header, rowsCount1) -> {
+    new ExcelReader().readContent(FileUtils.openInputStream(xlsx), (rows, header, rowsCount1, totalRowsCount) -> {
       rowsCount.set(rowsCount1);
-    });
+    }, () -> {});
     assertThat(rowsCount.get()).isEqualTo(426);
   }
 }

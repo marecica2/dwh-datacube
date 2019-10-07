@@ -44,7 +44,6 @@ function MappingStep({transaction, mappingConfig, setMappingConfig, mapping, set
   const classes = useStyles();
   const [loaded, setLoaded] = React.useState(false);
 
-
   const selectColumn = useCallback(({name, value}) => {
     const prevValue = mapping[name];
     if (value === '') {
@@ -54,7 +53,7 @@ function MappingStep({transaction, mappingConfig, setMappingConfig, mapping, set
     }
     setMapping(prev => ({...prev, [name]: value}));
     setPreview(null);
-  }, [mapping, setMapping, setAssignedColumns]);
+  }, [mapping, setMapping, setAssignedColumns, setPreview]);
 
   useEffect(() => {
     const autoSuggestMapping = (map) => {

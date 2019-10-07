@@ -65,7 +65,7 @@ function FileUpload({ transaction, files, setFiles, setUploadInProgress, setMapp
       setUploadInProgress(false);
     }
       fetchData();
-  }, [transaction, files, setFiles, setUploadInProgress, progresses]);
+  }, [transaction, files, setFiles, setUploadInProgress, setMappingConfig, setPreview, progresses]);
 
   const handleChange = (newFiles) => {
     const addedFiles = newFiles
