@@ -20,7 +20,7 @@ public class NotificationServiceImpl implements NotificationService {
         emitters.add(emitter);
         emitter.onCompletion(() -> emitters.remove(emitter));
         try {
-            emitter.send(SseEmitter.event().id("init").data("foo").name("hello").build());emitter.
+            emitter.send(SseEmitter.event().id("init").data("foo").name("hello").build());
         } catch (IOException e) {
             e.printStackTrace();
         }

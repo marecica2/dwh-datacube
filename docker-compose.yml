@@ -17,14 +17,9 @@ services:
       POSTGRES_DB: dwh-dev
       POSTGRES_USER: dwh-dev
       POSTGRES_PASSWORD: dwh-dev
-#  db-test:
-#    image: postgres:10.3
-#    volumes:
-#    - ./.db/pg.conf:/etc/postgresql/postgresql.conf
-#    - ./.db/seeds:/.db/seeds
-#    ports:
-#    - 30002:5432
-#    environment:
-#      POSTGRES_DB: dwh-test
-#      POSTGRES_USER: dwh
-#      POSTGRES_PASSWORD: dwh
+  redis:
+    image: redis:4.0.5-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes"]
