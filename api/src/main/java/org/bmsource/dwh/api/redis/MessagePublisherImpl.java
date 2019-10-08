@@ -10,6 +10,7 @@ public class MessagePublisherImpl implements MessagePublisher {
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
+
     @Autowired
     private ChannelTopic topic;
 
@@ -22,6 +23,7 @@ public class MessagePublisherImpl implements MessagePublisher {
     }
 
     public void publish(final String message) {
+        System.out.println("aaaa "+ message);
         redisTemplate.convertAndSend(topic.getTopic(), message);
     }
 

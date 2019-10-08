@@ -17,12 +17,12 @@ public class RedisRepositoryImpl implements RedisRepository {
     private HashOperations hashOperations;
 
     @Autowired
-    public RedisRepositoryImpl(RedisTemplate<String, Object> redisTemplate){
+    public RedisRepositoryImpl(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 
     @PostConstruct
-    private void init(){
+    private void init() {
         hashOperations = redisTemplate.opsForHash();
     }
 
@@ -34,11 +34,11 @@ public class RedisRepositoryImpl implements RedisRepository {
         hashOperations.delete(KEY, id);
     }
 
-    public Movie findMovie(final String id){
+    public Movie findMovie(final String id) {
         return (Movie) hashOperations.get(KEY, id);
     }
 
-    public Map<Object, Object> findAllMovies(){
+    public Map<Object, Object> findAllMovies() {
         return hashOperations.entries(KEY);
     }
 

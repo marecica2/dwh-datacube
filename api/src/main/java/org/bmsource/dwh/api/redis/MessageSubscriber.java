@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class MessageSubscriber implements MessageListener {
 
-    public static List<String> messageList = new ArrayList<String>();
+    public static List<String> messageList = new ArrayList<>();
 
     public void onMessage(final Message message, final byte[] pattern) {
         messageList.add(message.toString());
