@@ -16,9 +16,14 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public SseEmitter initSseEmitters() {
-        SseEmitter emitter = new SseEmitter(new Long(1000 * 60 * 60));
+        SseEmitter emitter = new SseEmitter(new Long(1000 * 60));
         emitters.add(emitter);
         emitter.onCompletion(() -> emitters.remove(emitter));
+        try {
+            emitter.send(SseEmitter.event().id("init").data("foo").name("hello").build());emitter.
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return emitter;
     }
 

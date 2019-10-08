@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 import AppStateApi from '../../shared/api/appState.api';
+import { AppContextProvider, defaultAppState } from './AppContext';
 
-export default function AppContextListener() {
+export default function AppContextDataProvider(props) {
   const [eventSource, setEventSource] = React.useState();
-  const [appState, setAppState] = React.useState();
+  const [appState, setAppState] = React.useState(defaultAppState);
 
   useEffect(() => {
     async function api() {
@@ -11,7 +12,8 @@ export default function AppContextListener() {
         const es = new EventSource(AppStateApi.getAppStateUrl());
         es.onmessage = (event) => {
           const data = JSON.parse(event.data);
-          setAppState(data.importStatus);
+          const appContext = { ...defaultAppState, jobs: { importStatus: data.importStatus || { running: false } } };
+          setAppState(appContext);
         };
         setEventSource(es);
       }
@@ -23,7 +25,9 @@ export default function AppContextListener() {
       }
     }
   }, [eventSource, setEventSource]);
-
-  console.log(appState);
-  return appState;
+  return (
+    <AppContextProvider value={appState}>
+      {props.children}
+    </AppContextProvider>
+  );
 }

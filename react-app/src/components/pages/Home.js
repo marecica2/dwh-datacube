@@ -7,9 +7,10 @@ import {
   Table,
   TableCell,
   TableRow,
-  TableBody, LinearProgress,
+  TableBody,
 } from '@material-ui/core';
 import AppContext from '../context/AppContext';
+import ImportJob from '../common/import/ImportJob';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -17,21 +18,40 @@ const useStyles = makeStyles(theme => ({
   },
   paper: {
     padding: theme.spacing(2),
-    textAlign: 'center',
     color: theme.palette.text.secondary,
   },
 }));
 
 const importStats = [
   {
-    label: 'Import running',
-    key: 'ImportRunning',
-    value: 'false',
-  },
-  {
     label: 'Rows imported',
     key: 'rows',
     value: 20000,
+  },
+  {
+    label: 'Dashboard',
+    key: 'dashboard',
+    value: 'calculated',
+  },
+  {
+    label: 'Levers',
+    key: 'levers',
+    value: 'calculated',
+  },
+  {
+    label: 'Last import',
+    key: 'updated',
+    value: '2019/10/02 10:43',
+  },
+  {
+    label: 'Errors file',
+    key: 'errors',
+    value: 'Download errors.zip',
+  },
+  {
+    label: 'Imported by',
+    key: 'importedBy',
+    value: 'John Doe',
   },
 ];
 
@@ -39,6 +59,26 @@ function Home() {
   const classes = useStyles();
   const appContext = useContext(AppContext);
   const { importStatus } = appContext.jobs;
+
+  const renderJobs = () => {
+    if (importStatus && importStatus.running) {
+      return (
+        <div>
+          <Typography variant="body1">
+            Import is running
+          </Typography>
+          <ImportJob importStatus={importStatus}/>
+        </div>
+      )
+    }
+    return (
+      <div style={{ margin: '38px', textAlign: 'center' }}>
+        <Typography variant="body1">
+          No active background jobs
+        </Typography>
+      </div>
+    )
+  };
 
   return (
     <div>
@@ -49,7 +89,7 @@ function Home() {
         <Grid item xs={6}>
           <Paper className={classes.paper}>
             <Typography variant="h6" paragraph>
-              Data stats
+              Data statistics
             </Typography>
             <Table className={classes.table}>
               <TableBody>
@@ -65,23 +105,16 @@ function Home() {
         </Grid>
         <Grid item xs={6}>
           <Paper className={classes.paper}>
-            <Typography variant="h6">
-              Backgroud jobs
+            <Typography variant="h6" paragraph>
+              Admin events
             </Typography>
-            {importStatus && importStatus.running && (
-              <div>
-                <p>{`${importStatus.currentFile + 1}. of ${importStatus.files} files`}</p>
-                <LinearProgress
-                  variant="determinate"
-                  value={(importStatus.currentFile + 1 / importStatus.files) * 100}
-                />
-                <p>{`Reading ${importStatus.currentFileName}, ${importStatus.currentRows} rows of ${importStatus.totalRows} rows`}</p>
-                <LinearProgress
-                  variant="determinate" color="secondary"
-                  value={(importStatus.currentRows / importStatus.totalRows) * 100}
-                />
-              </div>
-            )}
+          </Paper>
+          <br/>
+          <Paper className={classes.paper}>
+            <Typography variant="h6" paragraph>
+              Background jobs
+            </Typography>
+            {renderJobs()}
           </Paper>
         </Grid>
         <Grid item xs={12}>

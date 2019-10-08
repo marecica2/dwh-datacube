@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import BarChart from '../../common/charts/BarChart';
-import axios from 'axios';
 
 const data = [{
   'country': 'USA',
@@ -65,9 +64,6 @@ const data2 = [{
 
 class Supplier extends Component {
   async componentDidMount() {
-    const res = await axios.get('/api/charts');
-    console.log(res.status);
-    console.log(res.data);
   }
 
   render() {

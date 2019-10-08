@@ -10,8 +10,7 @@ import Home from './pages/Home';
 import Supplier from './pages/categories/Supplier';
 import ServiceType from './pages/categories/ServiceType';
 import Import from './pages/Import';
-import { AppContextProvider, defaultAppState } from './context/AppContext';
-import AppContextListener from './context/AppContextListener';
+import AppContextDataProvider from './context/AppContextDataProvider';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -28,7 +27,6 @@ function App() {
   const theme = useTheme();
   const classes = useStyles(theme);
   const [isSidebarOpen, setSidebarOpen] = React.useState(true);
-  const appContext = { ...defaultAppState, jobs: { importStatus: AppContextListener() || { running: false } } };
 
   function handleDrawerOpen() {
     setSidebarOpen(true);
@@ -40,7 +38,7 @@ function App() {
 
   return (
     <div className={classes.root}>
-      <AppContextProvider value={appContext}>
+      <AppContextDataProvider>
         <CssBaseline />
         <Router history={history}>
           <Menu open={isSidebarOpen} menuIconClick={handleDrawerOpen} />
@@ -54,7 +52,7 @@ function App() {
             </Switch>
           </main>
         </Router>
-      </AppContextProvider>
+      </AppContextDataProvider>
     </div>
   );
 }
