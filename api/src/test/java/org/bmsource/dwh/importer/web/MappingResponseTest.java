@@ -1,10 +1,10 @@
-package org.bmsource.dwh.web.importer;
+package org.bmsource.dwh.importer.web;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.bmsource.dwh.model.Fact;
+import org.bmsource.dwh.importer.Fact;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;

@@ -1,4 +1,4 @@
-package org.bmsource.dwh.web.importer;
+package org.bmsource.dwh.importer;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

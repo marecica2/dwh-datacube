@@ -1,4 +1,4 @@
-package org.bmsource.dwh.web.importer;
+package org.bmsource.dwh.importer.web;
 
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
@@ -7,16 +7,15 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.bmsource.dwh.common.appstate.Constants;
 import org.bmsource.dwh.common.fileManager.FileManager;
 import org.bmsource.dwh.common.fileManager.FileSystemImpl;
-import org.bmsource.dwh.model.Fact;
-import org.bmsource.dwh.model.FactModelMapper;
+import org.bmsource.dwh.importer.Fact;
+import org.bmsource.dwh.common.reader.FactModelMapper;
 import org.bmsource.dwh.common.reader.DataReader;
 import org.bmsource.dwh.common.reader.ExcelReader;
 import org.bmsource.dwh.common.reader.MappingResult;
-import org.bmsource.dwh.common.pushnotification.AppState;
-import org.bmsource.dwh.common.pushnotification.ImportStatus;
+import org.bmsource.dwh.common.appstate.AppState;
+import org.bmsource.dwh.common.appstate.ImportStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
@@ -141,7 +140,7 @@ public class ImportController {
         ) {
             DataReader reader = new ExcelReader();
             MappingResult columnMapping = reader.readHeaderRow(stream1);
-            return new FactModelMapper(columnMapping.getHeaderRow(), mappingParam.getMapping())
+            return new FactModelMapper<>(Fact.class, columnMapping.getHeaderRow(), mappingParam.getMapping())
                 .mapList(reader.readContent(stream2, 100));
         }
     }
@@ -157,10 +156,12 @@ public class ImportController {
                 DataReader reader = new ExcelReader();
                 reader
                     .readContent(stream, (items, header, rowsCount, totalRowsCount) -> {
-                        List<Fact> facts = new FactModelMapper(header, uploadRequestBody.getMapping()).mapList(items);
+                        long before = System.currentTimeMillis();
+                        List<Fact> facts = new FactModelMapper<Fact>(Fact.class, header, uploadRequestBody.getMapping()).mapList(items);
                         System.out.println("Parsed from file " + file + " " + rowsCount + " of total " + totalRowsCount);
                         AppState state = new AppState(new ImportStatus(true, file.length(), files.indexOf(file), file, rowsCount, totalRowsCount));
                         template.convertAndSend(Constants.APP_STATE_CHANNEL, state);
+                        System.out.println((System.currentTimeMillis() - before) + " ms");
                     }, () -> {
                         AppState state = new AppState(new ImportStatus(false));
                         template.convertAndSend(Constants.APP_STATE_CHANNEL, state);

@@ -1,4 +1,4 @@
-package org.bmsource.dwh.common.pushnotification;
+package org.bmsource.dwh.common.appstate;
 
 import java.io.Serializable;
 

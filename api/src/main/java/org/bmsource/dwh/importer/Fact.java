@@ -1,7 +1,5 @@
-package org.bmsource.dwh.model;
+package org.bmsource.dwh.importer;
 
-import java.math.BigDecimal;
-import java.util.Date;
 import javax.validation.constraints.NotNull;
 
 public class Fact {
