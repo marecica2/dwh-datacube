@@ -15,6 +15,7 @@ import org.bmsource.dwh.api.sse.AppStatus;
 import org.bmsource.dwh.api.sse.ImportStatus;
 import org.bmsource.dwh.api.sse.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -82,6 +83,9 @@ public class ImportController {
 
     @Autowired
     NotificationService notificationService;
+
+    @Autowired
+    StringRedisTemplate template;
 
     private FileManager fileManager = new FileSystemImpl();
 
@@ -160,6 +164,9 @@ public class ImportController {
                         System.out.println("Parsed from file " + file + " " + rowsCount + " of total " + totalRowsCount);
                         AppStatus status = new AppStatus(new ImportStatus(true, file.length(), files.indexOf(file), file, rowsCount, totalRowsCount));
                         notificationService.sendSseEvent(status);
+
+                        System.out.println("Sending message");
+                        template.convertAndSend("chat", "Hello from Redis!");
                     }, () -> {
                         AppStatus status = new AppStatus(new ImportStatus(false));
                         notificationService.sendSseEvent(status);
