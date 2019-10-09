@@ -1,23 +1,11 @@
 import React from 'react';
 
 const DEFAULT_APP_STATE = {
-  user: {
-    email: 'john.doe@gmail.com',
-    role: 'user',
+  importStatus: {
+    running: false,
   },
-  gui: {
-    sidebarExpanded: true,
-  },
-  data: {
-    count: 0,
-  },
-  jobs: {
-    importStatus: {
-      running: false,
-    },
-    leverStatus: {
-      running: false,
-    },
+  leverStatus: {
+    running: false,
   },
 };
 

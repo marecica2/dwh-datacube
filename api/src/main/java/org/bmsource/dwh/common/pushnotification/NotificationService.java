@@ -1,4 +1,4 @@
-package org.bmsource.dwh.sse;
+package org.bmsource.dwh.common.pushnotification;
 
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 

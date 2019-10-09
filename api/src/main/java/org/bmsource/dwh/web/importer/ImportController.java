@@ -1,9 +1,10 @@
-package org.bmsource.dwh.importer;
+package org.bmsource.dwh.web.importer;
 
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.bmsource.dwh.common.appstate.Constants;
 import org.bmsource.dwh.common.fileManager.FileManager;
 import org.bmsource.dwh.common.fileManager.FileSystemImpl;
 import org.bmsource.dwh.model.Fact;
@@ -11,14 +12,13 @@ import org.bmsource.dwh.model.FactModelMapper;
 import org.bmsource.dwh.common.reader.DataReader;
 import org.bmsource.dwh.common.reader.ExcelReader;
 import org.bmsource.dwh.common.reader.MappingResult;
-import org.bmsource.dwh.sse.AppStatus;
-import org.bmsource.dwh.sse.ImportStatus;
-import org.bmsource.dwh.sse.NotificationService;
+import org.bmsource.dwh.common.pushnotification.AppState;
+import org.bmsource.dwh.common.pushnotification.ImportStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -82,10 +82,7 @@ class UploadRequestBody {
 public class ImportController {
 
     @Autowired
-    NotificationService notificationService;
-
-    @Autowired
-    StringRedisTemplate template;
+    RedisTemplate template;
 
     private FileManager fileManager = new FileSystemImpl();
 
@@ -162,21 +159,13 @@ public class ImportController {
                     .readContent(stream, (items, header, rowsCount, totalRowsCount) -> {
                         List<Fact> facts = new FactModelMapper(header, uploadRequestBody.getMapping()).mapList(items);
                         System.out.println("Parsed from file " + file + " " + rowsCount + " of total " + totalRowsCount);
-                        AppStatus status = new AppStatus(new ImportStatus(true, file.length(), files.indexOf(file), file, rowsCount, totalRowsCount));
-                        notificationService.sendSseEvent(status);
-
-                        System.out.println("Sending message");
-                        template.convertAndSend("chat", "Hello from Redis!");
+                        AppState state = new AppState(new ImportStatus(true, file.length(), files.indexOf(file), file, rowsCount, totalRowsCount));
+                        template.convertAndSend(Constants.APP_STATE_CHANNEL, state);
                     }, () -> {
-                        AppStatus status = new AppStatus(new ImportStatus(false));
-                        notificationService.sendSseEvent(status);
+                        AppState state = new AppState(new ImportStatus(false));
+                        template.convertAndSend(Constants.APP_STATE_CHANNEL, state);
                     });
             }
         }
-    }
-
-    @GetMapping("/status")
-    public SseEmitter streamEvents(){
-        return notificationService.initSseEmitters();
     }
 }

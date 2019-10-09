@@ -1,4 +1,4 @@
-package org.bmsource.dwh.importer;
+package org.bmsource.dwh.web.importer;
 
 import java.util.Arrays;
 import java.util.List;

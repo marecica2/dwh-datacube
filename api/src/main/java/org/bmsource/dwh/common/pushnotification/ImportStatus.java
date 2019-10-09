@@ -1,6 +1,10 @@
-package org.bmsource.dwh.sse;
+package org.bmsource.dwh.common.pushnotification;
 
-public class ImportStatus {
+import java.io.Serializable;
+
+public class ImportStatus implements Serializable {
+
+    private static final long serialVersionUID = -6926932815233075496L;
 
     private boolean running = false;
 
@@ -13,6 +17,8 @@ public class ImportStatus {
     private Integer currentRows = null;
 
     private Integer totalRows = null;
+
+    public ImportStatus() {}
 
     public ImportStatus(boolean running) {
         this.running = running;

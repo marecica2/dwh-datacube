@@ -11,9 +11,11 @@ export default function AppContextDataProvider(props) {
       if (eventSource == null) {
         const es = new EventSource(AppStateApi.getAppStateUrl());
         es.onmessage = (event) => {
-          const data = JSON.parse(event.data);
-          const appContext = { ...defaultAppState, jobs: { importStatus: data.importStatus || { running: false } } };
-          setAppState(appContext);
+          if(event.data !== 'heartbeat') {
+            const data = JSON.parse(event.data);
+            const appContext = data || defaultAppState;
+            setAppState(appContext);
+          }
         };
         setEventSource(es);
       }

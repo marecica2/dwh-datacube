@@ -58,7 +58,7 @@ const importStats = [
 function Home() {
   const classes = useStyles();
   const appContext = useContext(AppContext);
-  const { importStatus } = appContext.jobs;
+  const { importStatus } = appContext;
 
   const renderJobs = () => {
     if (importStatus && importStatus.running) {
