@@ -18,7 +18,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 @Configuration
 @ComponentScan("org.bmsource.dwh")
-public class RedisConfiguration {
+public class AppStateConfiguration {
 
     @Value("${spring.redis.host}")
     private String redisHost;

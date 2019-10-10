@@ -1,4 +1,4 @@
-package org.bmsource.dwh.common.web.appstate;
+package org.bmsource.dwh.common.appstate;
 
 import org.bmsource.dwh.common.pushnotification.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;

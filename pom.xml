@@ -15,6 +15,7 @@
     <module>tests</module>
     <module>api</module>
     <module>proxy</module>
+    <module>common</module>
   </modules>
 
   <parent>

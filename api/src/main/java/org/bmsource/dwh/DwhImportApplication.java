@@ -7,11 +7,11 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
-@EntityScan(basePackages = {"org.bmsource.dwh"})
+@EntityScan(basePackages = {"org.bmsource.dwh.importer"})
 @EnableJpaRepositories
 @EnableTransactionManagement
-public class DwhApplication {
+public class DwhImportApplication {
   public static void main(String[] args) {
-    SpringApplication.run(DwhApplication.class, args);
+    SpringApplication.run(DwhImportApplication.class, args);
   }
 }

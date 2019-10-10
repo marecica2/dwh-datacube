@@ -83,15 +83,16 @@ public class ImportController {
     private FileManager fileManager = new FileSystemImpl();
 
     @GetMapping
-    public String init() {
+    public String initUpload() {
         return fileManager.createTransaction();
     }
 
     @PostMapping("/{transactionId}")
-    public List<String> handleUpload(HttpServletRequest request, @PathVariable("transactionId") String transactionId)
+    public List<String> fileUpload(HttpServletRequest request,
+                                   @PathVariable("transactionId") String transactionId)
         throws IOException, FileUploadException {
-        List<String> files = new ArrayList<>();
 
+        List<String> files = new ArrayList<>();
         if (ServletFileUpload.isMultipartContent(request)) {
             ServletFileUpload upload = new ServletFileUpload();
             FileItemIterator fileItemIterator = upload.getItemIterator(request);
@@ -112,10 +113,10 @@ public class ImportController {
 
     @PostMapping(value = "/{transactionId}/mapping", consumes = "application/json")
     public MappingResponse columnMapping(@PathVariable("transactionId") String transactionId,
-                                         @RequestBody MappingRequestBody filesParam
-    ) throws Exception {
-        List<String> files = fileManager.getFiles(transactionId);
+                                         @RequestBody MappingRequestBody filesParam)
+        throws Exception {
 
+        List<String> files = fileManager.getFiles(transactionId);
         try (InputStream stream = fileManager.getStream(transactionId, files.get(0))) {
             DataReader reader = new ExcelReader();
             MappingResult columnMapping = reader.readHeaderRow(stream);
@@ -129,7 +130,10 @@ public class ImportController {
     }
 
     @PostMapping(value = "/{transactionId}/preview", consumes = "application/json")
-    public List<Fact> preview(@PathVariable("transactionId") String transactionId, @RequestBody PreviewRequestBody mappingParam) throws Exception {
+    public List<Fact> preview(@PathVariable("transactionId") String transactionId,
+                              @RequestBody PreviewRequestBody mappingParam
+    ) throws Exception {
+
         List<String> files = fileManager.getFiles(transactionId);
         try (
             InputStream stream1 = fileManager.getStream(transactionId, files.get(0));
@@ -144,7 +148,11 @@ public class ImportController {
 
     @Async("asyncExecutor")
     @PostMapping(value = "/{transactionId}/start", consumes = "application/json")
-    public void start(@PathVariable("transactionId") String transactionId, @RequestBody UploadRequestBody uploadRequestBody) throws Exception {
+    public void start(@PathVariable("transactionId") String transactionId,
+                      @RequestBody UploadRequestBody uploadRequestBody)
+        throws Exception {
+        String tenant = "0000-0000-0000-0001";
+        String project = "1";
         List<String> files = fileManager.getFiles(transactionId);
         for (String file : files) {
             try (
@@ -153,11 +161,18 @@ public class ImportController {
                 DataReader reader = new ExcelReader();
                 reader.readContent(stream, new DataHandler() {
                     @Override
+                    public void onStart() {
+                        // Clear previous results/ caches etc
+                    }
+
+                    @Override
                     public void onRead(List<List<Object>> rows, List<Object> header, int rowsCount, int totalRowsCount) {
                         long before = System.currentTimeMillis();
                         List<Fact> facts = new FactModelMapper<Fact>(Fact.class, header, uploadRequestBody.getMapping()).mapList(rows);
                         System.out.println("Parsed from file " + file + " " + rowsCount + " of total " + totalRowsCount);
-                        AppState state = new AppState(new ImportStatus(true, file.length(), files.indexOf(file), file, rowsCount, totalRowsCount));
+                        AppState state = new AppState(new ImportStatus(true, files.size(), files.indexOf(file), file, rowsCount, totalRowsCount));
+
+                        template.opsForValue().set(String.format("tenant#%s:project#%s:import", tenant, project), state);
                         template.convertAndSend(Constants.APP_STATE_CHANNEL, state);
                         System.out.println((System.currentTimeMillis() - before) + " ms");
                     }
@@ -166,6 +181,8 @@ public class ImportController {
                     public void onFinish(int totalRowsCount) {
                         AppState state = new AppState(new ImportStatus(false));
                         template.convertAndSend(Constants.APP_STATE_CHANNEL, state);
+                        template.opsForValue().set(String.format("tenant#%s:project#%s:import", tenant, project), state);
+                        // Trigger post process
                     }
                 });
             }
