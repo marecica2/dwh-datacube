@@ -34,7 +34,7 @@ public class ExcelReaderTest {
     AtomicInteger rowsCount = new AtomicInteger();
     new ExcelReader().readContent(FileUtils.openInputStream(xlsx), (rows, header, rowsCount1, totalRowsCount) -> {
       rowsCount.set(rowsCount1);
-    }, () -> {});
+    });
     assertThat(rowsCount.get()).isEqualTo(426);
   }
 }

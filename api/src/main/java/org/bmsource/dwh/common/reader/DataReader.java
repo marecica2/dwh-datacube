@@ -5,11 +5,11 @@ import java.util.List;
 
 public interface DataReader {
 
-  MappingResult readHeaderRow(InputStream inputStream) throws Exception;
+    MappingResult readHeaderRow(InputStream inputStream) throws Exception;
 
-  void readContent(InputStream inputStream, RowsHandler rowsHandler, FinishHandler finishHandler) throws Exception;
+    void readContent(InputStream inputStream, DataHandler rowsHandler) throws Exception;
 
-  void readContent(InputStream inputStream, RowsHandler rowsHandler, FinishHandler finishHandler, Integer batchSize) throws Exception;
+    void readContent(InputStream inputStream, DataHandler rowsHandler, Integer batchSize) throws Exception;
 
-  List<List<Object>> readContent(InputStream inputStream, int rowsToRead) throws Exception;
+    List<List<Object>> readContent(InputStream inputStream, int rowsToRead) throws Exception;
 }

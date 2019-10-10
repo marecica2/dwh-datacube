@@ -7,11 +7,8 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.bmsource.dwh.common.appstate.Constants;
 import org.bmsource.dwh.common.fileManager.FileManager;
 import org.bmsource.dwh.common.fileManager.FileSystemImpl;
+import org.bmsource.dwh.common.reader.*;
 import org.bmsource.dwh.importer.Fact;
-import org.bmsource.dwh.common.reader.FactModelMapper;
-import org.bmsource.dwh.common.reader.DataReader;
-import org.bmsource.dwh.common.reader.ExcelReader;
-import org.bmsource.dwh.common.reader.MappingResult;
 import org.bmsource.dwh.common.appstate.AppState;
 import org.bmsource.dwh.common.appstate.ImportStatus;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -154,18 +151,23 @@ public class ImportController {
                 InputStream stream = fileManager.getStream(transactionId, file);
             ) {
                 DataReader reader = new ExcelReader();
-                reader
-                    .readContent(stream, (items, header, rowsCount, totalRowsCount) -> {
+                reader.readContent(stream, new DataHandler() {
+                    @Override
+                    public void onRead(List<List<Object>> rows, List<Object> header, int rowsCount, int totalRowsCount) {
                         long before = System.currentTimeMillis();
-                        List<Fact> facts = new FactModelMapper<Fact>(Fact.class, header, uploadRequestBody.getMapping()).mapList(items);
+                        List<Fact> facts = new FactModelMapper<Fact>(Fact.class, header, uploadRequestBody.getMapping()).mapList(rows);
                         System.out.println("Parsed from file " + file + " " + rowsCount + " of total " + totalRowsCount);
                         AppState state = new AppState(new ImportStatus(true, file.length(), files.indexOf(file), file, rowsCount, totalRowsCount));
                         template.convertAndSend(Constants.APP_STATE_CHANNEL, state);
                         System.out.println((System.currentTimeMillis() - before) + " ms");
-                    }, () -> {
+                    }
+
+                    @Override
+                    public void onFinish(int totalRowsCount) {
                         AppState state = new AppState(new ImportStatus(false));
                         template.convertAndSend(Constants.APP_STATE_CHANNEL, state);
-                    });
+                    }
+                });
             }
         }
     }

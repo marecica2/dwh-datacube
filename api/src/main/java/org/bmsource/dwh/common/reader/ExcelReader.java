@@ -17,13 +17,14 @@ public class ExcelReader implements DataReader {
 
     private static Integer DEFAULT_BATCH_SIZE = 5000;
 
-    private void readExcelStream(InputStream inputStream, RowsHandler rowsHandler, FinishHandler finishHandler,
+    private void readExcelStream(InputStream inputStream, DataHandler dataHandler,
                                  Integer batchSize, Integer rowsLimit, boolean headerExcluded) throws Exception {
         try (
             Workbook workbook = StreamingReader.builder()
                 .rowCacheSize(batchSize)
                 .bufferSize(32000)
                 .open(inputStream)) {
+            dataHandler.onStart();
             Sheet sheet = workbook.getSheetAt(0);
             Iterator<Row> rowIterator = sheet.rowIterator();
 
@@ -37,12 +38,12 @@ public class ExcelReader implements DataReader {
                 rows.add(readSingleRow(rowIterator));
                 totalRows++;
                 if (totalRows % batchSize == 0) {
-                    rowsHandler.handleRows(rows, headerRow, totalRows, sheet.getLastRowNum());
+                    dataHandler.onRead(rows, headerRow, totalRows, sheet.getLastRowNum());
                     rows = new LinkedList<>();
                 }
             }
-            rowsHandler.handleRows(rows, headerRow, totalRows, sheet.getLastRowNum());
-            finishHandler.handleFinish();
+            dataHandler.onRead(rows, headerRow, totalRows, sheet.getLastRowNum());
+            dataHandler.onFinish(sheet.getLastRowNum());
         }
     }
 
@@ -65,20 +66,19 @@ public class ExcelReader implements DataReader {
         List<List<Object>> header = new ArrayList<>();
         readExcelStream(inputStream, (rows, headerRow, totalRows, totalRowsCount) -> {
                 header.addAll(rows);
-            }, () -> {
             },
             2, 2, false);
         return new MappingResult(header.get(0), header.get(1));
     }
 
     @Override
-    public void readContent(InputStream inputStream, RowsHandler rowsHandler, FinishHandler finishHandler) throws Exception {
-        readExcelStream(inputStream, rowsHandler, finishHandler, DEFAULT_BATCH_SIZE, -1, true);
+    public void readContent(InputStream inputStream, DataHandler dataHandler) throws Exception {
+        readExcelStream(inputStream, dataHandler, DEFAULT_BATCH_SIZE, -1, true);
     }
 
     @Override
-    public void readContent(InputStream inputStream, RowsHandler rowsHandler, FinishHandler finishHandler, Integer batchSize) throws Exception {
-        readExcelStream(inputStream, rowsHandler, finishHandler, batchSize, -1, true);
+    public void readContent(InputStream inputStream, DataHandler dataHandler, Integer batchSize) throws Exception {
+        readExcelStream(inputStream, dataHandler, batchSize, -1, true);
     }
 
     @Override
@@ -89,7 +89,6 @@ public class ExcelReader implements DataReader {
         List<List<Object>> result = new ArrayList<>();
         readExcelStream(inputStream, (rows, header, rowsCount, totalRowsCount) -> {
                 result.addAll(rows);
-            }, () -> {
             },
             rowsToRead, rowsToRead, true);
         return result;
