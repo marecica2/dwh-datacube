@@ -11,11 +11,8 @@
   <name>dwh</name>
   <description>Data warehouse</description>
   <modules>
-    <module>multitenancy</module>
-    <module>tests</module>
-    <module>api</module>
-    <module>proxy</module>
     <module>common</module>
+    <module>importer</module>
   </modules>
 
   <parent>
