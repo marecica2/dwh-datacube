@@ -1,4 +1,4 @@
-package org.bmsource.dwh;
+package org.bmsource.dwh.importer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,8 +10,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EntityScan(basePackages = {"org.bmsource.dwh.importer"})
 @EnableJpaRepositories
 @EnableTransactionManagement
-public class DwhImportApplication {
+public class ImporterApplication {
   public static void main(String[] args) {
-    SpringApplication.run(DwhImportApplication.class, args);
+    SpringApplication.run(ImporterApplication.class, args);
   }
 }

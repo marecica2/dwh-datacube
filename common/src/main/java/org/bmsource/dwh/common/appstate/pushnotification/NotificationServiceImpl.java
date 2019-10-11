@@ -1,4 +1,4 @@
-package org.bmsource.dwh.common.pushnotification;
+package org.bmsource.dwh.common.appstate.pushnotification;
 
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Scheduled;

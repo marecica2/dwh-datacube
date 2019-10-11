@@ -7,17 +7,17 @@ export default function ImportJob(props) {
     <div>
       {importStatus && importStatus.running && (
         <div>
-          <p>{`${importStatus.currentFile + 1}. of ${importStatus.files} files`}</p>
-          <LinearProgress variant="determinate" value={(importStatus.currentFile + 1 / importStatus.files) * 100}/>
+          <p>{`${importStatus.file + 1}. of ${importStatus.files} files`}</p>
+          <LinearProgress variant="determinate" value={(importStatus.file + 1 / importStatus.files) * 100}/>
           <p>
-            <span>{`Reading ${importStatus.currentFileName} `}</span>
-            {importStatus.currentRows}
+            <span>{`Reading ${importStatus.fileName} `}</span>
+            {importStatus.rowsCount}
             <span> rows of </span>
-            {importStatus.totalRows}
+            {importStatus.totalRowsCount}
           </p>
           <LinearProgress
             variant="determinate" color="secondary"
-            value={(importStatus.currentRows / importStatus.totalRows) * 100}
+            value={(importStatus.rowsCount / importStatus.totalRowsCount) * 100}
           />
         </div>
       )}
