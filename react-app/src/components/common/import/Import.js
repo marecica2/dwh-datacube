@@ -104,39 +104,14 @@ export default function Import() {
     fetch();
   }, [setTransaction]);
 
-  useEffect(() => {
-    async function fn() {
-      if (importStatus && importStatus.running) {
-        setActiveStep(0);
-        setFiles({});
-        setMappingConfig();
-        setMapping({});
-        setPreview();
-      }
-    }
-
-    fn();
-  }, [importStatus, setActiveStep, setFiles, setMappingConfig, setMapping, setPreview]);
-
-  // useEffect(() => {
-  //   async function api() {
-  //     if (transaction && eventSource == null) {
-  //       const es = new EventSource(`/api/import/${transaction}/status`);
-  //       es.onmessage = (event) => {
-  //         const data = JSON.parse(event.data);
-  //         setImportStatus(data.importStatus);
-  //       };
-  //       setEventSource(es);
-  //     }
-  //   }
-  //
-  //   api();
-  //   return () => {
-  //     if (eventSource) {
-  //       eventSource.close();
-  //     }
-  //   }
-  // }, [transaction, setImportStatus, eventSource, setEventSource]);
+  const handleFinish = async () => {
+      await ImportApi.doImport(transaction, mapping, config);
+      setActiveStep(0);
+      setFiles({});
+      setMappingConfig();
+      setMapping({});
+      setPreview();
+  };
 
   const handleNext = () => {
     setActiveStep(prevActiveStep => prevActiveStep + 1);
@@ -178,7 +153,7 @@ export default function Import() {
                   </Button>
                   <Button
                     disabled={!isNextEnabled(activeStep)} variant="contained" color="primary"
-                    onClick={handleNext}
+                    onClick={activeStep === steps.length - 1 ? handleFinish : handleNext}
                     className={classes.button}
                     style={{ flex: 0 }}
                   >
