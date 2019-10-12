@@ -1,0 +1,187 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+shopt -s expand_aliases
+source compose.spec
+
+if [[ ! -f .env ]]; then
+  echo "You don't have .env file, let me try to create one..."
+  cp .env.sample .env
+fi
+
+if ! [[ -x "$(command -v docker-compose)" ]]; then
+  echo "Please install Docker for Mac (https://docs.docker.com/docker-for-mac/install/#what-to-know-before-you-install), and then fire the script again"
+  quit
+fi
+
+DOCKER="docker"
+COMPOSE="docker-compose -f docker-compose.yml"
+YARN_BIN="/usr/bin/yarn"
+
+function quit() {
+  echo >&2 "$@"
+  exit 1
+}
+
+function info() {
+  echo -e "\x1B[33m$1\x1B[0m"
+}
+
+function success() {
+  echo -e "\x1B[32m$1\x1B[0m"
+}
+
+function upService() {
+  ${COMPOSE} up -d --remove-orphans $@
+}
+
+function runService() {
+  ${COMPOSE} run --rm $1 sh -c "$2"
+}
+
+function upServiceWithDB() {
+  for service in $@; do
+    runService ${service} "
+        npm run db:create;
+        npm run db:migrate;
+        npm run db:init;
+        "
+    upService ${service}
+
+    # Making sure TM is started before starting any other service
+    if [[ ${service} == "nvt-tenant-management-api" ]]; then
+      sleep 10
+    fi
+  done
+}
+
+function appStart() {
+  true
+}
+
+function appStop() {
+  info "== Shutting down currently running Stack ... =="
+  ${COMPOSE} stop
+  # ps aux | grep '[n]ode' | (grep -i $(pwd) || true) | awk '{print $2}' | xargs kill -15
+}
+
+function stackStart() {
+  appStop
+
+  info "== Starting Stack ... =="
+  info "== Starting infrastructure services =="
+  upService ${DOCKER_SERVICES}
+  sleep 4
+
+  info "== Checking running services =="
+  ${COMPOSE} ps
+
+  success "== Done =="
+}
+
+function dbRestore() {
+  [[ ! -z $1 ]] || quit "Please specify database name"
+  [[ ! -z $2 ]] || quit "Please specify dump path"
+  ${COMPOSE} exec db sh -c "psql -U postgres -v ON_ERROR_STOP=1 --single-transaction -q -f /$2  $1 >/dev/null"
+}
+
+function init() {
+  success "== Done =="
+}
+
+
+if [[ $# -gt 0 ]]; then
+
+  if [[ "$1" == "start" ]]; then
+    stackStart
+    appStart $@
+
+  elif [[ "$1" == "stack-start" ]]; then
+    stackStart
+
+  elif [[ "$1" == "stack-stop" ]]; then
+    appStop
+
+  elif [[ "$1" == "stack-clear" ]]; then
+    echo "Cleaning docker containers..."
+    appStop
+    ${DOCKER} system prune
+    ${DOCKER} images -q --no-trunc | xargs ${DOCKER} rmi -f || true
+
+  elif [[ "$1" == "init" ]]; then
+    init
+
+  elif [[ "$1" == "reset" ]]; then
+    appStop
+    ${COMPOSE} rm -f
+    ${COMPOSE} pull
+    stackStart
+    sleep 10
+    init
+    appStart $@
+
+  elif [[ "$1" == "app-start" ]]; then
+    appStart $@
+
+  elif [[ "$1" == "yarn" ]]; then
+    shift 1
+    $YARN_BIN $@
+
+  elif [[ "$1" == "module-yarn" ]]; then
+    shift 1
+    [[ ! -z $1 ]] || quit "Please specify module name"
+    (cd modules/$1 && shift 1 && ../../$YARN_BIN $@)
+
+  elif [[ -d "modules/${1}" ]]; then
+    (cd modules/$1 && shift 1 && $@)
+
+  elif [[ "$1" == "app-test" ]]; then
+    $YARN_BIN install
+    $YARN_BIN test
+
+  elif [[ "$1" == "aws" ]]; then
+    shift 1
+    MODULE="$1"
+    shift 1
+    ARGS="$@"
+    if [[ "$MODULE" == "sqs" ]]; then
+      ${COMPOSE} exec \
+        localstack bash -c "aws sqs --endpoint-url=http://localstack:4570 --region=eu-central-1 $ARGS"
+    else
+      ${COMPOSE} exec \
+        localstack bash -c "aws $MODULE --endpoint-url=http://localstack:4572 $ARGS"
+    fi
+
+  elif [[ "$1" == "redis" ]]; then
+    shift 1
+    ${COMPOSE} exec redis redis-cli
+
+  elif [[ "$1" == "psql" ]]; then
+    shift 1
+    ${COMPOSE} exec \
+      ${1:-db} bash -c "psql -U postgres"
+
+  elif [[ "$1" == "db-dump" ]]; then
+    shift 1
+    [[ ! -z $1 ]] || quit "Please specify database name"
+    TIMESTAMP=$(date +%Y%m%d_%H%M)
+    ${COMPOSE} exec db sh -c "pg_dump -U postgres --clean --if-exists --no-owner $1 > /.db/seeds/postgres_$1_$TIMESTAMP.sql"
+    printf "\x1B[33mDump saved at: .db/seeds/postgres_$1_$TIMESTAMP.sql\x1B[0m\n"
+
+  elif [[ "$1" == "db-dump-tests" ]]; then
+    shift 1
+    [[ ! -z $1 ]] || quit "Please specify database name"
+    ${COMPOSE} exec db sh -c "pg_dump -U postgres --clean --if-exists --no-owner --schema-only -n access -n common -n data_dump1 $1 > /.db/seeds/dump.sql"
+    printf "\x1B[33mDump saved at: .db/seeds/dump.sql\x1B[0m\n"
+
+  elif [[ "$1" == "db-restore" ]]; then
+    shift 1
+    dbRestore $@
+
+  else
+    ${COMPOSE} "$@"
+  fi
+
+else
+  ${COMPOSE} ps
+fi
