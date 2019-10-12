@@ -4,12 +4,11 @@ import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.bmsource.dwh.common.appstate.AppStateService;
 import org.bmsource.dwh.common.fileManager.FileManager;
 import org.bmsource.dwh.common.fileManager.FileSystemImpl;
 import org.bmsource.dwh.common.reader.*;
 import org.bmsource.dwh.importer.Fact;
-import org.bmsource.dwh.importer.ImporterConfiguration;
+import org.bmsource.dwh.importer.ImportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 
 @RestController()
@@ -28,9 +26,6 @@ import java.util.Map;
 public class ImportController {
 
     private FileManager fileManager = new FileSystemImpl();
-
-    @Autowired
-    AppStateService appStateService;
 
     @Autowired
     ImportService importService;
@@ -92,17 +87,13 @@ public class ImportController {
     @PostMapping(value = "/{transactionId}/start", consumes = "application/json")
     public ResponseEntity start(@PathVariable("transactionId") String transactionId,
                                 @RequestBody UploadRequestBody uploadRequestBody) throws Exception {
+
         String tenant = "0000-0000-0000-0001";
         String project = "1";
-
-        Map<String, Object> state = appStateService.getState(tenant, project,
-            ImporterConfiguration.StateType.IMPORT_STATUS_STATE.getValue());
-        if(state.get("running") != null && (Boolean) state.get("running")) {
+        if (importService.checkRunningImport(tenant, project)) {
             return new ResponseEntity(HttpStatus.TOO_MANY_REQUESTS);
         }
-
-        importService.startImport(transactionId, uploadRequestBody, tenant, project);
+        importService.startImport(transactionId, uploadRequestBody.getMapping(), tenant, project);
         return new ResponseEntity(HttpStatus.OK);
     }
-
 }

@@ -1,4 +1,4 @@
-package org.bmsource.dwh.importer.web;
+package org.bmsource.dwh.importer;
 
 import org.bmsource.dwh.common.appstate.AppStateService;
 import org.bmsource.dwh.common.fileManager.FileManager;
@@ -7,9 +7,6 @@ import org.bmsource.dwh.common.reader.DataHandler;
 import org.bmsource.dwh.common.reader.DataReader;
 import org.bmsource.dwh.common.reader.ExcelReader;
 import org.bmsource.dwh.common.reader.FactModelMapper;
-import org.bmsource.dwh.importer.Fact;
-import org.bmsource.dwh.importer.ImporterConfiguration;
-import org.bmsource.dwh.importer.web.UploadRequestBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -27,8 +24,14 @@ public class ImportService {
     @Autowired
     AppStateService appStateService;
 
+    public boolean checkRunningImport(String tenant, String project) {
+        Map<String, Object> state = appStateService.getState(tenant, project,
+            ImporterConfiguration.StateType.IMPORT_STATUS_STATE.getValue());
+        return state.get("running") != null && (Boolean) state.get("running");
+    }
+
     @Async("asyncExecutor")
-    public void startImport(String transactionId, UploadRequestBody uploadRequestBody, String tenant, String project) throws Exception {
+    public void startImport(String transactionId, Map<String, String> mapping, String tenant, String project) throws Exception {
         List<String> files = fileManager.getFiles(transactionId);
         final FactModelMapper<Fact>[] modelMapper = new FactModelMapper[]{null};
         for (String file : files) {
@@ -45,8 +48,7 @@ public class ImportService {
                                        int totalRowsCount) {
                         long before = System.currentTimeMillis();
                         if (modelMapper[0] == null) {
-                            modelMapper[0] = new FactModelMapper<>(Fact.class, header,
-                                uploadRequestBody.getMapping());
+                            modelMapper[0] = new FactModelMapper<>(Fact.class, header, mapping);
                         }
                         List<Fact> facts = modelMapper[0].mapList(rows);
                         System.out.println("Parsed from file " + file + " " + rowsCount + " of total " + totalRowsCount);
@@ -69,7 +71,6 @@ public class ImportService {
                         state.put("running", false);
                         appStateService.updateState(tenant, project,
                             ImporterConfiguration.StateType.IMPORT_STATUS_STATE.getValue(), state);
-                        // Trigger post process
                     }
                 });
             }
