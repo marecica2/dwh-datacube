@@ -35,7 +35,7 @@ public class ImporterConfiguration {
     @Bean
     public List<String> channels() {
         return  Stream.of(StateType.values())
-            .map(StateType::name)
+            .map(StateType::getValue)
             .collect(Collectors.toList());
     }
 }

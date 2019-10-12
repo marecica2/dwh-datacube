@@ -16,7 +16,6 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.PatternTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
@@ -59,7 +58,7 @@ public class AppStateConfiguration {
         for (String topic : channels) {
             for (String tenant : tenantRepository.getTenants()) {
                 for (String project : projectRepository.getProjects(tenant)) {
-                    String topicKey = appStateService.buildTopicKey(tenant, project);
+                    String topicKey = appStateService.buildTopicKey(tenant, project, topic);
                     logger.info("Registering topic channel {}", topicKey);
                     container.addMessageListener(messageListener, new PatternTopic(topicKey));
                 }
@@ -73,10 +72,8 @@ public class AppStateConfiguration {
     RedisTemplate template(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
-
-        GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer();
         template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(serializer);
+        template.setValueSerializer(new StringRedisSerializer());
         return template;
     }
 }

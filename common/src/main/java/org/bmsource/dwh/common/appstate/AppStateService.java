@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class AppStateService {
@@ -23,9 +24,10 @@ public class AppStateService {
             .toString();
     }
 
-    String buildTopicKey(String tenant, String project) {
+    String buildTopicKey(String tenant, String project, String topic) {
         return buildKeyPrefix(tenant, project)
-            .append("topic")
+            .append(":topic#")
+            .append(topic)
             .toString();
     }
 
@@ -38,8 +40,9 @@ public class AppStateService {
 
     public void updateState(String tenant, String project, String stateType, Map<String, Object> state) {
         String stateKey = buildStateKey(stateType, tenant, project);
-        String topic = buildTopicKey(tenant, project);
+        String topic = buildTopicKey(tenant, project, stateType);
         template.opsForHash().putAll(stateKey, state);
+        template.expire(stateKey, 10, TimeUnit.SECONDS);
         template.convertAndSend(topic, tenant + ":" + project);
     }
 

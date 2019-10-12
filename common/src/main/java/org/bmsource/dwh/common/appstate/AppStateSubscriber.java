@@ -12,8 +12,6 @@ import java.util.Map;
 @Component
 public class AppStateSubscriber implements MessageListener {
 
-    GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer();
-
     @Autowired
     NotificationService notificationService;
 
