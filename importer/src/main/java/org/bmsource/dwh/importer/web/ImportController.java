@@ -8,7 +8,7 @@ import org.bmsource.dwh.common.fileManager.FileManager;
 import org.bmsource.dwh.common.fileManager.FileSystemImpl;
 import org.bmsource.dwh.common.reader.*;
 import org.bmsource.dwh.importer.Fact;
-import org.bmsource.dwh.importer.ImportService;
+import org.bmsource.dwh.importer.SimpleImportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +28,7 @@ public class ImportController {
     private FileManager fileManager = new FileSystemImpl();
 
     @Autowired
-    ImportService importService;
+    SimpleImportService importService;
 
     @GetMapping
     public String initUpload() {
