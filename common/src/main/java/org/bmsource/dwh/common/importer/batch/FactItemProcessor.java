@@ -1,20 +1,32 @@
 package org.bmsource.dwh.common.importer.batch;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.bmsource.dwh.common.reader.FactModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.annotation.BeforeStep;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FactItemProcessor<Fact> implements ItemProcessor<List<Object>, Fact>, ImportContext {
+@StepScope
+@Component
+public class FactItemProcessor<Fact extends BaseFact> implements ItemProcessor<List<Object>, Fact>, ImportContext {
 
     private static final Logger log = LoggerFactory.getLogger(FactItemProcessor.class);
 
-    private Class<Fact> factClass;
+    @Value("#{jobParameters['mapping']}")
+    private String mappingString;
 
     private Map<String, String> mapping;
 
@@ -22,24 +34,28 @@ public class FactItemProcessor<Fact> implements ItemProcessor<List<Object>, Fact
 
     private FactModelMapper<Fact> rowMapper;
 
-    public FactItemProcessor(Class<Fact> factClass, Map<String, String> mapping) {
-        this.factClass = factClass;
-        this.mapping = mapping;
-    }
+    @Autowired
+    @Qualifier("sample")
+    public Fact fact;
 
     @BeforeStep
     public void beforeStep(StepExecution stepExecution) {
         this.stepExecution = stepExecution;
+        try {
+            String mappingString = stepExecution.getJobExecution().getJobParameters().getString("mapping");
+            this.mapping = new ObjectMapper().readValue(mappingString, HashMap.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public Fact process(final List<Object> row) {
         if (rowMapper == null) {
-            List<Object> header = (List<Object>) getFromContext(stepExecution.getExecutionContext(), headerKey);
-            rowMapper = new FactModelMapper<>(factClass, header, mapping);
+            String[] header = ((String) stepExecution.getExecutionContext().get(headerKey)).split(",");
+            rowMapper = new FactModelMapper<>((Class<Fact>)fact.getClass(), Arrays.asList(header), mapping);
         }
         Fact fact = rowMapper.mapRow(row);
-        System.out.println(fact);
         return fact;
     }
 

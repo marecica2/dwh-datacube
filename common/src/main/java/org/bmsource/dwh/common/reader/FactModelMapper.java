@@ -10,26 +10,23 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class FactModelMapper<T> {
+public class FactModelMapper<Fact> {
 
-    final Class<T> typeParameterClass;
-
-    private final Map<String, String> mapping;
+    private final Class<Fact> typeParameterClass;
 
     private final Map<Integer, String> indexMapping = new LinkedHashMap<>();
 
-    public FactModelMapper(Class<T> typeParameterClass, List<Object> columns, Map<String, String> mapping) {
+    public FactModelMapper(Class<Fact> typeParameterClass, List<String> columns, Map<String, String> mapping) {
         this.typeParameterClass = typeParameterClass;
-        this.mapping = mapping;
-        this.mapping.forEach((key, value) -> {
-            Optional<Object> o = columns.stream().filter(obj -> obj.toString().equals(key)).findFirst();
-            indexMapping.put(columns.indexOf(o.get()), value);
+        mapping.forEach((key, value) -> {
+            Optional<String> o = columns.stream().filter(obj -> obj.equals(key)).findFirst();
+            o.ifPresent(s -> indexMapping.put(columns.indexOf(s), value));
         });
     }
 
-    public T mapRow(List<Object> row) {
+    public Fact mapRow(List<Object> row) {
         try {
-            T fact = typeParameterClass.newInstance();
+            Fact fact = typeParameterClass.newInstance();
             this.indexMapping.forEach((index, attribute) -> {
                 if (row.size() > index) {
                     try {
@@ -46,7 +43,7 @@ public class FactModelMapper<T> {
         return null;
     }
 
-    public List<T> mapList(List<List<Object>> rows) {
+    public List<Fact> mapList(List<List<Object>> rows) {
         return rows.stream()
             .map(row -> mapRow(row))
             .collect(Collectors.toList());

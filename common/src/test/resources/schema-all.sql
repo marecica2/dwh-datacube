@@ -9,7 +9,7 @@ CREATE TABLE people
 DROP TABLE fact IF EXISTS;
 CREATE TABLE fact
 (
-    id  BIGINT IDENTITY NOT NULL PRIMARY KEY,
+    id             BIGINT IDENTITY NOT NULL PRIMARY KEY,
     transaction_id VARCHAR(255),
     business_unit  VARCHAR(255)
 );

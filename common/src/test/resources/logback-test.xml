@@ -19,7 +19,7 @@
     <logger name="org.springframework.transaction" level="INFO"/>
     <logger name="org.flywaydb.core.internal.database.ExecutableSqlScript" level="DEBUG"/>
     <!-- sql params -->
-    <logger name="org.springframework.jdbc.core.StatementCreatorUtils" level="TRACE" />
+    <logger name="org.springframework.jdbc.core.StatementCreatorUtils" level="INFO" />
 
     <logger name="org.bmsource" level="TRACE"/>
 

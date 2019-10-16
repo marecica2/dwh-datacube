@@ -1,8 +1,9 @@
 package org.bmsource.dwh.common.importer.batch;
 
-import org.bmsource.dwh.common.AbstractFact;
+import org.springframework.stereotype.Component;
 
-public class Fact extends AbstractFact {
+@Component("sample")
+public class Fact extends BaseFact {
 
     public Fact() {
         super();
@@ -36,7 +37,6 @@ public class Fact extends AbstractFact {
     @Override
     public String toString() {
         return "Fact{" +
-            "businessUnit='" + businessUnit + '\'' +
             ", transactionId='" + transactionId + '\'' +
             '}';
     }

@@ -1,12 +1,11 @@
-package org.bmsource.dwh.common;
+package org.bmsource.dwh.common.importer.batch;
 
 import com.google.common.base.CaseFormat;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
-public class AbstractFact {
+public class BaseFact {
     public String insertSQL() {
         String columns = String.join(
             ", ",
