@@ -1,14 +1,15 @@
 package org.bmsource.dwh.common.importer.batch;
 
-import org.springframework.batch.core.*;
+import org.springframework.batch.core.ItemWriteListener;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecutionListener;
+import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.job.builder.SimpleJobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.core.listener.JobExecutionListenerSupport;
 import org.springframework.batch.core.step.builder.SimpleStepBuilder;
-import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
@@ -19,7 +20,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -85,17 +85,6 @@ public class ImportJobConfiguration<Fact extends BaseFact> {
     @Qualifier("sample")
     private Fact fact;
 
-    @Bean
-    public ThreadPoolTaskExecutor taskExecutor() {
-        ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-        taskExecutor.setMaxPoolSize(2);
-        taskExecutor.setCorePoolSize(2);
-        taskExecutor.setQueueCapacity(10);
-        taskExecutor.afterPropertiesSet();
-        return taskExecutor;
-    }
-
-
     @Autowired
     private JdbcTemplate template;
 
@@ -125,18 +114,36 @@ public class ImportJobConfiguration<Fact extends BaseFact> {
         return stepBuilderFactory.get("partitionStep")
             .partitioner("slaveStep", partitioner)
             .step(slaveStep())
-            .taskExecutor(taskExecutor())
+            //.partitionHandler(partitionHandler())
             .build();
     }
+
+//    @Bean
+//    public TaskExecutor taskExecutor() {
+//        ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+//        taskExecutor.setMaxPoolSize(1);
+//        taskExecutor.setCorePoolSize(1);
+//        taskExecutor.setQueueCapacity(1);
+//        taskExecutor.afterPropertiesSet();
+//        return taskExecutor;
+//    }
+//    @Bean
+//    public PartitionHandler partitionHandler() {
+//        TaskExecutorPartitionHandler retVal = new TaskExecutorPartitionHandler();
+//        retVal.setTaskExecutor(taskExecutor());
+//        retVal.setStep(slaveStep());
+//        retVal.setGridSize(10);
+//        return retVal;
+//    }
 
     @Bean
     public Step slaveStep() {
         SimpleStepBuilder<List<Object>, Fact> slaveStep = stepBuilderFactory.get("slaveStep")
-            .<List<Object>, Fact>chunk(5000)
+            .<List<Object>, Fact>chunk(100)
             .reader(reader())
             .processor(processor)
             .writer(writer());
-        if(writeListener != null) {
+        if (writeListener != null) {
             slaveStep.listener(writeListener);
         }
         return slaveStep

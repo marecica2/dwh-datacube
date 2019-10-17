@@ -11,6 +11,7 @@ import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemStreamException;
 import org.springframework.batch.item.ItemStreamReader;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 
 @StepScope
 @Component
+@Scope("prototype")
 public class ExcelItemReader implements ItemStreamReader<List<Object>>, ImportContext {
 
     private Iterator<Row> rowIterator;
@@ -34,20 +36,23 @@ public class ExcelItemReader implements ItemStreamReader<List<Object>>, ImportCo
 
     private InputStream inputStream;
 
+    private ExecutionContext executionContext;
+
+    private int line = 0;
+
     @Override
     public List<Object> read() {
         List<Object> row = readSingleRow(this.rowIterator);
-        String rowStr = String.join("", row.stream()
-            .map(item -> item != null ? item.toString() : "")
-            .collect(Collectors.toList()));
-        if(rowStr.equals("")) {
-            return null;
+        if (row != null && row.size() > 0 && row.get(0) != null) {
+            System.out.println(line + "  " + row.get(0) + " " + Thread.currentThread().getName() + " " + executionContext.get("fileName") + " wb" + workbook.toString());
+            return row;
         }
-        return row;
+        return null;
     }
 
     @Override
     public void open(@NotNull ExecutionContext executionContext) throws ItemStreamException {
+        this.executionContext = executionContext;
         String fileName = (String) executionContext.get("fileName");
         File file = null;
         try {
@@ -78,7 +83,6 @@ public class ExcelItemReader implements ItemStreamReader<List<Object>>, ImportCo
 
     @Override
     public void update(@NotNull ExecutionContext executionContext) throws ItemStreamException {
-
     }
 
     @Override
@@ -102,6 +106,7 @@ public class ExcelItemReader implements ItemStreamReader<List<Object>>, ImportCo
                 rowContainer.add(sheetCell.getStringCellValue());
                 prevCellIndex = currentIndex;
             }
+            line++;
             return rowContainer;
         }
         return null;
