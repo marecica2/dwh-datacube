@@ -44,7 +44,7 @@ public class SimpleImportService {
                     }
 
                     @Override
-                    public void onRead(List<List<Object>> rows, List<Object> header, int rowsCount,
+                    public void onRead(List<List<Object>> rows, List<String> header, int rowsCount,
                                        int totalRowsCount) {
                         long before = System.currentTimeMillis();
                         if (modelMapper[0] == null) {

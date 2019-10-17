@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -31,6 +32,10 @@ public class ExcelReader implements DataReader {
             int totalRows = 0;
             List<List<Object>> rows = new LinkedList<>();
             List<Object> headerRow = readSingleRow(rowIterator);
+            List<String> headerStringRow = headerRow
+                .stream()
+                .map(Object::toString)
+                .collect(Collectors.toList());
             if (!headerExcluded) {
                 rows.add(headerRow);
             }
@@ -38,11 +43,11 @@ public class ExcelReader implements DataReader {
                 rows.add(readSingleRow(rowIterator));
                 totalRows++;
                 if (totalRows % batchSize == 0) {
-                    dataHandler.onRead(rows, headerRow, totalRows, sheet.getLastRowNum());
+                    dataHandler.onRead(rows, headerStringRow, totalRows, sheet.getLastRowNum());
                     rows = new LinkedList<>();
                 }
             }
-            dataHandler.onRead(rows, headerRow, totalRows, sheet.getLastRowNum());
+            dataHandler.onRead(rows, headerStringRow, totalRows, sheet.getLastRowNum());
             dataHandler.onFinish(sheet.getLastRowNum());
         }
     }
@@ -63,12 +68,14 @@ public class ExcelReader implements DataReader {
 
     @Override
     public MappingResult readHeaderRow(InputStream inputStream) throws Exception {
-        List<List<Object>> header = new ArrayList<>();
+        List<List<Object>> twoRows = new ArrayList<>();
         readExcelStream(inputStream, (rows, headerRow, totalRows, totalRowsCount) -> {
-                header.addAll(rows);
+                twoRows.addAll(rows);
             },
             2, 2, false);
-        return new MappingResult(header.get(0), header.get(1));
+        List<String> headerRow = twoRows.get(0).stream().map(Object::toString).collect(Collectors.toList());
+        List<Object> previewRow = twoRows.get(1);
+        return new MappingResult(headerRow, previewRow);
     }
 
     @Override

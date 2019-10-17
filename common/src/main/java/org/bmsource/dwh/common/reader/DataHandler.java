@@ -6,7 +6,7 @@ public interface DataHandler {
 
     default void onStart() { }
 
-    void onRead(List<List<Object>> rows, List<Object> header, int rowsCount, int totalRowsCount) throws InterruptedException;
+    void onRead(List<List<Object>> rows, List<String> header, int rowsCount, int totalRowsCount) throws InterruptedException;
 
     default void onFinish(int totalRowsCount) { }
 }

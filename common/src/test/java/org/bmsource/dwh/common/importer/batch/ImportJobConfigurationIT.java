@@ -9,7 +9,6 @@ import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -19,7 +18,7 @@ import java.util.*;
 @Configuration
 @SpringBatchTest
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {ImportJobConfiguration.class})
+@ContextConfiguration(classes = {TestConfig.class, ImportJobConfiguration.class})
 class ImportJobConfigurationIT {
 
     static List<String> files = new ArrayList<>(
@@ -42,22 +41,8 @@ class ImportJobConfigurationIT {
     @Autowired
     ImportJobConfiguration job;
 
-//    @Bean
-//    public JobExecutionListenerSupport listener() {
-//        return new JobExecutionListenerSupport() {
-//            private final Logger log = LoggerFactory.getLogger(ImportJobBuilderIT.class);
-//
-//            @Override
-//            public void afterJob(JobExecution jobExecution) {
-//                if (jobExecution.getStatus() == BatchStatus.COMPLETED) {
-//                    log.info("Job finished successfully");
-//                }
-//            }
-//        };
-//    }
-
     @Test
-    void testJob() throws Exception {
+    public void testJob() throws Exception {
         JobParametersBuilder params = new JobParametersBuilder();
         params.addString("tenant", "000000-00000-00001");
         params.addString("project", "1");

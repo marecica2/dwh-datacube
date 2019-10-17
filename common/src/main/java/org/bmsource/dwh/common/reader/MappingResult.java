@@ -4,15 +4,15 @@ import java.util.List;
 
 public class MappingResult {
 
-  private final List<Object> headerRow;
+  private final List<String> headerRow;
   private final List<Object> previewRow;
 
-  public MappingResult(List<Object> headerRow, List<Object> previewRow) {
+  public MappingResult(List<String> headerRow, List<Object> previewRow) {
     this.headerRow = headerRow;
     this.previewRow = previewRow;
   }
 
-  public List<Object> getHeaderRow() {
+  public List<String> getHeaderRow() {
     return headerRow;
   }
 

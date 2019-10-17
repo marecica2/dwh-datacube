@@ -26,7 +26,7 @@ public class MappingResponse {
 
   public interface Source {
 
-    Destination setSourceFields(List<Object> fields, List<Object> values);
+    Destination setSourceFields(List<String> fields, List<Object> values);
   }
 
   public interface Destination {
@@ -54,7 +54,7 @@ public class MappingResponse {
     }
 
     @Override
-    public Destination setSourceFields(List<Object> fields, List<Object> values) {
+    public Destination setSourceFields(List<String> fields, List<Object> values) {
       for (int i = 0; i < fields.size(); i++) {
         inputFields.put(fields.get(i).toString(), i < values.size() ? values.get(i) : null);
       }

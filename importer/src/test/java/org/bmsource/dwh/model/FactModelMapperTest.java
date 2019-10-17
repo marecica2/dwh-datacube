@@ -4,14 +4,16 @@ import org.bmsource.dwh.common.reader.FactModelMapper;
 import org.junit.jupiter.api.Test;
 
 import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class FactModelMapperTest {
+class FactModelMapperTest {
 
-    static Map<String, String> columnMapping = new HashMap<>();
-
+    private static Map<String, String> columnMapping = new HashMap<>();
     static {
         columnMapping.put("Service Type", "serviceType");
         columnMapping.put("Business Unit", "businessUnit");
@@ -21,12 +23,13 @@ public class FactModelMapperTest {
         columnMapping.put("Zone", "zone");
     }
 
-    List<Object> columns = Arrays.asList("S. No", "Supplier name", "Service Type", "Business Unit", "Zone", "Origin-City");
+    private List<String> columns = Arrays.asList("S. No", "Supplier name", "Service Type", "Business Unit", "Zone",
+        "Origin-City");
 
-    List<Object> dataRow = Arrays.asList("12345", "UPS", "Air mail", "BU1", "202", "Atlanta");
+    private List<Object> dataRow = Arrays.asList("12345", "UPS", "Air mail", "BU1", "202", "Atlanta");
 
     @Test
-    public void modelMapperTest() {
+    void modelMapperTest() {
         FactModelMapper<Fact> mapper = new FactModelMapper<>(Fact.class, columns, columnMapping);
         Fact fact = mapper.mapRow(dataRow);
         assertThat(fact.getSupplierName()).isEqualTo("UPS");

@@ -1,12 +1,13 @@
 package org.bmsource.dwh.common.importer.batch;
 
-import org.springframework.batch.core.ItemWriteListener;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.Step;
+import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.job.builder.SimpleJobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.listener.JobExecutionListenerSupport;
+import org.springframework.batch.core.step.builder.SimpleStepBuilder;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
@@ -17,6 +18,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import javax.sql.DataSource;
@@ -28,18 +30,53 @@ import java.util.List;
 @ComponentScan
 public class ImportJobConfiguration<Fact extends BaseFact> {
 
-    @Autowired
     private DataSource dataSource;
 
-    @Autowired
-    private JobBuilderFactory jobBuilderFactory;
-
-    @Autowired
     private StepBuilderFactory stepBuilderFactory;
 
-    @Autowired
     private ImportPartitioner partitioner;
 
+    private JobExecutionListener jobListener;
+
+    private ItemWriteListener writeListener;
+
+    @Autowired
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    @Autowired
+    public void setStepBuilderFactory(StepBuilderFactory stepBuilderFactory) {
+        this.stepBuilderFactory = stepBuilderFactory;
+    }
+
+    @Autowired
+    public void setPartitioner(ImportPartitioner partitioner) {
+        this.partitioner = partitioner;
+    }
+
+    @Autowired(required = false)
+    public void setJobListener(JobExecutionListener jobListener) {
+        this.jobListener = jobListener;
+    }
+
+    @Autowired(required = false)
+    public void setItemWriteListener(ItemWriteListener writeListener) {
+        this.writeListener = writeListener;
+    }
+
+    @Autowired
+    public void setProcessor(FactItemProcessor<Fact> processor) {
+        this.processor = processor;
+    }
+
+    public void setFact(Fact fact) {
+        this.fact = fact;
+    }
+
+    public void setTemplate(JdbcTemplate template) {
+        this.template = template;
+    }
 
     @Autowired
     private FactItemProcessor<Fact> processor;
@@ -53,10 +90,14 @@ public class ImportJobConfiguration<Fact extends BaseFact> {
         ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
         taskExecutor.setMaxPoolSize(2);
         taskExecutor.setCorePoolSize(2);
-        taskExecutor.setQueueCapacity(2);
+        taskExecutor.setQueueCapacity(10);
         taskExecutor.afterPropertiesSet();
         return taskExecutor;
     }
+
+
+    @Autowired
+    private JdbcTemplate template;
 
 
     @Bean
@@ -90,43 +131,27 @@ public class ImportJobConfiguration<Fact extends BaseFact> {
 
     @Bean
     public Step slaveStep() {
-        return stepBuilderFactory.get("slaveStep")
-            .<List<Object>, Fact>chunk(10)
+        SimpleStepBuilder<List<Object>, Fact> slaveStep = stepBuilderFactory.get("slaveStep")
+            .<List<Object>, Fact>chunk(5000)
             .reader(reader())
             .processor(processor)
-            .writer(writer())
-            .listener(listener())
+            .writer(writer());
+        if(writeListener != null) {
+            slaveStep.listener(writeListener);
+        }
+        return slaveStep
             .build();
     }
 
     @Bean
-    public ItemWriteListener listener() {
-        return new ItemWriteListener() {
-
-            @Override
-            public void beforeWrite(List items) {
-
-            }
-
-            @Override
-            public void afterWrite(List items) {
-                items.forEach(item -> {
-                    System.out.println(item);
-                });
-            }
-
-            @Override
-            public void onWriteError(Exception exception, List items) {
-
-            }
-        };
-    }
-
-    @Bean
-    public Job job() {
-        return jobBuilderFactory.get("importJob")
+    public Job createJob(@Autowired JobBuilderFactory jobBuilderFactory) {
+        SimpleJobBuilder jobBuilder = jobBuilderFactory.get("importJob")
             .incrementer(new RunIdIncrementer())
-            .start(partitionStep())
-            .build();
+            .start(partitionStep());
+        if (jobListener != null) {
+            jobBuilder = jobBuilder
+                .listener(jobListener);
+        }
+        return jobBuilder.build();
     }
 }
