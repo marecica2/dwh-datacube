@@ -5,10 +5,13 @@ import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.bmsource.dwh.common.fileManager.FileManager;
-import org.bmsource.dwh.common.fileManager.FileSystemImpl;
-import org.bmsource.dwh.common.reader.*;
+import org.bmsource.dwh.common.fileManager.TmpFileManager;
+import org.bmsource.dwh.common.importer.ImportService;
+import org.bmsource.dwh.common.reader.DataReader;
+import org.bmsource.dwh.common.reader.ExcelReader;
+import org.bmsource.dwh.common.reader.FactModelMapper;
+import org.bmsource.dwh.common.reader.MappingResult;
 import org.bmsource.dwh.importer.Fact;
-import org.bmsource.dwh.importer.SimpleImportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,10 +28,10 @@ import java.util.List;
 @RequestMapping("/import")
 public class ImportController {
 
-    private FileManager fileManager = new FileSystemImpl();
+    private FileManager fileManager = new TmpFileManager();
 
     @Autowired
-    SimpleImportService importService;
+    ImportService importService;
 
     @GetMapping
     public String initUpload() {
@@ -86,14 +89,11 @@ public class ImportController {
     @ResponseBody
     @PostMapping(value = "/{transactionId}/start", consumes = "application/json")
     public ResponseEntity start(@PathVariable("transactionId") String transactionId,
-                                @RequestBody UploadRequestBody uploadRequestBody) throws Exception {
-
+                                @RequestBody UploadRequestBody uploadRequestBody) {
         String tenant = "0000-0000-0000-0001";
         String project = "1";
-        if (importService.checkRunningImport(tenant, project)) {
-            return new ResponseEntity(HttpStatus.TOO_MANY_REQUESTS);
-        }
-        importService.startImport(transactionId, uploadRequestBody.getMapping(), tenant, project);
+        List<String> files = fileManager.getFiles(transactionId);
+        importService.runImport(tenant, project, transactionId, files, uploadRequestBody.getMapping());
         return new ResponseEntity(HttpStatus.OK);
     }
 }

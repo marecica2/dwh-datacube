@@ -1,9 +1,13 @@
 package org.bmsource.dwh.common.appstate;
 
+import org.bmsource.dwh.common.importer.batch.ImportContext;
 import org.bmsource.dwh.common.repository.ProjectRepository;
 import org.bmsource.dwh.common.repository.TenantRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.*;
+import org.springframework.batch.core.listener.JobExecutionListenerSupport;
+import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +23,10 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @EnableScheduling
 @Configuration

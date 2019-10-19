@@ -1,34 +1,39 @@
 package org.bmsource.dwh.common.importer.batch;
 
 import com.monitorjbl.xlsx.StreamingReader;
-import org.apache.commons.io.FileUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.bmsource.dwh.common.fileManager.FileManager;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemStreamException;
 import org.springframework.batch.item.ItemStreamReader;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ResourceUtils;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-@StepScope
 @Component
+@StepScope
 @Scope("prototype")
 public class ExcelItemReader implements ItemStreamReader<List<Object>>, ImportContext {
+
+    private Logger logger = LoggerFactory.getLogger(ExcelItemReader.class.getName());
+
+    private int rowsCount = -1;
 
     private Iterator<Row> rowIterator;
 
@@ -38,13 +43,19 @@ public class ExcelItemReader implements ItemStreamReader<List<Object>>, ImportCo
 
     private ExecutionContext executionContext;
 
-    private int line = 0;
+    @Value("#{jobParameters['transaction']}")
+    private String transaction;
+
+    @Value("#{stepExecutionContext['fileName']}")
+    private String fileName;
+
+    @Autowired
+    private FileManager fileManager;
 
     @Override
     public List<Object> read() {
         List<Object> row = readSingleRow(this.rowIterator);
         if (row != null && row.size() > 0 && row.get(0) != null) {
-            System.out.println(line + "  " + row.get(0) + " " + Thread.currentThread().getName() + " " + executionContext.get("fileName") + " wb" + workbook.toString());
             return row;
         }
         return null;
@@ -53,22 +64,19 @@ public class ExcelItemReader implements ItemStreamReader<List<Object>>, ImportCo
     @Override
     public void open(@NotNull ExecutionContext executionContext) throws ItemStreamException {
         this.executionContext = executionContext;
-        String fileName = (String) executionContext.get("fileName");
-        File file = null;
         try {
-            file = ResourceUtils.getFile(this.getClass().getResource(fileName));
-        } catch (FileNotFoundException e) {
-            throw new ItemStreamException(e);
-        }
-        try (
-            InputStream inputStream = FileUtils.openInputStream(file);
+            InputStream inputStream = fileManager.getStream(transaction, fileName);
             Workbook workbook = StreamingReader.builder()
                 .rowCacheSize(5000)
-                .bufferSize(32000)
-                .open(inputStream)) {
+                .bufferSize(1024)
+                .open(inputStream);
             this.inputStream = inputStream;
             this.workbook = workbook;
+
+            logger.debug("Excel file {} opened for reading", this.fileName);
             Sheet sheet = workbook.getSheetAt(0);
+            executionContext.put(ImportContext.totalRowsKey, sheet.getLastRowNum());
+            executionContext.put(ImportContext.rowsKey, 0);
             this.rowIterator = sheet.rowIterator();
             List<String> columns =
                 readSingleRow(this.rowIterator)
@@ -76,7 +84,13 @@ public class ExcelItemReader implements ItemStreamReader<List<Object>>, ImportCo
                     .map(Object::toString)
                     .collect(Collectors.toList());
             saveToContext(executionContext, ImportContext.headerKey, String.join(",", columns));
-        } catch (IOException e) {
+        } catch (Exception e) {
+            try {
+                this.workbook.close();
+                this.inputStream.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
             throw new ItemStreamException(e);
         }
     }
@@ -88,6 +102,7 @@ public class ExcelItemReader implements ItemStreamReader<List<Object>>, ImportCo
     @Override
     public void close() throws ItemStreamException {
         try {
+            logger.debug("Closing excel file " + this.fileName);
             this.workbook.close();
             this.inputStream.close();
         } catch (IOException e) {
@@ -97,17 +112,17 @@ public class ExcelItemReader implements ItemStreamReader<List<Object>>, ImportCo
 
     private List<Object> readSingleRow(Iterator<Row> rowIterator) {
         if (rowIterator.hasNext()) {
-            List<Object> rowContainer = new LinkedList<>();
+            List<Object> row = new LinkedList<>();
             int prevCellIndex = 0;
             Row sheetRow = rowIterator.next();
             for (Cell sheetCell : sheetRow) {
                 int currentIndex = sheetCell.getColumnIndex();
-                fillGaps(rowContainer, prevCellIndex, currentIndex);
-                rowContainer.add(sheetCell.getStringCellValue());
+                fillGaps(row, prevCellIndex, currentIndex);
+                row.add(sheetCell.getStringCellValue());
                 prevCellIndex = currentIndex;
             }
-            line++;
-            return rowContainer;
+            rowsCount++;
+            return row;
         }
         return null;
     }

@@ -1,0 +1,36 @@
+DROP TABLE IF EXISTS fact;
+
+CREATE TABLE fact
+(
+    id                   BIGSERIAL NOT NULL,
+    transaction_id       VARCHAR(255),
+    supplier_name        VARCHAR(255),
+    business_unit        VARCHAR(255),
+    origin_city          VARCHAR(255),
+    origin_state         VARCHAR(255),
+    origin_country       VARCHAR(255),
+    origin_zip           VARCHAR(255),
+    destination_city     VARCHAR(255),
+    destination_state    VARCHAR(255),
+    destination_country  VARCHAR(255),
+    destination_zip      VARCHAR(255),
+    zone                 VARCHAR(255),
+    shipment_date        VARCHAR(255),
+    delivery_date        VARCHAR(255),
+    service_type         VARCHAR(255),
+    billable_weight      VARCHAR(255),
+    actual_weight        VARCHAR(255),
+    length               VARCHAR(255),
+    width                VARCHAR(255),
+    height               VARCHAR(255),
+    cost                 VARCHAR(255),
+    accessorial_service1 VARCHAR(255),
+    accessorial_service2 VARCHAR(255),
+    accessorial_service3 VARCHAR(255),
+    accessorial_charge1  VARCHAR(255),
+    accessorial_charge2  VARCHAR(255),
+    accessorial_charge3  VARCHAR(255),
+    discount             VARCHAR(255),
+    distance             VARCHAR(255),
+    constraint fact_uniq unique (ID)
+);

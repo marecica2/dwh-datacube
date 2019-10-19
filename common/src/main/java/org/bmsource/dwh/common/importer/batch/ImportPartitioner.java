@@ -24,15 +24,18 @@ public class ImportPartitioner implements Partitioner {
 
     @Override
     public Map<String, ExecutionContext> partition(int gridSize) {
-        String[] files = this.files.split(",");
-        Map<String, ExecutionContext> map = new HashMap<>(files.length);
-        int i = 0, k = 1;
-        for (String file : files) {
-            ExecutionContext context = new ExecutionContext();
-            context.putString("fileName", file);
-            map.put(PARTITION_KEY + i, context);
-            i++;
+        if(this.files != null) {
+            String[] files = this.files.split(",");
+            Map<String, ExecutionContext> map = new HashMap<>(files.length);
+            int i = 0, k = 1;
+            for (String file : files) {
+                ExecutionContext context = new ExecutionContext();
+                context.putString("fileName", file);
+                map.put(PARTITION_KEY + i, context);
+                i++;
+            }
+            return map;
         }
-        return map;
+        return new HashMap<>();
     }
 };

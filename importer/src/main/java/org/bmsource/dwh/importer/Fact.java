@@ -1,8 +1,12 @@
 package org.bmsource.dwh.importer;
 
+import org.bmsource.dwh.common.BaseFact;
+
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-public class Fact {
+@Table(name = "fact")
+public class Fact extends BaseFact {
 
   String transactionId;
 

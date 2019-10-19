@@ -1,11 +1,13 @@
 package org.bmsource.dwh.common.importer;
 
 import org.bmsource.dwh.common.BaseFact;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -18,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+@SpringBootTest
 @Component
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {ImportService.class})
@@ -29,7 +32,6 @@ public class ImportServiceIT {
     private List<String> files = new ArrayList<String>() {{
         add("/spends.xlsx");
         add("/spends2.xlsx");
-        add("/spends3.xlsx");
     }};
     private Map<String, String> mapping = new LinkedHashMap<String, String>() {{
         put("Service Type", "serviceType");
@@ -63,8 +65,10 @@ public class ImportServiceIT {
     }
 
     @Test
-    public void testRunImport() {
+    public void testImport() {
         importService.runImport(tenant, project, transaction, files, mapping);
+        int importedRows = template.queryForObject("SELECT count(*) FROM fact", Integer.class);
+        Assertions.assertEquals(476, importedRows);
     }
 
     @Table(name = "fact")

@@ -13,7 +13,7 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
 
 @Service
-public class FileSystemImpl implements FileManager {
+public class TmpFileManager implements FileManager {
 
   private static String SLASH = FileSystems.getDefault().getSeparator();
 

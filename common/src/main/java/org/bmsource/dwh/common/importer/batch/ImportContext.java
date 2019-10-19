@@ -5,6 +5,7 @@ import org.springframework.batch.item.ExecutionContext;
 public interface ImportContext {
     String headerKey = "header";
     String totalRowsKey = "totalRows";
+    String rowsKey = "rows";
     String fileNameKey = "fileName";
     String filesKey = "files";
     String tenantKey = "tenant";

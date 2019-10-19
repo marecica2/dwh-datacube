@@ -1,15 +1,21 @@
 package org.bmsource.dwh.common.importer.batch;
 
 import org.bmsource.dwh.common.BaseFact;
-import org.springframework.batch.core.ItemWriteListener;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobExecutionListener;
-import org.springframework.batch.core.Step;
+import org.bmsource.dwh.common.appstate.AppStateConfiguration;
+import org.bmsource.dwh.common.appstate.AppStateService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.SimpleJobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.listener.JobExecutionListenerSupport;
+import org.springframework.batch.core.partition.PartitionHandler;
+import org.springframework.batch.core.partition.support.TaskExecutorPartitionHandler;
+import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.builder.SimpleStepBuilder;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
@@ -20,9 +26,14 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import javax.sql.DataSource;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Configuration
 @EnableBatchProcessing
@@ -30,19 +41,30 @@ import java.util.List;
 @ComponentScan
 public class ImportJobConfiguration<Fact extends BaseFact> {
 
+    private Logger logger = LoggerFactory.getLogger(ImportJobConfiguration.class);
+
+    private static final int BATCH_SIZE = 5000;
+
+    private static final int MAX_CONCURRENT_FILES = 10;
+
     private DataSource dataSource;
 
     private StepBuilderFactory stepBuilderFactory;
 
-    private ImportPartitioner partitioner;
+    private ImportPartitioner excelImportPartitioner;
 
     private JobExecutionListener jobListener;
 
     private ItemWriteListener writeListener;
 
+    private ChunkListener chunkListener;
+
     private FactItemProcessor<Fact> processor;
 
     private Fact fact;
+
+    @Autowired
+    AppStateService appStateService;
 
     @Autowired
     public void setDataSource(DataSource dataSource) {
@@ -55,8 +77,8 @@ public class ImportJobConfiguration<Fact extends BaseFact> {
     }
 
     @Autowired
-    public void setPartitioner(ImportPartitioner partitioner) {
-        this.partitioner = partitioner;
+    public void setExcelImportPartitioner(ImportPartitioner excelImportPartitioner) {
+        this.excelImportPartitioner = excelImportPartitioner;
     }
 
     @Autowired(required = false)
@@ -67,6 +89,11 @@ public class ImportJobConfiguration<Fact extends BaseFact> {
     @Autowired(required = false)
     public void setItemWriteListener(ItemWriteListener writeListener) {
         this.writeListener = writeListener;
+    }
+
+    @Autowired(required = false)
+    public void setChunkListener(ChunkListener chunkListener) {
+        this.chunkListener = chunkListener;
     }
 
     @Autowired
@@ -96,60 +123,147 @@ public class ImportJobConfiguration<Fact extends BaseFact> {
     }
 
     @Bean
+    @StepScope
     public ExcelItemReader reader() {
         return new ExcelItemReader();
     }
 
     @Bean
-    public Step partitionStep() {
-        return stepBuilderFactory.get("partitionStep")
-            .partitioner("slaveStep", partitioner)
-            .step(slaveStep())
-            //.partitionHandler(partitionHandler())
+    public Step excelReadPartitionStep() {
+        return stepBuilderFactory.get("excelReadPartitionStep")
+            .partitioner("excelReadPartitioner", excelImportPartitioner)
+            .partitionHandler(excelReadPartitioner())
             .build();
     }
 
-//    @Bean
-//    public TaskExecutor taskExecutor() {
-//        ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-//        taskExecutor.setMaxPoolSize(1);
-//        taskExecutor.setCorePoolSize(1);
-//        taskExecutor.setQueueCapacity(1);
-//        taskExecutor.afterPropertiesSet();
-//        return taskExecutor;
-//    }
-//    @Bean
-//    public PartitionHandler partitionHandler() {
-//        TaskExecutorPartitionHandler retVal = new TaskExecutorPartitionHandler();
-//        retVal.setTaskExecutor(taskExecutor());
-//        retVal.setStep(slaveStep());
-//        retVal.setGridSize(10);
-//        return retVal;
-//    }
+    @Bean
+    public PartitionHandler excelReadPartitioner() {
+        TaskExecutorPartitionHandler partitionHandler = new TaskExecutorPartitionHandler();
+        partitionHandler.setTaskExecutor(taskExecutor());
+        partitionHandler.setStep(excelReadStep());
+        partitionHandler.setGridSize(MAX_CONCURRENT_FILES);
+        return partitionHandler;
+    }
 
     @Bean
-    public Step slaveStep() {
-        SimpleStepBuilder<List<Object>, Fact> slaveStep = stepBuilderFactory.get("slaveStep")
-            .<List<Object>, Fact>chunk(100)
+    public Step excelReadStep() {
+        SimpleStepBuilder<List<Object>, Fact> step = stepBuilderFactory.get("excelReadStep")
+            .<List<Object>, Fact>chunk(BATCH_SIZE)
             .reader(reader())
             .processor(processor)
             .writer(writer());
         if (writeListener != null) {
-            slaveStep.listener(writeListener);
+            step.listener(writeListener);
         }
-        return slaveStep
+        if (chunkListener != null) {
+            step.listener(chunkListener);
+        }
+        return step
             .build();
     }
 
     @Bean
     public Job importJob(@Autowired JobBuilderFactory jobBuilderFactory) {
         SimpleJobBuilder jobBuilder = jobBuilderFactory.get("importJob")
-            .incrementer(new RunIdIncrementer())
-            .start(partitionStep());
+            //.incrementer(new RunIdIncrementer())
+            .start(excelReadPartitionStep());
         if (jobListener != null) {
             jobBuilder = jobBuilder
                 .listener(jobListener);
         }
         return jobBuilder.build();
+    }
+
+    @Bean
+    public JobExecutionListener jobListener() {
+        JobExecutionListener listener = new JobExecutionListenerSupport() {
+
+            @Autowired
+            AppStateService appStateService;
+
+            @Override
+            public void beforeJob(JobExecution jobExecution) {
+                String tenant = jobExecution.getJobParameters().getString("tenant");
+                if(tenant == null)
+                    return;
+
+                String transaction = jobExecution.getJobParameters().getString("transaction");
+                String project = jobExecution.getJobParameters().getString("project");
+                List<String> files =
+                    Arrays.asList((jobExecution.getJobParameters().getString("files")).split(","));
+                Map<String, Object> state = new HashMap<>();
+
+                logger.info("Import started for tenant {} project {} transaction {}", tenant, project, transaction);
+
+                state.put("running", true);
+                state.put("file", 0);
+                state.put("files", files.size());
+                state.put("fileName", "");
+                state.put("rowsCount", 0);
+                state.put("totalRowsCount", 0);
+                appStateService.updateState(tenant, project, "importStatus", state);
+            }
+
+            @Override
+            public void afterJob(JobExecution jobExecution) {
+                String tenant = jobExecution.getJobParameters().getString("tenant");
+                if(tenant == null)
+                    return;
+
+                String project = jobExecution.getJobParameters().getString("project");
+                Map<String, Object> state = new HashMap<>();
+                state.put("running", false);
+                appStateService.updateState(tenant, project, "importStatus", state);
+            }
+        };
+        return listener;
+    }
+
+    @Bean
+    public ChunkListener chunkListener() {
+        return new ChunkListener() {
+
+            @Override
+            public void beforeChunk(ChunkContext context) {
+            }
+
+            @Override
+            public void afterChunk(ChunkContext context) {
+                Map<String, Object> ec = context.getStepContext().getStepExecutionContext();
+                int rows = context.getStepContext().getStepExecution().getWriteCount();
+                int totalRows = (Integer) ec.get("totalRows");
+
+                String tenant = (String) context.getStepContext().getJobParameters().get(ImportContext.tenantKey);
+                String project = (String) context.getStepContext().getJobParameters().get(ImportContext.projectKey);
+                String file = (String) ec.get(ImportContext.fileNameKey);
+                List<String> files =
+                    Arrays.asList(((String)context.getStepContext().getJobParameters().get("files")).split(","));
+
+                logger.info("Import {} {} of {} rows", file, rows, totalRows);
+
+                Map<String, Object> state = new HashMap<>();
+                state.put("running", true);
+                state.put("file", files.indexOf(file) + 1);
+                state.put("files", files.size());
+                state.put("fileName", file);
+                state.put("rowsCount", rows);
+                state.put("totalRowsCount", totalRows);
+                appStateService.updateState(tenant, project, "importStatus", state);
+            }
+
+            @Override
+            public void afterChunkError(ChunkContext context) {
+            }
+        };
+    }
+
+    @Bean
+    public TaskExecutor taskExecutor() {
+        ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+        taskExecutor.setMaxPoolSize(MAX_CONCURRENT_FILES);
+        taskExecutor.setCorePoolSize(MAX_CONCURRENT_FILES / 2);
+        taskExecutor.setQueueCapacity(MAX_CONCURRENT_FILES / 2);
+        taskExecutor.afterPropertiesSet();
+        return taskExecutor;
     }
 }

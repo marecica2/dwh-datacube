@@ -1,8 +1,10 @@
 package org.bmsource.dwh.importer;
 
-import org.bmsource.dwh.common.appstate.EnableAppStateManagement;
+import org.bmsource.dwh.common.appstate.EnableImportEvents;
+import org.bmsource.dwh.common.importer.ImportService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 import java.util.Arrays;
 import java.util.List;
@@ -10,11 +12,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Configuration
-@EnableAppStateManagement
+@Import(ImportService.class)
 public class ImporterConfiguration {
 
     public enum StateType {
-        IMPORT_STATUS_STATE ("importStatus");
+        IMPORT_STATUS_STATE("importStatus");
 
         private String value;
 
@@ -32,10 +34,15 @@ public class ImporterConfiguration {
         }
     }
 
-    @Bean
-    public List<String> channels() {
-        return  Stream.of(StateType.values())
-            .map(StateType::getValue)
-            .collect(Collectors.toList());
+    @Bean("fact")
+    public Fact fact() {
+        return new Fact();
     }
+
+//    @Bean
+//    public List<String> channels() {
+//        return  Stream.of(StateType.values())
+//            .map(StateType::getValue)
+//            .collect(Collectors.toList());
+//    }
 }

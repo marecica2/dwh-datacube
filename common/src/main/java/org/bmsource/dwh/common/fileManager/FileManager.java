@@ -1,9 +1,12 @@
 package org.bmsource.dwh.common.fileManager;
 
+import org.springframework.context.annotation.Profile;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+@Profile("unit-test")
 public interface FileManager {
 
   String createTransaction();
