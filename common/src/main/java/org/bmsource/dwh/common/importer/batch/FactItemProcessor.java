@@ -1,6 +1,7 @@
 package org.bmsource.dwh.common.importer.batch;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.bmsource.dwh.common.BaseFact;
 import org.bmsource.dwh.common.reader.FactModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,9 +35,13 @@ public class FactItemProcessor<Fact extends BaseFact> implements ItemProcessor<L
 
     private FactModelMapper<Fact> rowMapper;
 
+    private Fact fact;
+
     @Autowired
-    @Qualifier("sample")
-    public Fact fact;
+    @Qualifier("fact")
+    public void setFact(Fact fact) {
+        this.fact = fact;
+    }
 
     @BeforeStep
     public void beforeStep(StepExecution stepExecution) {

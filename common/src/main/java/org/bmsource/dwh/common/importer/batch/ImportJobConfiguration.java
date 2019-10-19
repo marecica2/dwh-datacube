@@ -1,5 +1,6 @@
 package org.bmsource.dwh.common.importer.batch;
 
+import org.bmsource.dwh.common.BaseFact;
 import org.springframework.batch.core.ItemWriteListener;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecutionListener;
@@ -19,7 +20,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -39,6 +39,10 @@ public class ImportJobConfiguration<Fact extends BaseFact> {
     private JobExecutionListener jobListener;
 
     private ItemWriteListener writeListener;
+
+    private FactItemProcessor<Fact> processor;
+
+    private Fact fact;
 
     @Autowired
     public void setDataSource(DataSource dataSource) {
@@ -70,24 +74,11 @@ public class ImportJobConfiguration<Fact extends BaseFact> {
         this.processor = processor;
     }
 
+    @Autowired
+    @Qualifier("fact")
     public void setFact(Fact fact) {
         this.fact = fact;
     }
-
-    public void setTemplate(JdbcTemplate template) {
-        this.template = template;
-    }
-
-    @Autowired
-    private FactItemProcessor<Fact> processor;
-
-    @Autowired
-    @Qualifier("sample")
-    private Fact fact;
-
-    @Autowired
-    private JdbcTemplate template;
-
 
     @Bean
     JdbcBatchItemWriter<Fact> writer() {
@@ -151,7 +142,7 @@ public class ImportJobConfiguration<Fact extends BaseFact> {
     }
 
     @Bean
-    public Job createJob(@Autowired JobBuilderFactory jobBuilderFactory) {
+    public Job importJob(@Autowired JobBuilderFactory jobBuilderFactory) {
         SimpleJobBuilder jobBuilder = jobBuilderFactory.get("importJob")
             .incrementer(new RunIdIncrementer())
             .start(partitionStep());

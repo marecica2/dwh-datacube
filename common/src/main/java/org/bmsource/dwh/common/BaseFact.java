@@ -1,4 +1,4 @@
-package org.bmsource.dwh.common.importer.batch;
+package org.bmsource.dwh.common;
 
 import com.google.common.base.CaseFormat;
 
