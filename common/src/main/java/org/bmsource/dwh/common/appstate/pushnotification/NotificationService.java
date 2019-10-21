@@ -5,5 +5,5 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 public interface NotificationService {
     SseEmitter initSseEmitters(String tenant, String projectId);
 
-    <M extends Object> void sendSseEvent(M message);
+    <M extends Object> void sendSseEvent(String tenant, String projectId, M message);
 }

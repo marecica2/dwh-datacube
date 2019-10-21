@@ -6,39 +6,47 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class NotificationServiceImpl implements NotificationService {
-    private static final List<SseEmitter> emitters = Collections.synchronizedList(new ArrayList<>());
+    private static final Map<String, List<SseEmitter>> emittersMap = Collections.synchronizedMap(new HashMap<>());
 
     @Scheduled(fixedRate = 30000)
     public void heartbeat() {
         List<SseEmitter> sseEmitterListToRemove = new ArrayList<>();
-        emitters.forEach((SseEmitter emitter) -> {
-            try {
-                emitter.send("heartbeat", MediaType.TEXT_PLAIN);
-            } catch (IOException e) {
-                emitter.complete();
-                sseEmitterListToRemove.add(emitter);
-                e.printStackTrace();
-            }
-        });
-        emitters.removeAll(sseEmitterListToRemove);
+        for (List<SseEmitter> emitters : emittersMap.values()) {
+            emitters.forEach((SseEmitter emitter) -> {
+                try {
+                    emitter.send("heartbeat", MediaType.TEXT_PLAIN);
+                } catch (IOException e) {
+                    emitter.complete();
+                    sseEmitterListToRemove.add(emitter);
+                    e.printStackTrace();
+                }
+            });
+            emitters.removeAll(sseEmitterListToRemove);
+        }
     }
 
     @Override
     public SseEmitter initSseEmitters(String tenant, String projectId) {
+        String key = tenant + projectId;
+        List<SseEmitter> emmiters = emittersMap.get(key);
+        if (emmiters == null) {
+            emmiters = Collections.synchronizedList(new ArrayList<>());
+            emittersMap.put(key, emmiters);
+        }
         SseEmitter emitter = new SseEmitter((long) (1000 * 60));
-        emitters.add(emitter);
-        emitter.onCompletion(() -> emitters.remove(emitter));
+        emitter.onCompletion(() -> emittersMap.get(key).remove(emitter));
+        emmiters.add(emitter);
         return emitter;
     }
 
     @Override
-    public <M> void sendSseEvent(M message) {
+    public <M> void sendSseEvent(String tenant, String projectId, M message) {
+        String key = tenant + projectId;
+        List<SseEmitter> emitters = emittersMap.get(key);
         List<SseEmitter> sseEmitterListToRemove = new ArrayList<>();
         emitters.forEach((SseEmitter emitter) -> {
             try {
