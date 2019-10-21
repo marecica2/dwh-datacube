@@ -1,4 +1,5 @@
 import dwhAxios from './dwhAxios';
+import { portalApiPath } from '../../settings';
 
 const constantHeaders = {
   Accept: 'application/json',
@@ -6,17 +7,18 @@ const constantHeaders = {
 };
 
 const httpRequest = (url, options = {}) => {
+  const projectId = sessionStorage.projectId;
   const {
     method = 'GET',
-    headers: defaultHeaders = {},
-    params: defaultParams = {},
+    headers: defaultHeaders = { 'x-tenant': sessionStorage.tenant },
+    params: defaultParams = { },
     data: defaultData,
     ...otherOptions
   } = options;
 
   return ({ headers = {}, params = {}, data, ...other } = {}) => {
     return dwhAxios({
-      url,
+      url: `${portalApiPath}/${projectId}${url}`,
       method,
       headers: {
         ...constantHeaders,

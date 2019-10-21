@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.testcontainers.shaded.javax.ws.rs.HeaderParam;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -25,7 +26,7 @@ import java.util.List;
 
 
 @RestController()
-@RequestMapping("/import")
+@RequestMapping("{projectId}/import")
 public class ImportController {
 
     private FileManager fileManager = new TmpFileManager();
@@ -39,8 +40,10 @@ public class ImportController {
     }
 
     @PostMapping("/{transactionId}")
-    public List<String> fileUpload(HttpServletRequest request, @PathVariable("transactionId") String transactionId) throws IOException, FileUploadException {
-
+    public List<String> fileUpload(HttpServletRequest request,
+                                   @PathVariable("projectId") String projectId,
+                                   @PathVariable("transactionId") String transactionId) throws IOException,
+        FileUploadException {
         List<String> files = new ArrayList<>();
         if (ServletFileUpload.isMultipartContent(request)) {
             ServletFileUpload upload = new ServletFileUpload();
@@ -61,9 +64,9 @@ public class ImportController {
     }
 
     @PostMapping(value = "/{transactionId}/mapping", consumes = "application/json")
-    public MappingResponse columnMapping(@PathVariable("transactionId") String transactionId,
+    public MappingResponse columnMapping(@PathVariable("projectId") String projectId,
+                                         @PathVariable("transactionId") String transactionId,
                                          @RequestBody MappingRequestBody filesParam) throws Exception {
-
         List<String> files = fileManager.getFiles(transactionId);
         try (InputStream stream = fileManager.getStream(transactionId, files.get(0))) {
             DataReader reader = new ExcelReader();
@@ -74,7 +77,8 @@ public class ImportController {
     }
 
     @PostMapping(value = "/{transactionId}/preview", consumes = "application/json")
-    public List<Fact> preview(@PathVariable("transactionId") String transactionId,
+    public List<Fact> preview(@PathVariable("projectId") String projectId,
+                              @PathVariable("transactionId") String transactionId,
                               @RequestBody PreviewRequestBody mappingParam) throws Exception {
 
         List<String> files = fileManager.getFiles(transactionId);
@@ -88,12 +92,12 @@ public class ImportController {
 
     @ResponseBody
     @PostMapping(value = "/{transactionId}/start", consumes = "application/json")
-    public ResponseEntity start(@PathVariable("transactionId") String transactionId,
+    public ResponseEntity start(@HeaderParam("x-tenant") String tenant,
+                                @PathVariable("projectId") String projectId,
+                                @PathVariable("transactionId") String transactionId,
                                 @RequestBody UploadRequestBody uploadRequestBody) {
-        String tenant = "0000-0000-0000-0001";
-        String project = "1";
         List<String> files = fileManager.getFiles(transactionId);
-        importService.runImport(tenant, project, transactionId, files, uploadRequestBody.getMapping());
+        importService.runImport(tenant, projectId, transactionId, files, uploadRequestBody.getMapping());
         return new ResponseEntity(HttpStatus.OK);
     }
 }

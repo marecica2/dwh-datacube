@@ -1,6 +1,6 @@
 import { portalApiPath } from '../../settings';
 
-const getAppStateUrl = () => `${portalApiPath}/status`;
+const getAppStateUrl = (tenant, project) => `${portalApiPath}/${tenant}/${project}/status`;
 
 export default {
   getAppStateUrl,

@@ -35,7 +35,7 @@ const useStyles = makeStyles(theme => ({
 export default function Import() {
   const classes = useStyles();
   const appContext = useContext(AppContext);
-  const { importStatus } = appContext;
+  const { appState: { importStatus } } = appContext;
 
   const steps = [fileUploadStepDescription, mappingStepDescription, previewStepDescription, configStepDescription];
   const [activeStep, setActiveStep] = React.useState(0);

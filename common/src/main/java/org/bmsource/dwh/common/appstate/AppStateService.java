@@ -1,7 +1,11 @@
 package org.bmsource.dwh.common.appstate;
 
+import org.bmsource.dwh.common.appstate.pushnotification.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.connection.Message;
+import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedHashMap;
@@ -9,10 +13,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-@Service
-public class AppStateService {
+@Component
+public class AppStateService implements MessageListener {
 
     private static final String APP_STATE_CHANNEL = "appState";
+
+    @Autowired
+    NotificationService notificationService;
 
     @Autowired
     RedisTemplate<String, Object> template;
@@ -59,7 +66,12 @@ public class AppStateService {
         return result;
     }
 
-    public Map<String, Object> getState(String tenant, String project, String stateType) {
-        return template.<String, Object>opsForHash().entries(buildStateKey(stateType, tenant, project));
+    public void onMessage(final Message message, final byte[] pattern) {
+        String[] params = new String(message.getBody()).split(":");
+        String tenant = params[0];
+        String project = params[1];
+        Map<String, Map<String, Object>> state = getState(tenant, project);
+        notificationService.sendSseEvent(state);
     }
+
 }

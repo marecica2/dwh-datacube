@@ -1,17 +1,19 @@
 import clsx from 'clsx';
-import {makeStyles} from '@material-ui/core/styles';
+import React, { useContext } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Badge from '@material-ui/core/Badge';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
-import { IconButton } from '@material-ui/core/';
+import { Button, IconButton } from '@material-ui/core/';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MailIcon from '@material-ui/icons/Mail';
 import MenuIcon from '@material-ui/icons/Menu';
 import Typography from '@material-ui/core/Typography';
-import React from 'react';
-import {NavLink as Link} from 'react-router-dom';
+import { NavLink as Link } from 'react-router-dom';
+
+import AppContext from '../context/AppContext';
 
 const drawerWidth = 240;
 
@@ -48,6 +50,9 @@ function AppMenu(props) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
 
+  const appContext = useContext(AppContext);
+  const [projectMenu, setProjectMenu] = React.useState(null);
+
   function handleMenu(event) {
     setAnchorEl(event.currentTarget);
   }
@@ -60,8 +65,8 @@ function AppMenu(props) {
     <AppBar
       position="fixed"
       className={clsx(classes.appBar, {
-            [classes.appBarShift]: props.open,
-          })}
+        [classes.appBarShift]: props.open,
+      })}
     >
       <Toolbar>
         <IconButton
@@ -70,12 +75,11 @@ function AppMenu(props) {
           onClick={props.menuIconClick}
           edge="start"
           className={clsx(classes.menuButton, {
-                [classes.hide]: props.open,
-              })}
+            [classes.hide]: props.open,
+          })}
         >
-          <MenuIcon />
+          <MenuIcon/>
         </IconButton>
-
 
         <Typography
           variant="h5"
@@ -87,17 +91,72 @@ function AppMenu(props) {
           DataCube
         </Typography>
 
+        <AppContext.Consumer>
+          {({ appState, setProject }) => (
+            <div>
+              <Button
+                className={classes.button}
+                color="inherit"
+              >
+                {appState.tenant.name}
+              </Button>
+
+              <Button
+                className={classes.button}
+                aria-controls="projectSelection"
+                aria-haspopup="true"
+                onClick={event => setProjectMenu(event.currentTarget)}
+                color="inherit"
+              >
+                Project&nbsp;
+                {appState.projectId}
+              </Button>
+              <Menu
+                id="projectSelection"
+                anchorEl={projectMenu}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={Boolean(projectMenu)}
+                onClose={() => setProjectMenu(null)}
+              >
+                <MenuItem onClick={() => {
+                  setProject('1');
+                  setProjectMenu(null)
+                }}
+                >
+                  Project 1
+                </MenuItem>
+                <MenuItem onClick={() => {
+                  setProject('2');
+                  setProjectMenu(null)
+                }}
+                >
+                  Project 2
+                </MenuItem>
+              </Menu>
+            </div>
+          )}
+        </AppContext.Consumer>
+
         <IconButton
           color="inherit"
           onClick={props.menuIconClick}
         >
           <Badge className={classes.margin} badgeContent={4} color="error">
-            <MailIcon />
+            <MailIcon/>
           </Badge>
         </IconButton>
+
         <IconButton
           className={classes.button}
-          aria-controls="menu-appbar"
+          aria-controls="userMenu"
           aria-haspopup="true"
           onClick={handleMenu}
           color="inherit"
@@ -107,20 +166,21 @@ function AppMenu(props) {
           />
         </IconButton>
         <Menu
-          id="menu-appbar"
+          id="userMenu"
           anchorEl={anchorEl}
           anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
+            vertical: 'top',
+            horizontal: 'right',
+          }}
           keepMounted
           transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
+            vertical: 'top',
+            horizontal: 'right',
+          }}
           open={open}
           onClose={handleClose}
         >
+
           <MenuItem onClick={handleClose}>User preferences</MenuItem>
           <MenuItem onClick={handleClose}>Sign out</MenuItem>
         </Menu>

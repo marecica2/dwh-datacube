@@ -1,6 +1,6 @@
 import React from 'react';
 import { Router, Route, Switch } from 'react-router-dom';
-import {makeStyles, useTheme} from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
 import history from './history';
@@ -38,17 +38,17 @@ function App() {
 
   return (
     <div className={classes.root}>
+      <CssBaseline/>
       <AppContextDataProvider>
-        <CssBaseline />
         <Router history={history}>
-          <Menu open={isSidebarOpen} menuIconClick={handleDrawerOpen} />
-          <Sidebar handleDrawerClose={handleDrawerClose} isSidebarOpen={isSidebarOpen} />
+          <Menu open={isSidebarOpen} menuIconClick={handleDrawerOpen}/>
+          <Sidebar handleDrawerClose={handleDrawerClose} isSidebarOpen={isSidebarOpen}/>
           <main className={classes.content}>
             <Switch>
-              <Route path="/category/supplier" component={Supplier} />
-              <Route path="/category/service-type" component={ServiceType} />
-              <Route path="/import" component={Import} />
-              <Route path="/" strict component={Home} />
+              <Route path="/category/supplier" component={Supplier}/>
+              <Route path="/category/service-type" component={ServiceType}/>
+              <Route path="/import" component={Import}/>
+              <Route path="/" strict component={Home}/>
             </Switch>
           </main>
         </Router>

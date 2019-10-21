@@ -1,7 +1,6 @@
 import { httpRequest } from '../utils';
-import { portalApiPath } from '../../settings';
 
-const baseUrl = `${portalApiPath}/import`;
+const baseUrl = '/import';
 
 export default {
   initImport: async (options) => {

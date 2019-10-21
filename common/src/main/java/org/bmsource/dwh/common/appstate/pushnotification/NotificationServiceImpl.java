@@ -30,7 +30,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public SseEmitter initSseEmitters() {
+    public SseEmitter initSseEmitters(String tenant, String projectId) {
         SseEmitter emitter = new SseEmitter((long) (1000 * 60));
         emitters.add(emitter);
         emitter.onCompletion(() -> emitters.remove(emitter));
