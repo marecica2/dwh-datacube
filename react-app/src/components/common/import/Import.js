@@ -12,7 +12,7 @@ import MappingStep, { stepName as mappingStepDescription } from './MappingStep';
 import PreviewStep, { stepName as previewStepDescription } from './PreviewStep';
 import ConfigStep, { stepName as configStepDescription } from './ConfigStep';
 import ImportProgressStep from './ImportProgressStep';
-import AppContext from '../../context/AppContext';
+import { AppContext } from '../../context/AppContext';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -34,8 +34,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function Import() {
   const classes = useStyles();
-  const appContext = useContext(AppContext);
-  const { appState: { importStatus } } = appContext;
+  const { state } = useContext(AppContext);
 
   const steps = [fileUploadStepDescription, mappingStepDescription, previewStepDescription, configStepDescription];
   const [activeStep, setActiveStep] = React.useState(0);
@@ -52,7 +51,6 @@ export default function Import() {
     setActiveStep,
     transaction,
     setTransaction,
-    importStatus,
     files,
     setFiles,
     uploadInProgress,
@@ -105,7 +103,7 @@ export default function Import() {
   }, [setTransaction]);
 
   const handleFinish = async () => {
-      await ImportApi.doImport(transaction, mapping, config);
+      ImportApi.doImport(transaction, mapping, config);
       setActiveStep(0);
       setFiles({});
       setMappingConfig();
@@ -124,7 +122,6 @@ export default function Import() {
   const handleReset = () => {
     setActiveStep(0);
   };
-
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
@@ -139,7 +136,7 @@ export default function Import() {
             );
           })}
         </Stepper>
-        {(activeStep === steps.length || importStatus.running) ?
+        {(state.importStatus && state.importStatus.running) ?
           <ImportProgressStep {...globalState} /> : (
             <div>
               {getStepContent(activeStep)}

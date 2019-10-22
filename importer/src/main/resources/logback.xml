@@ -12,6 +12,7 @@
 
     <logger name="org.apache.commons" level="WARN"/>
     <logger name="org.springframework" level="INFO"/>
+    <logger name="org.apache.catalina.connector.CoyoteAdapter" level="OFF"/>
 
     <!--sql logging -->
     <logger name="org.hibernate.SQL" level="TRACE"/>

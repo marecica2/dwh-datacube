@@ -50,7 +50,8 @@ function AppMenu(props) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
 
-  const appContext = useContext(AppContext);
+  const { state, dispatch } = useContext(AppContext);
+
   const [projectMenu, setProjectMenu] = React.useState(null);
 
   function handleMenu(event) {
@@ -91,59 +92,51 @@ function AppMenu(props) {
           DataCube
         </Typography>
 
-        <AppContext.Consumer>
-          {({ appState, setProject }) => (
-            <div>
-              <Button
-                className={classes.button}
-                color="inherit"
-              >
-                {appState.tenant.name}
-              </Button>
-
-              <Button
-                className={classes.button}
-                aria-controls="projectSelection"
-                aria-haspopup="true"
-                onClick={event => setProjectMenu(event.currentTarget)}
-                color="inherit"
-              >
-                Project&nbsp;
-                {appState.projectId}
-              </Button>
-              <Menu
-                id="projectSelection"
-                anchorEl={projectMenu}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                open={Boolean(projectMenu)}
-                onClose={() => setProjectMenu(null)}
-              >
-                <MenuItem onClick={() => {
-                  setProject('1');
-                  setProjectMenu(null)
-                }}
-                >
-                  Project 1
-                </MenuItem>
-                <MenuItem onClick={() => {
-                  setProject('2');
-                  setProjectMenu(null)
-                }}
-                >
-                  Project 2
-                </MenuItem>
-              </Menu>
-            </div>
-          )}
-        </AppContext.Consumer>
+        <Typography variant='body1' style={{ opacity: 0.7, fontSize: '0.9em' }}>
+          Tenant&nbsp;
+        </Typography>
+        <Typography variant='body1' className={clsx(classes.menuButton)} style={{ fontSize: '0.9em' }}>
+          {state.tenant.name}
+        </Typography>
+        <Button
+          className={classes.button}
+          aria-controls="projectSelection"
+          aria-haspopup="true"
+          onClick={event => setProjectMenu(event.currentTarget)}
+          color="inherit"
+        >
+          {state.project.name}
+        </Button>
+        <Menu
+          id="projectSelection"
+          anchorEl={projectMenu}
+          anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+          keepMounted
+          transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+          open={Boolean(projectMenu)}
+          onClose={() => setProjectMenu(null)}
+        >
+          <MenuItem onClick={() => {
+              dispatch({ type: 'project', value: { id: '1', name: 'Sample proj 1'}});
+              setProjectMenu(null)
+            }}
+          >
+            Sample proj 1
+          </MenuItem>
+          <MenuItem onClick={() => {
+              dispatch({ type: 'project', value: { id: '2', name: 'Sample proj 2'}});
+              setProjectMenu(null)
+            }}
+          >
+            Sample proj 2
+          </MenuItem>
+        </Menu>
 
         <IconButton
           color="inherit"

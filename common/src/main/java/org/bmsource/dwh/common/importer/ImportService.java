@@ -14,9 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 @ComponentScan
@@ -56,19 +54,22 @@ public class ImportService {
         return new ArrayList<String>() {{
             add("importStatus");
         }};
-    };
+    }
+
+    ;
 
     public void runImport(String tenant, String project, String transaction, List<String> files,
                           Map<String, String> columnMapping) {
         try {
             JobParameters params = new JobParametersBuilder()
+                .addString("uid", UUID.randomUUID().toString())
                 .addString("tenant", tenant)
                 .addString("project", project)
                 .addString("transaction", transaction)
                 .addString("files", String.join(",", files))
                 .addString("mapping", new JSONObject(columnMapping).toString())
                 .toJobParameters();
-            JobExecution je = jobLauncher.run(importJob, params);
+            jobLauncher.run(importJob, params);
         } catch (JobParametersInvalidException | JobInstanceAlreadyCompleteException | JobRestartException | JobExecutionAlreadyRunningException e) {
             throw new RuntimeException(e);
         }

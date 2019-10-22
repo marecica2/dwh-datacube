@@ -1,24 +1,27 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { LinearProgress } from '@material-ui/core';
+import { AppContext } from '../../context/AppContext';
 
-export default function ImportJob(props) {
-  const { importStatus } = props;
+export default function ImportJob() {
+  const { state } = useContext(AppContext);
   return (
     <div>
-      {importStatus && importStatus.running && (
+      {state.importStatus && state.importStatus.running && (
         <div>
-          <p>{`${importStatus.file}. of ${importStatus.files} files`}</p>
-          <LinearProgress variant="determinate" value={(importStatus.file / importStatus.files) * 100}/>
-          <p>
-            <span>{`Reading ${importStatus.fileName} `}</span>
-            {importStatus.rowsCount}
-            <span> rows of </span>
-            {importStatus.totalRowsCount}
-          </p>
-          <LinearProgress
-            variant="determinate" color="secondary"
-            value={(importStatus.rowsCount / importStatus.totalRowsCount) * 100}
-          />
+          {Object.entries(state.progresses).map(([key, progress]) => (
+            <div key={key}>
+              <p>
+                <span>{`Reading ${key} `}</span>
+                {progress.rowsCount}
+                <span> rows of </span>
+                {progress.totalRowsCount}
+              </p>
+              <LinearProgress
+                variant="determinate" color="secondary"
+                value={(progress.rowsCount / progress.totalRowsCount) * 100}
+              />
+            </div>
+            ))}
         </div>
       )}
     </div>

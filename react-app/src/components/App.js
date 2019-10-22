@@ -10,7 +10,7 @@ import Home from './pages/Home';
 import Supplier from './pages/categories/Supplier';
 import ServiceType from './pages/categories/ServiceType';
 import Import from './pages/Import';
-import AppContextDataProvider from './context/AppContextDataProvider';
+import { AppStateProvider } from './context/AppContext';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -39,7 +39,7 @@ function App() {
   return (
     <div className={classes.root}>
       <CssBaseline/>
-      <AppContextDataProvider>
+      <AppStateProvider>
         <Router history={history}>
           <Menu open={isSidebarOpen} menuIconClick={handleDrawerOpen}/>
           <Sidebar handleDrawerClose={handleDrawerClose} isSidebarOpen={isSidebarOpen}/>
@@ -52,7 +52,7 @@ function App() {
             </Switch>
           </main>
         </Router>
-      </AppContextDataProvider>
+      </AppStateProvider>
     </div>
   );
 }

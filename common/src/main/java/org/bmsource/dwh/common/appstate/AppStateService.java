@@ -46,11 +46,12 @@ public class AppStateService implements MessageListener {
     }
 
     public void updateState(String tenant, String project, String stateType, Map<String, Object> state) {
-        String stateKey = buildStateKey(stateType, tenant, project);
-        String topic = buildTopicKey(tenant, project, stateType);
-        template.opsForHash().putAll(stateKey, state);
-        template.expire(stateKey, 10, TimeUnit.SECONDS);
-        template.convertAndSend(topic, tenant + ":" + project);
+//        String stateKey = buildStateKey(stateType, tenant, project);
+//        String topic = buildTopicKey(tenant, project, stateType);
+//        template.opsForHash().putAll(stateKey, state);
+//        template.expire(stateKey, 10, TimeUnit.SECONDS);
+//        template.convertAndSend(topic, tenant + ":" + project);
+        notificationService.sendSseEvent(tenant, project, state);
     }
 
     Map<String, Map<String, Object>> getState(String tenant, String project) {
@@ -67,11 +68,11 @@ public class AppStateService implements MessageListener {
     }
 
     public void onMessage(final Message message, final byte[] pattern) {
-        String[] params = new String(message.getBody()).split(":");
-        String tenant = params[0];
-        String project = params[1];
-        Map<String, Map<String, Object>> state = getState(tenant, project);
-        notificationService.sendSseEvent(state);
+//        String[] params = new String(message.getBody()).split(":");
+//        String tenant = params[0];
+//        String project = params[1];
+//        Map<String, Map<String, Object>> state = getState(tenant, project);
+//        notificationService.sendSseEvent(tenant, project, state);
     }
 
 }

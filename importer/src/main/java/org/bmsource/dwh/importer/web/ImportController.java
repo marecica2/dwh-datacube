@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.testcontainers.shaded.javax.ws.rs.HeaderParam;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -92,11 +91,12 @@ public class ImportController {
 
     @ResponseBody
     @PostMapping(value = "/{transactionId}/start", consumes = "application/json")
-    public ResponseEntity start(@HeaderParam("x-tenant") String tenant,
+    public ResponseEntity start(@RequestHeader("x-tenant") String tenant,
                                 @PathVariable("projectId") String projectId,
                                 @PathVariable("transactionId") String transactionId,
                                 @RequestBody UploadRequestBody uploadRequestBody) {
         List<String> files = fileManager.getFiles(transactionId);
+        System.out.println(tenant + projectId);
         importService.runImport(tenant, projectId, transactionId, files, uploadRequestBody.getMapping());
         return new ResponseEntity(HttpStatus.OK);
     }

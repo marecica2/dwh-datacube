@@ -1,18 +1,82 @@
-import React from 'react';
+import React, { useEffect, useState, useReducer } from 'react';
+import AppStateApi from '../../shared/api/appState.api';
 
-const DEFAULT_APP_STATE = {
-  projectId: '1',
-  tenant: { id: '00000-00000-00001', name: 'demo' },
+const INITIAL_APP_STATE = {
+  user: localStorage.user,
+  project: localStorage.project ? JSON.parse(localStorage.project) : { id: '1', name: 'Sample proj 1' },
+  tenant: localStorage.tenant ? JSON.parse(localStorage.tenant) : { id: '00000-00000-00001', name: 'demo' },
   importStatus: {
     running: false,
   },
-  leverStatus: {
-    running: false,
-  },
+  progresses: {},
 };
 
-const AppContext = React.createContext(DEFAULT_APP_STATE);
+const reducer = (state, { type, value }) => {
+  switch (type) {
+    case 'login':
+      return { ...state, user: value };
+    case 'logout':
+      return { ...state, user: undefined };
+    case 'project': {
+      localStorage.project = JSON.stringify(value);
+      window.location.href = '/';
+      return null;
+    }
+    case 'tenant':
+      localStorage.tenant = JSON.stringify(value);
+      window.location.href = '/';
+      return null;
+    case 'importStatus':
+      return { ...state, importStatus: { running: value.running } };
+    case 'importStatusFile': {
+      const newProgress = { ...state.progresses, [value.fileName]: { ...value } };
+      return { ...state, importStatus: { running: value.running }, progresses: { ...newProgress } };
+    }
+    default: {
+      console.warn('AppContext No action registered for ', type);
+      return state;
+    }
+  }
+};
 
-export const defaultAppState = DEFAULT_APP_STATE;
-export const AppContextProvider = AppContext.Provider;
+const AppContext = React.createContext(INITIAL_APP_STATE);
+
+function AppStateProvider(props) {
+  const [state, dispatch] = useReducer(reducer, INITIAL_APP_STATE);
+  const [eventSource, setEventSource] = useState();
+
+  useEffect(() => {
+    async function api() {
+      if (eventSource && eventSource.readyState !== EventSource.CLOSED) {
+        eventSource.close();
+      }
+      const es = new EventSource(AppStateApi.getAppStateUrl(state.tenant.id, state.project.id));
+      es.onmessage = (event) => {
+        if (event.data !== 'heartbeat') {
+          const data = JSON.parse(event.data);
+          const action = { type: data.type, value: data };
+          dispatch(action);
+        }
+      };
+      setEventSource(es);
+    }
+
+    api();
+    return () => {
+      if (eventSource) {
+        eventSource.close();
+      }
+    }
+  }, [setEventSource, state.tenant, state.project]);
+
+
+  return (
+    // new
+    <AppContext.Provider value={{ state, dispatch }}>
+      {props.children}
+    </AppContext.Provider>
+  );
+}
+
+export { AppContext, AppStateProvider };
 export default AppContext;

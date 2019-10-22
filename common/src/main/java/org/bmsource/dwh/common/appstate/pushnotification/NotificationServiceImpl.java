@@ -1,37 +1,49 @@
 package org.bmsource.dwh.common.appstate.pushnotification;
 
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.io.IOException;
 import java.util.*;
 
 @Service
 public class NotificationServiceImpl implements NotificationService {
+    private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+
     private static final Map<String, List<SseEmitter>> emittersMap = Collections.synchronizedMap(new HashMap<>());
 
-    @Scheduled(fixedRate = 30000)
+    @Scheduled(fixedRate = 50000)
     public void heartbeat() {
-        List<SseEmitter> sseEmitterListToRemove = new ArrayList<>();
-        for (List<SseEmitter> emitters : emittersMap.values()) {
-            emitters.forEach((SseEmitter emitter) -> {
+        for (Map.Entry<String, List<SseEmitter>> entry : emittersMap.entrySet()) {
+            ListIterator<SseEmitter> iterator = entry.getValue().listIterator();
+            while (iterator.hasNext()) {
+                SseEmitter emitter = iterator.next();
                 try {
                     emitter.send("heartbeat", MediaType.TEXT_PLAIN);
-                } catch (IOException e) {
+                } catch (Exception e) {
+                    logger.trace("Removing closed sse connection " + emitter);
                     emitter.complete();
-                    sseEmitterListToRemove.add(emitter);
-                    e.printStackTrace();
+                    iterator.remove();
                 }
-            });
-            emitters.removeAll(sseEmitterListToRemove);
+            }
         }
+        Iterator<Map.Entry<String,List<SseEmitter>>> iter = emittersMap.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry<String,List<SseEmitter>> entry = iter.next();
+            if(entry.getValue().size() == 0){
+                iter.remove();
+            }
+        }
+        logger.trace("Active sse emmiters {}", emittersMap);
     }
 
     @Override
     public SseEmitter initSseEmitters(String tenant, String projectId) {
-        String key = tenant + projectId;
+        String key = createKey(tenant, projectId);
         List<SseEmitter> emmiters = emittersMap.get(key);
         if (emmiters == null) {
             emmiters = Collections.synchronizedList(new ArrayList<>());
@@ -43,20 +55,27 @@ public class NotificationServiceImpl implements NotificationService {
         return emitter;
     }
 
+    @NotNull
+    private String createKey(String tenant, String projectId) {
+        return tenant + ":" + projectId;
+    }
+
     @Override
     public <M> void sendSseEvent(String tenant, String projectId, M message) {
-        String key = tenant + projectId;
+        String key = createKey(tenant, projectId);
         List<SseEmitter> emitters = emittersMap.get(key);
-        List<SseEmitter> sseEmitterListToRemove = new ArrayList<>();
-        emitters.forEach((SseEmitter emitter) -> {
-            try {
-                emitter.send(message, MediaType.APPLICATION_JSON);
-            } catch (IOException e) {
-                emitter.complete();
-                sseEmitterListToRemove.add(emitter);
-                e.printStackTrace();
+        if (emitters != null) {
+            ListIterator<SseEmitter> iterator = emitters.listIterator();
+            while (iterator.hasNext()) {
+                SseEmitter emitter = iterator.next();
+                try {
+                    emitter.send(message, MediaType.APPLICATION_JSON);
+                } catch (Exception e) {
+                    logger.trace("Removing closed sse connection " + emitter);
+                    emitter.complete();
+                    iterator.remove();
+                }
             }
-        });
-        emitters.removeAll(sseEmitterListToRemove);
+        }
     }
 }

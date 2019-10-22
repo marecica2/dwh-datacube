@@ -11,10 +11,13 @@ import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.SimpleJobBuilder;
+import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.launch.support.SimpleJobLauncher;
 import org.springframework.batch.core.listener.JobExecutionListenerSupport;
 import org.springframework.batch.core.partition.PartitionHandler;
 import org.springframework.batch.core.partition.support.TaskExecutorPartitionHandler;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.builder.SimpleStepBuilder;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
@@ -26,6 +29,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
@@ -65,6 +69,9 @@ public class ImportJobConfiguration<Fact extends BaseFact> {
 
     @Autowired
     AppStateService appStateService;
+
+    @Autowired
+    JobRepository jobRepository;
 
     @Autowired
     public void setDataSource(DataSource dataSource) {
@@ -175,6 +182,15 @@ public class ImportJobConfiguration<Fact extends BaseFact> {
     }
 
     @Bean
+    public JobLauncher simpleJobLauncher() throws Exception {
+        SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
+        jobLauncher.setJobRepository(jobRepository);
+        jobLauncher.setTaskExecutor(new SimpleAsyncTaskExecutor());
+        jobLauncher.afterPropertiesSet();
+        return jobLauncher;
+    }
+
+    @Bean
     public JobExecutionListener jobListener() {
         JobExecutionListener listener = new JobExecutionListenerSupport() {
 
@@ -194,13 +210,9 @@ public class ImportJobConfiguration<Fact extends BaseFact> {
                 Map<String, Object> state = new HashMap<>();
 
                 logger.info("Import started for tenant {} project {} transaction {}", tenant, project, transaction);
-
+                state.put("type", "importStatus");
                 state.put("running", true);
-                state.put("file", 0);
-                state.put("files", files.size());
-                state.put("fileName", "");
-                state.put("rowsCount", 0);
-                state.put("totalRowsCount", 0);
+                state.put("files", files);
                 appStateService.updateState(tenant, project, "importStatus", state);
             }
 
@@ -212,6 +224,7 @@ public class ImportJobConfiguration<Fact extends BaseFact> {
 
                 String project = jobExecution.getJobParameters().getString("project");
                 Map<String, Object> state = new HashMap<>();
+                state.put("type", "importStatus");
                 state.put("running", false);
                 appStateService.updateState(tenant, project, "importStatus", state);
             }
@@ -242,9 +255,8 @@ public class ImportJobConfiguration<Fact extends BaseFact> {
                 logger.info("Import {} {} of {} rows", file, rows, totalRows);
 
                 Map<String, Object> state = new HashMap<>();
+                state.put("type", "importStatusFile");
                 state.put("running", true);
-                state.put("file", files.indexOf(file) + 1);
-                state.put("files", files.size());
                 state.put("fileName", file);
                 state.put("rowsCount", rows);
                 state.put("totalRowsCount", totalRows);
