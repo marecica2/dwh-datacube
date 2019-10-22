@@ -11,6 +11,9 @@ const INITIAL_APP_STATE = {
   progresses: {},
 };
 
+localStorage.project = JSON.stringify(INITIAL_APP_STATE.project);
+localStorage.tenant = JSON.stringify(INITIAL_APP_STATE.tenant);
+
 const reducer = (state, { type, value }) => {
   switch (type) {
     case 'login':
@@ -54,6 +57,7 @@ function AppStateProvider(props) {
       es.onmessage = (event) => {
         if (event.data !== 'heartbeat') {
           const data = JSON.parse(event.data);
+          console.log(data)
           const action = { type: data.type, value: data };
           dispatch(action);
         }

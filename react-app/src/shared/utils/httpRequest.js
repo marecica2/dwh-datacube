@@ -7,10 +7,11 @@ const constantHeaders = {
 };
 
 const httpRequest = (url, options = {}) => {
-  const projectId = sessionStorage.projectId;
+  const projectId = JSON.parse(localStorage.project).id;
+  const tenant = JSON.parse(localStorage.tenant).id;
   const {
     method = 'GET',
-    headers: defaultHeaders = { 'x-tenant': sessionStorage.tenant },
+    headers: defaultHeaders = { 'x-tenant': tenant },
     params: defaultParams = { },
     data: defaultData,
     ...otherOptions
