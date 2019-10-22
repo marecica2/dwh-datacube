@@ -57,7 +57,6 @@ function AppStateProvider(props) {
       es.onmessage = (event) => {
         if (event.data !== 'heartbeat') {
           const data = JSON.parse(event.data);
-          console.log(data)
           const action = { type: data.type, value: data };
           dispatch(action);
         }
