@@ -56,8 +56,6 @@ public class ImportService {
         }};
     }
 
-    ;
-
     public void runImport(String tenant, String project, String transaction, List<String> files,
                           Map<String, String> columnMapping) {
         try {

@@ -2,7 +2,7 @@ package org.bmsource.dwh.common.importer.batch;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.bmsource.dwh.common.BaseFact;
-import org.bmsource.dwh.common.reader.FactModelMapper;
+import org.bmsource.dwh.common.reader.BeanMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.StepExecution;
@@ -33,7 +33,7 @@ public class FactItemProcessor<Fact extends BaseFact> implements ItemProcessor<L
 
     private StepExecution stepExecution;
 
-    private FactModelMapper<Fact> rowMapper;
+    private BeanMapper<Fact> rowMapper;
 
     private Fact fact;
 
@@ -58,7 +58,7 @@ public class FactItemProcessor<Fact extends BaseFact> implements ItemProcessor<L
     public Fact process(final List<Object> row) {
         if (rowMapper == null) {
             String[] header = ((String) stepExecution.getExecutionContext().get(headerKey)).split(",");
-            rowMapper = new FactModelMapper<>((Class<Fact>)fact.getClass(), Arrays.asList(header), mapping);
+            rowMapper = new BeanMapper<>((Class<Fact>)fact.getClass(), Arrays.asList(header), mapping);
         }
         Fact fact = rowMapper.mapRow(row);
         return fact;

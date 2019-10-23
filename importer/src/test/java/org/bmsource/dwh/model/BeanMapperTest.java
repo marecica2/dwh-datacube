@@ -1,6 +1,6 @@
 package org.bmsource.dwh.model;
 
-import org.bmsource.dwh.common.reader.FactModelMapper;
+import org.bmsource.dwh.common.reader.BeanMapper;
 import org.junit.jupiter.api.Test;
 
 import javax.validation.constraints.NotNull;
@@ -11,7 +11,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class FactModelMapperTest {
+class BeanMapperTest {
 
     private static Map<String, String> columnMapping = new HashMap<>();
     static {
@@ -30,7 +30,7 @@ class FactModelMapperTest {
 
     @Test
     void modelMapperTest() {
-        FactModelMapper<Fact> mapper = new FactModelMapper<>(Fact.class, columns, columnMapping);
+        BeanMapper<Fact> mapper = new BeanMapper<>(Fact.class, columns, columnMapping);
         Fact fact = mapper.mapRow(dataRow);
         assertThat(fact.getSupplierName()).isEqualTo("UPS");
         assertThat(fact.getTransactionId()).isEqualTo("12345");

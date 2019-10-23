@@ -9,7 +9,7 @@ import org.bmsource.dwh.common.fileManager.TmpFileManager;
 import org.bmsource.dwh.common.importer.ImportService;
 import org.bmsource.dwh.common.reader.DataReader;
 import org.bmsource.dwh.common.reader.ExcelReader;
-import org.bmsource.dwh.common.reader.FactModelMapper;
+import org.bmsource.dwh.common.reader.BeanMapper;
 import org.bmsource.dwh.common.reader.MappingResult;
 import org.bmsource.dwh.importer.Fact;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,7 +85,7 @@ public class ImportController {
             fileManager.getStream(transactionId, files.get(0));) {
             DataReader reader = new ExcelReader();
             MappingResult columnMapping = reader.readHeaderRow(stream1);
-            return new FactModelMapper<>(Fact.class, columnMapping.getHeaderRow(), mappingParam.getMapping()).mapList(reader.readContent(stream2, 100));
+            return new BeanMapper<>(Fact.class, columnMapping.getHeaderRow(), mappingParam.getMapping()).mapList(reader.readContent(stream2, 100));
         }
     }
 

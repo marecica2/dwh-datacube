@@ -40,7 +40,9 @@ public class ExcelReader implements DataReader {
                 rows.add(headerRow);
             }
             while ((rowIterator.hasNext()) && (totalRows < rowsLimit || rowsLimit == -1)) {
-                rows.add(readSingleRow(rowIterator));
+                List<Object> row = readSingleRow(rowIterator);
+                if(row == null) break;
+                rows.add(row);
                 totalRows++;
                 if (totalRows % batchSize == 0) {
                     dataHandler.onRead(rows, headerStringRow, totalRows, sheet.getLastRowNum());
@@ -63,6 +65,8 @@ public class ExcelReader implements DataReader {
             rowContainer.add(sheetCell.getStringCellValue());
             prevCellIndex = currentIndex;
         }
+        if (rowContainer.size() == 1 && rowContainer.get(0).equals(""))
+            return null;
         return rowContainer;
     }
 
