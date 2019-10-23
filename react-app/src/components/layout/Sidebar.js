@@ -135,7 +135,16 @@ function Sidebar(props) {
           <ListItemIcon><CloudUploadIcon /></ListItemIcon>
           <ListItemText primary='Import' />
         </ListItem>
-        <ListItem button key='Settings'>
+
+        <ListItem
+          button
+          key='Settings'
+          to='/settings'
+          activeStyle={{
+            color: theme.palette.primary.main,
+          }}
+          component={AdapterLink}
+        >
           <ListItemIcon><SettingsIcon /></ListItemIcon>
           <ListItemText primary='Settings' />
         </ListItem>

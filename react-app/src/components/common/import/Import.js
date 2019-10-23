@@ -14,6 +14,9 @@ import ConfigStep, { stepName as configStepDescription } from './ConfigStep';
 import ImportProgressStep from './ImportProgressStep';
 import { AppContext } from '../../context/AppContext';
 
+const VARIANT_DEFAULT = 'default';
+const VARIANT_SIMPLE = 'simple';
+
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
@@ -32,7 +35,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Import() {
+export default function Import(props) {
+  const variant = props.variant || VARIANT_DEFAULT;
   const classes = useStyles();
   const { state } = useContext(AppContext);
 
@@ -125,28 +129,31 @@ export default function Import() {
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <Stepper activeStep={activeStep}>
-          {steps.map((label) => {
-            const stepProps = {};
-            const labelProps = {};
-            return (
-              <Step key={label} {...stepProps}>
-                <StepLabel {...labelProps}>{label}</StepLabel>
-              </Step>
-            );
-          })}
-        </Stepper>
+        { variant === VARIANT_DEFAULT && (
+          <Stepper activeStep={activeStep}>
+            {steps.map((label) => {
+              const stepProps = {};
+              const labelProps = {};
+              return (
+                <Step key={label} {...stepProps}>
+                  <StepLabel {...labelProps}>{label}</StepLabel>
+                </Step>
+              );
+            })}
+          </Stepper>
+        )}
         {(state.importStatus && state.importStatus.running) ?
           <ImportProgressStep {...globalState} /> : (
             <div>
               {getStepContent(activeStep)}
+              {variant === VARIANT_DEFAULT && (
               <div style={{ marginTop: '15px' }}>
                 <div style={{ float: 'left' }}>
                   <Button
                     disabled={activeStep === 0} onClick={handleBack} className={classes.button}
                     style={{ flex: 0 }}
                   >
-                    Back
+                      Back
                   </Button>
                   <Button
                     disabled={!isNextEnabled(activeStep)} variant="contained" color="primary"
@@ -162,10 +169,12 @@ export default function Import() {
                     onClick={handleReset} className={classes.button}
                     style={{ flex: 2 }}
                   >
-                    Cancel
+                      Cancel
                   </Button>
                 </div>
               </div>
+              )}
+
               <div style={{ clear: 'both' }}/>
             </div>
           )}

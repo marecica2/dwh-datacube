@@ -7,6 +7,7 @@ import history from './history';
 import Menu from './layout/Menu';
 import Sidebar from './layout/Sidebar';
 import Home from './pages/Home';
+import Settings from './pages/Settings';
 import Supplier from './pages/categories/Supplier';
 import ServiceType from './pages/categories/ServiceType';
 import Import from './pages/Import';
@@ -48,6 +49,7 @@ function App() {
               <Route path="/category/supplier" component={Supplier}/>
               <Route path="/category/service-type" component={ServiceType}/>
               <Route path="/import" component={Import}/>
+              <Route path="/settings" component={Settings}/>
               <Route path="/" strict component={Home}/>
             </Switch>
           </main>
