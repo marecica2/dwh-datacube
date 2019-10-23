@@ -62,7 +62,6 @@ public class ImportService {
                           Map<String, String> columnMapping) {
         try {
             JobParameters params = new JobParametersBuilder()
-                .addString("uid", UUID.randomUUID().toString())
                 .addString("tenant", tenant)
                 .addString("project", project)
                 .addString("transaction", transaction)

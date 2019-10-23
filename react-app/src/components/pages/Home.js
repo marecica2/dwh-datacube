@@ -9,7 +9,7 @@ import {
   TableRow,
   TableBody,
 } from '@material-ui/core';
-import AppContext from '../context/AppContext';
+import { AppContext } from '../context/AppContext';
 import ImportJob from '../common/import/ImportJob';
 
 const useStyles = makeStyles(theme => ({
@@ -57,17 +57,16 @@ const importStats = [
 
 function Home() {
   const classes = useStyles();
-  const appContext = useContext(AppContext);
-  const { importStatus } = appContext;
+  const { state } = useContext(AppContext);
 
   const renderJobs = () => {
-    if (importStatus && importStatus.running) {
+    if (state.importStatus && state.importStatus.running) {
       return (
         <div>
           <Typography variant="body1">
             Import is running
           </Typography>
-          <ImportJob importStatus={importStatus}/>
+          <ImportJob/>
         </div>
       )
     }
