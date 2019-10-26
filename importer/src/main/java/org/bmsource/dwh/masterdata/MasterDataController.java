@@ -1,41 +1,72 @@
 package org.bmsource.dwh.masterdata;
 
-import org.apache.commons.fileupload.FileItemIterator;
-import org.apache.commons.fileupload.FileItemStream;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.bmsource.dwh.common.BaseFact;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.InputStream;
+import java.util.List;
+import java.util.function.Consumer;
 
-
-@RestController()
-@RequestMapping("{projectId}/master-data")
+@RestController
 public class MasterDataController {
 
-    SimpleImportService importService = new SimpleImportService();
-
-    @PostMapping(value = "/zip-code-location/import", consumes = "multipart/form-data")
-    public DeferredResult<ResponseEntity<?>> start(MultipartHttpServletRequest request) throws Exception {
-        Class<ZipCodeLocation> classType = ZipCodeLocation.class;
-        return importExcelStream(request, classType);
+    @Bean
+    MultipartResolver multipartResolver() {
+        return new CommonsMultipartResolver();
     }
 
-    private DeferredResult<ResponseEntity<?>> importExcelStream(MultipartHttpServletRequest request,
-                                                                Class<ZipCodeLocation> classType) {
+    @Autowired
+    ZipCodeLocationRepository repository;
+
+    @PostMapping(value = "/zip-code-locations/import", consumes = "multipart/form-data")
+    public DeferredResult<ResponseEntity<?>> importZipCodes(MultipartHttpServletRequest request) {
+        Class<ZipCodeLocation> classType = ZipCodeLocation.class;
         DeferredResult<ResponseEntity<?>> result = new DeferredResult<>();
+        return importModel(
+            request,
+            classType,
+            (Void) -> repository.deleteAll(),
+            zipCodeLocations -> {
+                try {
+                    repository.saveAll(zipCodeLocations);
+                } catch (Exception e) {
+                    new ResponseEntity<Integer>(HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            },
+            result
+        );
+    }
+
+    private <T extends BaseFact> DeferredResult<ResponseEntity<?>> importModel(MultipartHttpServletRequest request,
+                                                                               Class<T> classType,
+                                                                               Consumer<Void> onStart,
+                                                                               Consumer<List<T>> onRead,
+                                                                               DeferredResult<ResponseEntity<?>> result
+    ) {
+        SimpleExcelParser excelParser = new SimpleExcelParser<T>(
+            onStart,
+            onRead,
+            rows -> {
+                result.setResult(new ResponseEntity<Integer>(HttpStatus.CREATED));
+            },
+            classType
+        );
         try {
             MultipartFile multipartFile = request.getFile("file");
             String name = multipartFile.getOriginalFilename();
             try (InputStream inputStream = multipartFile.getInputStream();) {
-                importService.start(classType, inputStream, (rowsCount) -> {
-                    result.setResult(ResponseEntity.ok(rowsCount));
-                });
+                excelParser.parse(inputStream);
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,5 +1,5 @@
 import React from 'react';
-import FileUpload from '../FileUpload';
+import FileUpload from './FileUpload';
 
 export const stepName = 'File Upload';
 

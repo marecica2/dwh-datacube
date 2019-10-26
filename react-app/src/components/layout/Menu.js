@@ -83,7 +83,7 @@ function AppMenu(props) {
         </IconButton>
 
         <Typography
-          variant="h5"
+          variant="h3"
           className={clsx(classes.title)}
           color="inherit"
           to='/'

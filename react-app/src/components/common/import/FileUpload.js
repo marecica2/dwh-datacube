@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Typography, CircularProgress, Grid, TableBody, Table, TableRow, TableCell } from '@material-ui/core';
+import {makeStyles} from '@material-ui/core/styles';
+import {Typography, CircularProgress, Grid, TableBody, Table, TableRow, TableCell} from '@material-ui/core';
 import CheckIcon from '@material-ui/icons/Check';
 import lightGreen from '@material-ui/core/colors/lightGreen';
 import { DropzoneArea } from 'material-ui-dropzone'
@@ -17,15 +17,14 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function FileUpload({ uploadApi }) {
+function FileUpload({ api, transaction, files, setFiles, setUploadInProgress, setMappingConfig, setPreview }) {
   const classes = useStyles();
   const [progresses, setProgresses] = React.useState({});
-  const [files, setFiles] = React.useState({});
 
   useEffect(() => {
     async function fetchData() {
       const filesToUpload = Object.values(files).filter(file => file.uploadStarted == null);
-      if (filesToUpload.length === 0)
+      if(filesToUpload.length === 0)
         return;
 
       await Promise.all(filesToUpload.map(async (file) => {
@@ -40,17 +39,17 @@ function FileUpload({ uploadApi }) {
             [file.name]: file,
           }
         });
+        setUploadInProgress(true);
+        setMappingConfig(null);
+        setPreview(null);
 
-        await uploadApi({
-          data,
-          onUploadProgress: (ProgressEvent) => {
-            setProgresses((prev) => {
-              return {
-                ...prev,
-                [file.name]: Math.round((ProgressEvent.loaded / ProgressEvent.total * 100)),
-              }
-            });
-          },
+        await api.uploadFiles(transaction, data, (ProgressEvent) => {
+          setProgresses( (prev) => {
+            return {
+              ...prev,
+              [file.name]: Math.round((ProgressEvent.loaded / ProgressEvent.total * 100)),
+            }
+          });
         });
 
         setFiles((prevState) => {
@@ -62,20 +61,17 @@ function FileUpload({ uploadApi }) {
           }
         });
       }));
-
-      setFiles({});
-      setProgresses({});
+      setUploadInProgress(false);
     }
-
-    fetchData();
-  }, [files, setFiles, progresses, uploadApi]);
+      fetchData();
+  }, [api, transaction, files, setFiles, setUploadInProgress, setMappingConfig, setPreview, progresses]);
 
   const handleChange = (newFiles) => {
     const addedFiles = newFiles
-      .filter(file => !Object.keys(files).includes(file.name));
+        .filter(file => !Object.keys(files).includes(file.name));
     setFiles({
       ...files,
-      ...addedFiles.reduce((acc, file) => ({ ...acc, [file.name]: file }), {}),
+      ...addedFiles.reduce((acc, file) => ({ ...acc, [file.name]: file}), {}),
     });
   };
 
@@ -84,8 +80,8 @@ function FileUpload({ uploadApi }) {
       const progress = progresses[file.name] || 0;
 
       const progressIndicator = (progress === 100 || file.uploadFinished) ?
-        <CheckIcon className={classes.successIcon}/> :
-        <CircularProgress variant="static" value={progress} size='1.5rem'/>;
+        <CheckIcon className={classes.successIcon} /> :
+        <CircularProgress variant="static" value={progress} size='1.5rem' />;
 
       return (
         <TableRow key={file.name}>
@@ -93,10 +89,10 @@ function FileUpload({ uploadApi }) {
             <Typography variant="body1">{file.name}</Typography>
           </TableCell>
           <TableCell>
-            <span className={classes.uploadStatus}>{progressIndicator}</span>
+            <span className={classes.uploadStatus}>{ progressIndicator }</span>
           </TableCell>
         </TableRow>
-      )
+    )
     })
   };
 
@@ -104,22 +100,22 @@ function FileUpload({ uploadApi }) {
     <Grid container spacing={2}>
       <Grid item xs={Object.keys(files).length === 0 ? 12 : 6}>
         <DropzoneArea
-          filesLimit={1}
+          filesLimit={10}
           dropzoneClass="dropzone"
-          dropzoneText=""
+          dropzoneText="Click or drop files here"
           acceptedFiles={types}
           showPreviewsInDropzone={false}
           showFileNamesInPreview={true}
           showFileNames={true}
           onChange={handleChange}
           showAlerts={false}
-          maxFileSize={1000000}
+          maxFileSize={100000000}
         />
       </Grid>
       <Grid item xs={6}>
         <Table>
           <TableBody>
-            {renderFileProgress()}
+            { renderFileProgress() }
           </TableBody>
         </Table>
       </Grid>

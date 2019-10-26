@@ -2,12 +2,29 @@ package org.bmsource.dwh.masterdata;
 
 import org.bmsource.dwh.common.BaseFact;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.math.BigInteger;
+
+@Entity
 public class ZipCodeLocation extends BaseFact {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private BigInteger id;
+
+    @NotNull
     private String zipCode;
 
-    private double lattitude;
+    @NotNull
+    private double latitude;
 
+    @NotNull
     private double longitude;
+
+    public BigInteger getId() {
+        return id;
+    }
 
     public String getZipCode() {
         return zipCode;
@@ -17,12 +34,12 @@ public class ZipCodeLocation extends BaseFact {
         this.zipCode = zipCode;
     }
 
-    public double getLattitude() {
-        return lattitude;
+    public double getLatitude() {
+        return latitude;
     }
 
-    public void setLattitude(double lattitude) {
-        this.lattitude = lattitude;
+    public void setLatitude(double lattitude) {
+        this.latitude = lattitude;
     }
 
     public double getLongitude() {

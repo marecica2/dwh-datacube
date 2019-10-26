@@ -1,48 +1,63 @@
 package org.bmsource.dwh.masterdata;
 
 import org.bmsource.dwh.common.BaseFact;
-import org.bmsource.dwh.common.fileManager.FileManager;
-import org.bmsource.dwh.common.fileManager.TmpFileManager;
 import org.bmsource.dwh.common.reader.BeanMapper;
 import org.bmsource.dwh.common.reader.DataHandler;
 import org.bmsource.dwh.common.reader.DataReader;
 import org.bmsource.dwh.common.reader.ExcelReader;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class SimpleImportService {
+public class SimpleExcelParser<T extends BaseFact> {
+    private Consumer<Void> onStart;
+    private Consumer<List<T>> onRead;
+    private Consumer<Integer> onFinish;
+    private Class<T> classType;
+
+    public SimpleExcelParser(Consumer<Void> onStart, Consumer<List<T>> onRead,
+                             Consumer<Integer> onFinish,
+                             Class<T> classType) {
+        this.onStart = onStart;
+        this.onRead = onRead;
+        this.onFinish = onFinish;
+        this.classType = classType;
+    }
 
     @Async("asyncExecutor")
-    public <Model extends BaseFact> void start(Class classType, InputStream stream, Consumer onFinish) throws Exception {
+    public void parse(InputStream stream) throws Exception {
         DataReader reader = new ExcelReader();
-        final BeanMapper[] rowMapper = {null};
+        final List<BeanMapper<T>> rowMapper = new ArrayList<>();
 
         reader.readContent(stream, new DataHandler() {
             @Override
             public void onStart() {
+                if (onStart != null)
+                    onStart.accept(null);
             }
 
             @Override
             public void onRead(List<List<Object>> rows, List<String> header, int rowsCount,
                                int totalRowsCount) {
-                if (rowMapper[0] == null) {
+                if (rowMapper.size() == 0) {
                     Map<String, String> simpleMapping =
                         header.stream().collect(Collectors.toMap(String::toString, item -> item));
-                    rowMapper[0] = new BeanMapper<Model>(classType, header, simpleMapping);
+                    rowMapper.add(new BeanMapper<T>(classType, header, simpleMapping));
                 }
-                List<Model> items = rowMapper[0].mapList(rows);
-                System.out.println(items);
+                List<T> items = rowMapper.get(0).mapList(rows);
+                if (onRead != null)
+                    onRead.accept(items);
             }
 
             @Override
             public void onFinish(int totalRowsCount) {
-                onFinish.accept(null);
+                if (onFinish != null)
+                    onFinish.accept(totalRowsCount);
             }
         });
     }

@@ -1,7 +1,6 @@
 package org.bmsource.dwh.common.importer.batch;
 
 import org.bmsource.dwh.common.BaseFact;
-import org.bmsource.dwh.common.appstate.AppStateConfiguration;
 import org.bmsource.dwh.common.appstate.AppStateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +11,6 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.SimpleJobBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.launch.support.SimpleJobLauncher;
 import org.springframework.batch.core.listener.JobExecutionListenerSupport;
 import org.springframework.batch.core.partition.PartitionHandler;

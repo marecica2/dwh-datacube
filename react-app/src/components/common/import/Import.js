@@ -15,7 +15,6 @@ import ImportProgressStep from './ImportProgressStep';
 import { AppContext } from '../../context/AppContext';
 
 const VARIANT_DEFAULT = 'default';
-const VARIANT_SIMPLE = 'simple';
 
 const useStyles = makeStyles(theme => ({
   root: {

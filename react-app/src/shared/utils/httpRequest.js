@@ -7,19 +7,25 @@ const constantHeaders = {
 };
 
 const httpRequest = (url, options = {}) => {
-  const projectId = JSON.parse(localStorage.project).id;
-  const tenant = JSON.parse(localStorage.tenant).id;
   const {
     method = 'GET',
-    headers: defaultHeaders = { 'x-tenant': tenant },
-    params: defaultParams = { },
+    headers: defaultHeaders = {},
+    params: defaultParams = {},
     data: defaultData,
+    tenantRequest = true,
     ...otherOptions
   } = options;
 
+  let requestUrl = `${portalApiPath}${url}`;
+  if (tenantRequest) {
+    const projectId = JSON.parse(localStorage.project).id;
+    defaultHeaders['x-tenant'] = JSON.parse(localStorage.tenant).id;
+    requestUrl = `${portalApiPath}/${projectId}${url}`;
+  }
+
   return ({ headers = {}, params = {}, data, ...other } = {}) => {
     return dwhAxios({
-      url: `${portalApiPath}/${projectId}${url}`,
+      url: requestUrl,
       method,
       headers: {
         ...constantHeaders,

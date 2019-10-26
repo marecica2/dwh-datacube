@@ -5,8 +5,8 @@ import Import from '../common/import/Import';
 function ImportPage() {
   return (
     <div>
-      <Typography variant="h6" paragraph>
-        Data import
+      <Typography variant="h1" paragraph>
+        Import
       </Typography>
       <Import />
     </div>
