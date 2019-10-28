@@ -1,0 +1,15 @@
+.gridSpinnerInactive tbody tr {
+    display: table-row;
+}
+
+.gridSpinnerInactive .gridSpinner {
+    display: none;
+}
+
+.gridSpinnerActive tbody tr {
+    display: none;
+}
+
+.gridSpinnerActive .gridSpinner {
+    display: table-row;
+}

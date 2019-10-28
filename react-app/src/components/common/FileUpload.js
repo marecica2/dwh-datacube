@@ -17,7 +17,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function FileUpload({ uploadApi }) {
+function FileUpload({ uploadApi, before = () => {}, after = () => {} }) {
   const classes = useStyles();
   const [progresses, setProgresses] = React.useState({});
   const [files, setFiles] = React.useState({});
@@ -27,6 +27,8 @@ function FileUpload({ uploadApi }) {
       const filesToUpload = Object.values(files).filter(file => file.uploadStarted == null);
       if (filesToUpload.length === 0)
         return;
+
+      await before();
 
       await Promise.all(filesToUpload.map(async (file) => {
         const data = new FormData();
@@ -61,6 +63,8 @@ function FileUpload({ uploadApi }) {
             [file.name]: file,
           }
         });
+
+        await after();
       }));
 
       setFiles({});
@@ -68,7 +72,7 @@ function FileUpload({ uploadApi }) {
     }
 
     fetchData();
-  }, [files, setFiles, progresses, uploadApi]);
+  }, [files, setFiles, progresses, uploadApi, before, after]);
 
   const handleChange = (newFiles) => {
     const addedFiles = newFiles

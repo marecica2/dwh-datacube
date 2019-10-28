@@ -1,7 +1,6 @@
 import React from 'react';
 import { Typography } from '@material-ui/core';
 import crudApi from '../../shared/api/crud.api'
-import FileUpload from '../common/FileUpload';
 import Grid from '../common/Grid';
 
 function SettingsPage() {
@@ -17,15 +16,15 @@ function SettingsPage() {
       <Typography variant="h6" gutterBottom>
         Zip code locations
       </Typography>
-      <FileUpload uploadApi={api.fileUpload}/>
       <Grid
         columnsConfig={[
-          { name: 'id', title: 'Id' },
           { name: 'zipCode', title: 'Zip Code' },
           { name: 'latitude', title: 'Latitude' },
           { name: 'longitude', title: 'Longitude' },
         ]}
         crudApi={api}
+        editable={true}
+        uploader={true}
       />
 
       {/* <br/> */}
