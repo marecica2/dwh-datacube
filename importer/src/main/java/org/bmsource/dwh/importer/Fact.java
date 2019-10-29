@@ -4,6 +4,8 @@ import org.bmsource.dwh.common.BaseFact;
 
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import java.util.Date;
 
 @Table(name = "fact")
 public class Fact extends BaseFact {
@@ -32,26 +34,26 @@ public class Fact extends BaseFact {
 
   String zone;
 
-  String shipmentDate;
+  Date shipmentDate;
 
-  String deliveryDate;
+  Date deliveryDate;
 
   @NotNull
   String serviceType;
 
   @NotNull
-  String billableWeight;
+  Double billableWeight;
 
-  String actualWeight;
+  Double actualWeight;
 
-  String length;
+  Double length;
 
-  String width;
+  Double width;
 
-  String height;
+  Double height;
 
   @NotNull
-  String cost;
+  BigDecimal cost;
 
   String accessorialService1;
 
@@ -59,15 +61,15 @@ public class Fact extends BaseFact {
 
   String accessorialService3;
 
-  String accessorialCharge1;
+  BigDecimal accessorialCharge1;
 
-  String accessorialCharge2;
+  BigDecimal accessorialCharge2;
 
-  String accessorialCharge3;
+  BigDecimal accessorialCharge3;
 
-  String discount;
+  BigDecimal discount;
 
-  String distance;
+  Double distance;
 
   public String getTransactionId() {
     return transactionId;
@@ -165,19 +167,19 @@ public class Fact extends BaseFact {
     this.zone = zone;
   }
 
-  public String getShipmentDate() {
+  public Date getShipmentDate() {
     return shipmentDate;
   }
 
-  public void setShipmentDate(String shipmentDate) {
+  public void setShipmentDate(Date shipmentDate) {
     this.shipmentDate = shipmentDate;
   }
 
-  public String getDeliveryDate() {
+  public Date getDeliveryDate() {
     return deliveryDate;
   }
 
-  public void setDeliveryDate(String deliveryDate) {
+  public void setDeliveryDate(Date deliveryDate) {
     this.deliveryDate = deliveryDate;
   }
 
@@ -189,51 +191,51 @@ public class Fact extends BaseFact {
     this.serviceType = serviceType;
   }
 
-  public String getBillableWeight() {
+  public Double getBillableWeight() {
     return billableWeight;
   }
 
-  public void setBillableWeight(String billableWeight) {
+  public void setBillableWeight(Double billableWeight) {
     this.billableWeight = billableWeight;
   }
 
-  public String getActualWeight() {
+  public Double getActualWeight() {
     return actualWeight;
   }
 
-  public void setActualWeight(String actualWeight) {
+  public void setActualWeight(Double actualWeight) {
     this.actualWeight = actualWeight;
   }
 
-  public String getLength() {
+  public Double getLength() {
     return length;
   }
 
-  public void setLength(String length) {
+  public void setLength(Double length) {
     this.length = length;
   }
 
-  public String getWidth() {
+  public Double getWidth() {
     return width;
   }
 
-  public void setWidth(String width) {
+  public void setWidth(Double width) {
     this.width = width;
   }
 
-  public String getHeight() {
+  public Double getHeight() {
     return height;
   }
 
-  public void setHeight(String height) {
+  public void setHeight(Double height) {
     this.height = height;
   }
 
-  public String getCost() {
+  public BigDecimal getCost() {
     return cost;
   }
 
-  public void setCost(String cost) {
+  public void setCost(BigDecimal cost) {
     this.cost = cost;
   }
 
@@ -261,43 +263,43 @@ public class Fact extends BaseFact {
     this.accessorialService3 = accessorialService3;
   }
 
-  public String getAccessorialCharge1() {
+  public BigDecimal getAccessorialCharge1() {
     return accessorialCharge1;
   }
 
-  public void setAccessorialCharge1(String accessorialCharge1) {
+  public void setAccessorialCharge1(BigDecimal accessorialCharge1) {
     this.accessorialCharge1 = accessorialCharge1;
   }
 
-  public String getAccessorialCharge2() {
+  public BigDecimal getAccessorialCharge2() {
     return accessorialCharge2;
   }
 
-  public void setAccessorialCharge2(String accessorialCharge2) {
+  public void setAccessorialCharge2(BigDecimal accessorialCharge2) {
     this.accessorialCharge2 = accessorialCharge2;
   }
 
-  public String getAccessorialCharge3() {
+  public BigDecimal getAccessorialCharge3() {
     return accessorialCharge3;
   }
 
-  public void setAccessorialCharge3(String accessorialCharge3) {
+  public void setAccessorialCharge3(BigDecimal accessorialCharge3) {
     this.accessorialCharge3 = accessorialCharge3;
   }
 
-  public String getDiscount() {
+  public BigDecimal getDiscount() {
     return discount;
   }
 
-  public void setDiscount(String discount) {
+  public void setDiscount(BigDecimal discount) {
     this.discount = discount;
   }
 
-  public String getDistance() {
+  public Double getDistance() {
     return distance;
   }
 
-  public void setDistance(String distance) {
+  public void setDistance(Double distance) {
     this.distance = distance;
   }
 }

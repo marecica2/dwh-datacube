@@ -21,15 +21,10 @@ import java.util.function.Consumer;
 @RestController
 public class MasterDataController {
 
-    @Bean
-    MultipartResolver multipartResolver() {
-        return new CommonsMultipartResolver();
-    }
-
     @Autowired
     ZipCodeLocationRepository repository;
 
-    @PostMapping(value = "/zip-code-locations/import", consumes = "multipart/form-data")
+    @PostMapping(value = "/zip-code-locations/import")
     public DeferredResult<ResponseEntity<?>> importZipCodes(MultipartHttpServletRequest request) {
         Class<ZipCodeLocation> classType = ZipCodeLocation.class;
         DeferredResult<ResponseEntity<?>> result = new DeferredResult<>();

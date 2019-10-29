@@ -1,12 +1,15 @@
 package org.bmsource.dwh.masterdata;
 
-import org.bmsource.dwh.common.importer.ImportService;
+import org.bmsource.dwh.ImporterApplication;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
@@ -16,28 +19,33 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
-import java.io.File;
-import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @SpringBootTest
 @Component
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {MasterDataController.class})
+@ContextConfiguration(classes = {ImporterApplication.class})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class MasterDataControllerTest {
+
+    @Bean
+    MultipartResolver multipartResolver() {
+        return new CommonsMultipartResolver();
+    }
+
     @Autowired
     private WebApplicationContext wac;
 
@@ -51,13 +59,13 @@ public class MasterDataControllerTest {
     @Test
     public void testDeferred() throws Exception {
         URL file = this.getClass().getResource("/zipcode_locations.xlsx");
-        String url = "/1/master-data/zip-code-location/import";
+        String url = "/zip-code-locations/import";
 
-        MockMultipartFile mockMultipartFile = new MockMultipartFile("file",
-            Files.readAllBytes(Paths.get(file.toURI())));
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("file", "zipcode_locations.xlsx",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", Files.readAllBytes(Paths.get(file.toURI())));
 
         Map<String, String> contentTypeParams = new HashMap<String, String>();
-        contentTypeParams.put("boundary", "265001916915724");
+        contentTypeParams.put("boundary", "------WebKitFormBoundarybBQfomP0f8B2dsWP");
         MediaType mediaType = new MediaType("multipart", "form-data", contentTypeParams);
 
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
@@ -69,8 +77,6 @@ public class MasterDataControllerTest {
             .perform(builder)
             .andExpect(request().asyncStarted())
             .andReturn();
-
-        System.out.println();
 
         mockMvc.perform(asyncDispatch(resultActions))
             .andExpect(status().is2xxSuccessful());

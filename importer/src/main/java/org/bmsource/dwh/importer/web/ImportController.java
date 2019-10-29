@@ -1,23 +1,20 @@
 package org.bmsource.dwh.importer.web;
 
-import org.apache.commons.fileupload.FileItemIterator;
-import org.apache.commons.fileupload.FileItemStream;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.bmsource.dwh.common.fileManager.FileManager;
 import org.bmsource.dwh.common.fileManager.TmpFileManager;
 import org.bmsource.dwh.common.importer.ImportService;
+import org.bmsource.dwh.common.reader.BeanMapper;
 import org.bmsource.dwh.common.reader.DataReader;
 import org.bmsource.dwh.common.reader.ExcelReader;
-import org.bmsource.dwh.common.reader.BeanMapper;
 import org.bmsource.dwh.common.reader.MappingResult;
 import org.bmsource.dwh.importer.Fact;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -39,25 +36,16 @@ public class ImportController {
     }
 
     @PostMapping("/{transactionId}")
-    public List<String> fileUpload(HttpServletRequest request,
+    public List<String> fileUpload(MultipartHttpServletRequest request,
                                    @PathVariable("projectId") String projectId,
-                                   @PathVariable("transactionId") String transactionId) throws IOException,
-        FileUploadException {
+                                   @PathVariable("transactionId") String transactionId) throws IOException {
         List<String> files = new ArrayList<>();
-        if (ServletFileUpload.isMultipartContent(request)) {
-            ServletFileUpload upload = new ServletFileUpload();
-            FileItemIterator fileItemIterator = upload.getItemIterator(request);
 
-            while (fileItemIterator.hasNext()) {
-                FileItemStream fis = fileItemIterator.next();
-                String name = fis.getName();
-                try (InputStream stream = fis.openStream()) {
-                    if (!fis.isFormField()) {
-                        fileManager.addFile(transactionId, name, stream);
-                        files.add(name);
-                    }
-                }
-            }
+        MultipartFile multipartFile = request.getFile("file");
+        String name = multipartFile.getOriginalFilename();
+        try (InputStream inputStream = multipartFile.getInputStream();) {
+            fileManager.addFile(transactionId, name, inputStream);
+            files.add(name);
         }
         return files;
     }

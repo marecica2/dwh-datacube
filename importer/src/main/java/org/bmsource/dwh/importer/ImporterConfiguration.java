@@ -5,6 +5,8 @@ import org.bmsource.dwh.common.importer.ImportService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,6 +34,11 @@ public class ImporterConfiguration {
         public String toString() {
             return this.getValue();
         }
+    }
+
+    @Bean
+    MultipartResolver multipartResolver() {
+        return new CommonsMultipartResolver();
     }
 
     @Bean("fact")
