@@ -10,6 +10,9 @@ public class CustomRepositoryRestConfiguration implements RepositoryRestConfigur
     @Override
     public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config) {
         config.exposeIdsFor(ZipCodeLocation.class);
+        config.exposeIdsFor(Taxonomy.class);
+        config.exposeIdsFor(ServiceTypeMapping.class);
+        config.exposeIdsFor(RateCard.class);
         config.setBasePath("/");
     }
 }

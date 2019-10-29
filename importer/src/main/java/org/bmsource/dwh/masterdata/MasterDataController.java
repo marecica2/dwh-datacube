@@ -2,17 +2,13 @@ package org.bmsource.dwh.masterdata;
 
 import org.bmsource.dwh.common.BaseFact;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.multipart.MultipartResolver;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import java.io.InputStream;
 import java.util.List;
@@ -22,7 +18,16 @@ import java.util.function.Consumer;
 public class MasterDataController {
 
     @Autowired
-    ZipCodeLocationRepository repository;
+    ZipCodeLocationRepository zipCodeRepository;
+
+    @Autowired
+    TaxonomyRepository taxonomyRepository;
+
+    @Autowired
+    RateCardRepository rateCardRepository;
+
+    @Autowired
+    ServiceTypeMappingRepository serviceTypeMappingRepository;
 
     @PostMapping(value = "/zip-code-locations/import")
     public DeferredResult<ResponseEntity<?>> importZipCodes(MultipartHttpServletRequest request) {
@@ -31,11 +36,69 @@ public class MasterDataController {
         return importModel(
             request,
             classType,
-            (Void) -> repository.deleteAll(),
+            (Void) -> zipCodeRepository.deleteAll(),
             zipCodeLocations -> {
                 try {
-                    repository.saveAll(zipCodeLocations);
+                    zipCodeRepository.saveAll(zipCodeLocations);
                 } catch (Exception e) {
+                    new ResponseEntity<Integer>(HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            },
+            result
+        );
+    }
+
+    @PostMapping(value = "/service-types/import")
+    public DeferredResult<ResponseEntity<?>> importServiceTypes(MultipartHttpServletRequest request) {
+        Class<ServiceTypeMapping> classType = ServiceTypeMapping.class;
+        DeferredResult<ResponseEntity<?>> result = new DeferredResult<>();
+        return importModel(
+            request,
+            classType,
+            (Void) -> serviceTypeMappingRepository.deleteAll(),
+            items -> {
+                try {
+                    serviceTypeMappingRepository.saveAll(items);
+                } catch (Exception e) {
+                    new ResponseEntity<Integer>(HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            },
+            result
+        );
+    }
+
+    @PostMapping(value = "/taxonomy/import")
+    public DeferredResult<ResponseEntity<?>> importTaxonomy(MultipartHttpServletRequest request) {
+        Class<Taxonomy> classType = Taxonomy.class;
+        DeferredResult<ResponseEntity<?>> result = new DeferredResult<>();
+        return importModel(
+            request,
+            classType,
+            (Void) -> taxonomyRepository.deleteAll(),
+            items -> {
+                try {
+                    taxonomyRepository.saveAll(items);
+                } catch (Exception e) {
+                    new ResponseEntity<Integer>(HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            },
+            result
+        );
+    }
+
+    @PostMapping(value = "/rate-cards/import")
+    public DeferredResult<ResponseEntity<?>> importRateCards(MultipartHttpServletRequest request) {
+        Class<RateCard> classType = RateCard.class;
+        DeferredResult<ResponseEntity<?>> result = new DeferredResult<>();
+        return importModel(
+            request,
+            classType,
+            (Void) -> rateCardRepository.deleteAll(),
+            items -> {
+                try {
+                    rateCardRepository.saveAll(items);
+                } catch (Exception e) {
+                    e.printStackTrace();
                     new ResponseEntity<Integer>(HttpStatus.INTERNAL_SERVER_ERROR);
                 }
             },
