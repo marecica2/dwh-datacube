@@ -1,15 +1,25 @@
-.gridSpinnerInactive tbody tr {
-    display: table-row;
+.loadable-container {
+    position: relative;
 }
 
-.gridSpinnerInactive .gridSpinner {
-    display: none;
+.loadable-content {
+    /*filter: blur(1px);*/
 }
 
-.gridSpinnerActive tbody tr {
-    display: none;
+.loadable-spinner {
+    background: rgba(255, 255, 255, 0.7);
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 9999;
 }
 
-.gridSpinnerActive .gridSpinner {
-    display: table-row;
+.loadable-spinner-container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 49%;
+    top: 49%;
 }

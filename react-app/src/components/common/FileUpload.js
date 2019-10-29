@@ -1,133 +1,72 @@
-import React, { useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Typography, CircularProgress, Grid, TableBody, Table, TableRow, TableCell } from '@material-ui/core';
-import CheckIcon from '@material-ui/icons/Check';
-import lightGreen from '@material-ui/core/colors/lightGreen';
-import { DropzoneArea } from 'material-ui-dropzone'
+import React, { useEffect, useRef } from 'react';
+import { CircularProgress, IconButton } from '@material-ui/core';
+import UploadIcon from '@material-ui/icons/CloudUpload';
 
-const types = ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'text/csv'];
-
-const useStyles = makeStyles(() => ({
-  successIcon: {
-    color: lightGreen[500],
-    fontWeight: 500,
+function FileUpload({
+                      style, uploadApi, before = () => {
+  }, after = () => {
   },
-  uploadStatus: {
-    fontWeight: 500,
-  },
-}));
-
-function FileUpload({ uploadApi, before = () => {}, after = () => {} }) {
-  const classes = useStyles();
-  const [progresses, setProgresses] = React.useState({});
-  const [files, setFiles] = React.useState({});
+                    }) {
+  const [progress, setProgress] = React.useState();
+  const [file, setFile] = React.useState();
+  const inputRef = useRef();
 
   useEffect(() => {
     async function fetchData() {
-      const filesToUpload = Object.values(files).filter(file => file.uploadStarted == null);
-      if (filesToUpload.length === 0)
-        return;
-
-      await before();
-
-      await Promise.all(filesToUpload.map(async (file) => {
+      if (file && file.uploadStarted == null) {
+        await before();
         const data = new FormData();
         data.append('file', file);
-
-        setFiles((prevState) => {
-          // eslint-disable-next-line no-param-reassign
-          file.uploadStarted = true;
+        setFile(() => {
           return {
-            ...prevState,
-            [file.name]: file,
+            ...file,
+            uploadStarted: true,
           }
         });
+        try {
+          await uploadApi({
+            data,
+            onUploadProgress: (ProgressEvent) => {
+              const percentProgress = Math.round((ProgressEvent.loaded / ProgressEvent.total * 100));
+              setProgress(percentProgress)
+            },
+          });
+          await after();
+        } finally {
+          setFile(null);
+          setProgress(null);
+          inputRef.current.value = null;
+        }
+      }
 
-        await uploadApi({
-          data,
-          onUploadProgress: (ProgressEvent) => {
-            setProgresses((prev) => {
-              return {
-                ...prev,
-                [file.name]: Math.round((ProgressEvent.loaded / ProgressEvent.total * 100)),
-              }
-            });
-          },
-        });
-
-        setFiles((prevState) => {
-          // eslint-disable-next-line no-param-reassign
-          file.uploadFinished = true;
-          return {
-            ...prevState,
-            [file.name]: file,
-          }
-        });
-
-        await after();
-      }));
-
-      setFiles({});
-      setProgresses({});
     }
 
     fetchData();
-  }, [files, setFiles, progresses, uploadApi, before, after]);
+  }, [inputRef, file, setProgress, uploadApi, before, after]);
 
-  const handleChange = (newFiles) => {
-    const addedFiles = newFiles
-      .filter(file => !Object.keys(files).includes(file.name));
-    setFiles({
-      ...files,
-      ...addedFiles.reduce((acc, file) => ({ ...acc, [file.name]: file }), {}),
-    });
-  };
-
-  const renderFileProgress = () => {
-    return Object.values(files).map((file) => {
-      const progress = progresses[file.name] || 0;
-
-      const progressIndicator = (progress === 100 || file.uploadFinished) ?
-        <CheckIcon className={classes.successIcon}/> :
-        <CircularProgress variant="static" value={progress} size='1.5rem'/>;
-
-      return (
-        <TableRow key={file.name}>
-          <TableCell>
-            <Typography variant="body1">{file.name}</Typography>
-          </TableCell>
-          <TableCell>
-            <span className={classes.uploadStatus}>{progressIndicator}</span>
-          </TableCell>
-        </TableRow>
-      )
-    })
+  const addFile = () => {
+    setFile(inputRef.current.files[0]);
   };
 
   return (
-    <Grid container spacing={2}>
-      <Grid item xs={Object.keys(files).length === 0 ? 12 : 6}>
-        <DropzoneArea
-          filesLimit={1}
-          dropzoneClass="dropzone"
-          dropzoneText=""
-          acceptedFiles={types}
-          showPreviewsInDropzone={false}
-          showFileNamesInPreview={true}
-          showFileNames={true}
-          onChange={handleChange}
-          showAlerts={false}
-          maxFileSize={1000000}
-        />
-      </Grid>
-      <Grid item xs={6}>
-        <Table>
-          <TableBody>
-            {renderFileProgress()}
-          </TableBody>
-        </Table>
-      </Grid>
-    </Grid>
+    <span style={style}>
+      {progress ?
+        <CircularProgress variant="static" value={progress} size='1.5rem'/> :
+        (
+          <IconButton color="primary" onClick={() => inputRef.current.click()}>
+            <UploadIcon/>
+          </IconButton>
+        )
+      }
+      <input
+        type="file"
+        ref={inputRef}
+        onChange={() => addFile()}
+        style={{ display: 'none' }}
+        multiple={false}
+        accept=".csv, .xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+      />
+    </span>
   );
 }
 

@@ -1,8 +1,8 @@
-import './Grid.css'
 import React, { useState, useEffect, useCallback } from 'react';
 import { equals } from 'ramda';
 import Promise from 'bluebird';
-import Paper from '@material-ui/core/Paper';
+import { Paper, IconButton } from '@material-ui/core';
+import DownloadIcon from '@material-ui/icons/CloudDownload';
 import {
   PagingState,
   CustomPaging,
@@ -18,27 +18,12 @@ import {
 } from '@devexpress/dx-react-grid-material-ui';
 import FileUpload from './FileUpload';
 import Loader from './Loader';
+import './Grid.css'
 
 const getRowId = row => row.id;
 
 
-function LoadingRow(props) {
-  return (
-    <tbody>
-      <tr className="gridSpinner">
-        <td
-          style={{ textAlign: 'center', padding: '10px' }}
-          colSpan={props.children[0].props.columns.length}
-        >
-          <Loader/>
-        </td>
-      </tr>
-      {props.children}
-    </tbody>
-  )
-};
-
-export default ({ columnsConfig, crudApi, editable = false, uploader = false }) => {
+export default ({ columnsConfig, crudApi, editable = false, uploader = false, downloader = false }) => {
   const [columns] = useState(columnsConfig);
   const [rows, setRows] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
@@ -48,20 +33,16 @@ export default ({ columnsConfig, crudApi, editable = false, uploader = false }) 
   const [loading, setLoading] = useState(false);
 
   const awaitable = (fn) => {
-    // eslint-disable-next-line consistent-return
     return (args) => {
       setLoading(true);
       return new Promise((resolve, reject) => {
-        try {
-          // eslint-disable-next-line no-undef
-          fn.apply(this, [args]).then((result) => {
-            setLoading(false);
-            resolve(result);
-          });
-        } catch (ex) {
+        fn.apply(this, [args]).then((result) => {
           setLoading(false);
-          reject(ex);
-        }
+          resolve(result);
+        }).catch((e) => {
+          setLoading(false);
+          reject(e);
+        })
       });
     };
   };
@@ -84,24 +65,27 @@ export default ({ columnsConfig, crudApi, editable = false, uploader = false }) 
   }, [crudApi, fetch]);
 
   const rowChange = useCallback(async ({ added, changed, deleted }) => {
+    if(loading)
+      return;
+
     if (added) {
-      setPreviousRequest(null);
       await Promise.map(added, data => crudApi.create({ data }));
-      await fetch();
+      setPreviousRequest(null);
+      fetch();
     }
     if (changed) {
-      setPreviousRequest(null);
       await Promise.map(Object.entries(changed), ([id, data]) =>
         crudApi.patch({ id, data }));
-      await fetch();
+      setPreviousRequest(null);
+      fetch();
     }
     if (deleted) {
-      setPreviousRequest(null);
       await Promise.map(deleted, id =>
         crudApi.delete({ id }));
-      await fetch();
+      setPreviousRequest(null);
+      fetch();
     }
-  }, [crudApi, fetch]);
+  }, [crudApi, fetch, setPreviousRequest, loading]);
 
 
   const afterUpload = useCallback(() => {
@@ -110,40 +94,56 @@ export default ({ columnsConfig, crudApi, editable = false, uploader = false }) 
   }, [fetch]);
 
   return (
-    <Paper className={ loading ? 'gridSpinnerActive' : 'gridSpinnerInactive'}>
-      {uploader && (
-        <FileUpload uploadApi={crudApi.fileUpload} after={afterUpload}/>
-      )}
-      <Grid
-        rows={rows}
-        columns={columns}
-        getRowId={getRowId}
-      >
-        <EditingState
-          onCommitChanges={rowChange}
-        />
-        <PagingState
-          currentPage={currentPage}
-          onCurrentPageChange={setCurrentPage}
-          pageSize={pageSize}
-        />
-        <CustomPaging
-          totalCount={totalCount}
-        />
-        <Table bodyComponent={LoadingRow} loading={loading}/>
-        <TableHeaderRow/>
-        {!loading && editable && (
-          <TableEditRow/>
-        )}
-        {editable && (
-          <TableEditColumn
-            showAddCommand={!loading}
-            showEditCommand={!loading}
-            showDeleteCommand={!loading}
+    <Paper className="loadable-container">
+      <div className={loading ? 'loadable-content' : ''}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '10px'}}>
+          {uploader && (
+            <FileUpload uploadApi={crudApi.fileUpload} after={afterUpload} />
+          )}
+          {downloader && (
+            <IconButton>
+              <DownloadIcon />
+            </IconButton>
+          )}
+        </div>
+        <Grid
+          rows={rows}
+          columns={columns}
+          getRowId={getRowId}
+        >
+          <EditingState
+            onCommitChanges={rowChange}
           />
-        )}
-        <PagingPanel/>
-      </Grid>
+          <PagingState
+            currentPage={currentPage}
+            onCurrentPageChange={setCurrentPage}
+            pageSize={pageSize}
+          />
+          <CustomPaging
+            totalCount={totalCount}
+          />
+          <Table/>
+          <TableHeaderRow/>
+          { editable && (
+            <>
+              <TableEditRow/>
+              <TableEditColumn
+                showAddCommand
+                showEditCommand
+                showDeleteCommand
+              />
+            </>
+          )}
+          <PagingPanel/>
+        </Grid>
+      </div>
+      {loading && (
+        <div className="loadable-spinner">
+          <div className="loadable-spinner-container">
+            <Loader/>
+          </div>
+        </div>
+      )}
     </Paper>
   );
 };

@@ -13,7 +13,7 @@ function SettingsPage() {
       </Typography>
 
       <br/>
-      <Typography variant="h6" gutterBottom>
+      <Typography variant="h4" gutterBottom>
         Zip code locations
       </Typography>
       <Grid
@@ -25,13 +25,24 @@ function SettingsPage() {
         crudApi={api}
         editable={true}
         uploader={true}
+        downloader={true}
       />
 
-      {/* <br/> */}
-      {/* <Typography variant="subtitle2" gutterBottom > */}
+      <br />
+
+      {/* <Typography variant="h4" gutterBottom > */}
       {/*  Taxonomy */}
       {/* </Typography> */}
-      {/* <Import variant="simple"/> */}
+      {/* <Grid */}
+      {/*  columnsConfig={[ */}
+      {/*    { name: 'zipCode', title: 'Zip Code' }, */}
+      {/*    { name: 'latitude', title: 'Latitude' }, */}
+      {/*    { name: 'longitude', title: 'Longitude' }, */}
+      {/*  ]} */}
+      {/*  crudApi={api} */}
+      {/*  editable={true} */}
+      {/*  uploader={true} */}
+      {/* /> */}
 
       {/* <br/> */}
       {/* <Typography variant="subtitle2" gutterBottom> */}
