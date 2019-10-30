@@ -5,7 +5,7 @@ import Import from '../common/import/Import';
 function ImportPage() {
   return (
     <div>
-      <Typography variant="h1" paragraph>
+      <Typography variant="h3" gutterBottom>
         Import
       </Typography>
       <Import />

@@ -1,6 +1,6 @@
-DROP TABLE IF EXISTS fact;
+DROP TABLE IF EXISTS fact_raw;
 
-CREATE TABLE fact
+CREATE TABLE fact_raw
 (
     id                   BIGSERIAL NOT NULL,
     transaction_id       VARCHAR(255),
@@ -32,5 +32,5 @@ CREATE TABLE fact
     accessorial_charge3  DECIMAL,
     discount             VARCHAR(255),
     distance             FLOAT,
-    constraint fact_uniq unique (ID)
+    constraint fact_raw_uniq unique (ID)
 );
