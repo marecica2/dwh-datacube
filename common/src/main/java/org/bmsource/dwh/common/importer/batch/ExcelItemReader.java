@@ -23,7 +23,6 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Component
@@ -40,8 +39,6 @@ public class ExcelItemReader implements ItemStreamReader<List<Object>>, ImportCo
     private Workbook workbook;
 
     private InputStream inputStream;
-
-    private ExecutionContext executionContext;
 
     @Value("#{jobParameters['transaction']}")
     private String transaction;
@@ -63,7 +60,6 @@ public class ExcelItemReader implements ItemStreamReader<List<Object>>, ImportCo
 
     @Override
     public void open(@NotNull ExecutionContext executionContext) throws ItemStreamException {
-        this.executionContext = executionContext;
         try {
             InputStream inputStream = fileManager.getStream(transaction, fileName);
             Workbook workbook = StreamingReader.builder()
@@ -83,7 +79,7 @@ public class ExcelItemReader implements ItemStreamReader<List<Object>>, ImportCo
                     .stream()
                     .map(Object::toString)
                     .collect(Collectors.toList());
-            saveToContext(executionContext, ImportContext.headerKey, String.join(",", columns));
+            executionContext.put(ImportContext.headerKey, String.join(",", columns));
         } catch (Exception e) {
             try {
                 this.workbook.close();

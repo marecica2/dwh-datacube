@@ -9,12 +9,13 @@ import java.util.*;
 public class BeanMapperTest {
 
     @Test
-    public void testBeanMappingForTypes() throws Exception {
+    public void testBeanMappingForTypes() {
         List<String> headerColumn = new ArrayList<String>() {{
             add("integerColumn");
             add("doubleColumn");
             add("stringColumn");
             add("dateColumn");
+            add("dateColumn1");
             add("bigDecimalColumn");
         }};
         List<Object> row = new ArrayList<Object>() {{
@@ -22,6 +23,7 @@ public class BeanMapperTest {
             add("0.1234");
             add("string");
             add("2019-10-24 12:00:00");
+            add("02/05/2018");
             add("999999.99");
         }};
         Map<String, String> mapping = new HashMap<String, String>() {{
@@ -29,6 +31,7 @@ public class BeanMapperTest {
             put("doubleColumn", "doubleProp");
             put("stringColumn", "stringProp");
             put("dateColumn", "dateProp");
+            put("dateColumn1", "dateProp1");
             put("bigDecimalColumn", "bigDecimalProp");
         }};
         BeanMapper<Bean> mapper = new BeanMapper<>(Bean.class, headerColumn, mapping);
@@ -42,15 +45,28 @@ public class BeanMapperTest {
             .set(Calendar.DAY_OF_MONTH, 24)
             .set(Calendar.HOUR, 12)
             .build();
+        Calendar cal1 = new Calendar
+            .Builder()
+            .set(Calendar.YEAR, 2018)
+            .set(Calendar.MONTH, Calendar.MAY)
+            .set(Calendar.DAY_OF_MONTH, 2)
+            .build();
         Assertions.assertEquals(cal.getTime(),bean.getDateProp());
+        Assertions.assertEquals(cal1.getTime(),bean.getDateProp1());
         Assertions.assertEquals(new BigDecimal("999999.99"),bean.getBigDecimalProp());
     }
 
     public static class Bean {
         private int integerProp;
+
         private double doubleProp;
+
         private String stringProp;
+
         private Date dateProp;
+
+        private Date dateProp1;
+
         private BigDecimal bigDecimalProp;
 
         public int getIntegerProp() {
@@ -91,6 +107,26 @@ public class BeanMapperTest {
 
         public void setBigDecimalProp(BigDecimal bigDecimalProp) {
             this.bigDecimalProp = bigDecimalProp;
+        }
+
+        public Date getDateProp1() {
+            return dateProp1;
+        }
+
+        public void setDateProp1(Date dateProp1) {
+            this.dateProp1 = dateProp1;
+        }
+
+        @Override
+        public String toString() {
+            return "Bean{" +
+                "integerProp=" + integerProp +
+                ", doubleProp=" + doubleProp +
+                ", stringProp='" + stringProp + '\'' +
+                ", dateProp=" + dateProp +
+                ", dateProp1=" + dateProp1 +
+                ", bigDecimalProp=" + bigDecimalProp +
+                '}';
         }
     }
 }

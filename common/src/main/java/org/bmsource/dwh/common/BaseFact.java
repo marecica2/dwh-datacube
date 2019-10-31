@@ -2,6 +2,7 @@ package org.bmsource.dwh.common;
 
 import com.google.common.base.CaseFormat;
 
+import javax.persistence.Table;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -23,8 +24,14 @@ public class BaseFact {
                 .collect(Collectors.toList())
         );
 
+        String tableName;
+        try {
+            tableName = this.getClass().getAnnotation(Table.class).name();
+        } catch (NullPointerException npe) {
+            tableName = this.getClass().getSimpleName();
+        }
         return String.format("INSERT INTO %s (%s) VALUES (%s)",
-            this.getClass().getSimpleName(),
+            tableName,
             columns,
             parameters
         );

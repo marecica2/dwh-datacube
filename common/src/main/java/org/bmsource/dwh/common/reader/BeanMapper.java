@@ -5,8 +5,9 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.ConversionException;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.Converter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,6 +15,15 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class BeanMapper<Bean> {
+
+    private static Logger logger = LoggerFactory.getLogger(BeanMapper.class);
+
+    private static final String[] datePatterns = {
+        "yyyy-MM-dd HH:mm:ss",
+        "dd.MM.YYYY HH:mm:ss",
+        "dd.MM.YYYY",
+        "dd/MM/yyyy",
+    };
 
     private final Class<Bean> typeParameterClass;
 
@@ -25,9 +35,8 @@ public class BeanMapper<Bean> {
             Optional<String> o = columns.stream().filter(obj -> obj.equals(key)).findFirst();
             o.ifPresent(s -> indexMapping.put(columns.indexOf(s), value));
         });
-
-        MyConverter converter = new MyConverter("yyyy-MM-dd HH:mm:ss");
-        ConvertUtils.register(converter, Date.class);
+        ConvertUtils.register(new MyConverter(datePatterns), Date.class);
+        ConvertUtils.register(new MyConverter(datePatterns), BigDecimal.class);
     }
 
     public Bean mapRow(List<Object> row) {
@@ -37,8 +46,12 @@ public class BeanMapper<Bean> {
                 if (row.size() > index) {
                     try {
                         BeanUtils.copyProperty(bean, attribute, row.get(index));
-                    } catch (IllegalAccessException | InvocationTargetException e) {
-                        e.printStackTrace();
+                    } catch (Exception e) {
+                        logger.debug("Conversion failed for bean {} attribute {} value. Error {}",
+                            typeParameterClass.getName(),
+                            attribute,
+                            row.get(index),
+                            e.getMessage());
                     }
                 }
             });
@@ -56,37 +69,46 @@ public class BeanMapper<Bean> {
     }
 
     private static class MyConverter implements Converter {
-        private static SimpleDateFormat format;
+        private static List<SimpleDateFormat> formats = new ArrayList<>();
+        private static String[] patterns;
 
-        public MyConverter(String pattern) {
-            format = new SimpleDateFormat(pattern);
+        public MyConverter(String[] patterns) {
+            for (String pattern : patterns) {
+                formats.add(new SimpleDateFormat(pattern));
+            }
         }
 
         @Override
         public Object convert(Class type, Object value) {
-            if (value == null) {
+            String stringValue;
+
+            if (value == null)
                 return null;
-            }
 
             if (value instanceof String) {
-                String tmp = (String) value;
-                if (tmp.trim().length() == 0) {
-                    return null;
-                } else {
-                    try {
-                        return new BigDecimal(tmp);
-                    } catch (NumberFormatException nfe) {
-                        try {
-                            return format.parse(tmp);
-                        } catch (ParseException pe) {
-                            return tmp;
-                        }
-                    }
-                }
+                stringValue = (String) value;
             } else {
                 throw new ConversionException("not String");
             }
+
+            if (stringValue.trim().length() == 0) {
+                return null;
+            }
+
+            for (SimpleDateFormat format : formats) {
+                try {
+                    Date date = format.parse(stringValue);
+                    return date;
+                } catch (ParseException pe) {
+                    // Omitted
+                }
+            }
+
+            try {
+                return new BigDecimal(stringValue.replaceAll("[^0-9\\.]", ""));
+            } catch (NumberFormatException nfe) {
+                throw new ConversionException("not Number");
+            }
         }
     }
-
 }

@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 
-@Table(name = "fact")
+@Table(name = "fact_raw")
 public class Fact extends BaseFact {
 
   String transactionId;
