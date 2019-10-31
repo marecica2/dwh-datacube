@@ -27,10 +27,11 @@ export default ({ columnsConfig, crudApi, editable = false, uploader = false, do
   const [columns] = useState(columnsConfig);
   const [rows, setRows] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
-  const [pageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(20);
   const [currentPage, setCurrentPage] = useState(0);
   const [previousRequest, setPreviousRequest] = useState();
   const [loading, setLoading] = useState(false);
+  const [pageSizes] = useState([10, 20, 50]);
 
   const awaitable = (fn) => {
     return (args) => {
@@ -118,6 +119,7 @@ export default ({ columnsConfig, crudApi, editable = false, uploader = false, do
             currentPage={currentPage}
             onCurrentPageChange={setCurrentPage}
             pageSize={pageSize}
+            onPageSizeChange={setPageSize}
           />
           <CustomPaging
             totalCount={totalCount}
@@ -134,7 +136,9 @@ export default ({ columnsConfig, crudApi, editable = false, uploader = false, do
               />
             </>
           )}
-          <PagingPanel/>
+          <PagingPanel
+            pageSizes={pageSizes}
+          />
         </Grid>
       </div>
       {loading && (
