@@ -61,7 +61,7 @@ public class ExcelWriter {
             int cellNum = 0;
             for (Object value : excelRow.getRow()) {
                 Cell cell = row.createCell(cellNum);
-                if (excelRow.getErrors() != null) {
+                if (excelRow.getErrors() != null && cellNum < header.size()) {
                     List<String> errors = excelRow.getErrors().get(header.get(cellNum));
                     if (errors != null) {
                         String errorComment = String.join("\r\n", errors);

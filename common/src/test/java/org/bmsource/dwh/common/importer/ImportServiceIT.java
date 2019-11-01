@@ -75,7 +75,7 @@ public class ImportServiceIT {
     public void testImport() {
         importService.runImport(tenant, project, transaction, files, mapping);
         int importedRows = template.queryForObject("SELECT count(*) FROM fact", Integer.class);
-        Assertions.assertEquals(474, importedRows);
+        Assertions.assertEquals(458, importedRows);
     }
 
     @Table(name = "fact")

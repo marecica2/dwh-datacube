@@ -36,7 +36,6 @@ public class ExcelRowMapper<Bean> {
             o.ifPresent(s -> indexMapping.put(columns.indexOf(s), value));
         });
         ConvertUtils.register(new ExcelConverter(datePatterns), Date.class);
-        ConvertUtils.register(new ExcelConverter(datePatterns), BigDecimal.class);
     }
 
     public Bean map(List<Object> row) {
@@ -47,7 +46,7 @@ public class ExcelRowMapper<Bean> {
                     try {
                         BeanUtils.copyProperty(bean, attribute, row.get(index));
                     } catch (Exception e) {
-                        logger.debug("Conversion failed for bean {} attribute {} value. Error {}",
+                        logger.debug("Conversion failed for bean {} attribute {} value {} Error {}",
                             typeParameterClass.getName(),
                             attribute,
                             row.get(index),
