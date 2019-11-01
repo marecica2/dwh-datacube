@@ -3,14 +3,17 @@ package org.bmsource.dwh.common;
 import com.google.common.base.CaseFormat;
 
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public class BaseFact {
+
     public String insertSQL() {
         String columns = String.join(
             ", ",
             Arrays.stream(this.getClass().getDeclaredFields())
+                .filter(field -> field.getAnnotation(Transient.class) == null)
                 .map(field -> CaseFormat.LOWER_CAMEL
                     .converterTo(CaseFormat.LOWER_UNDERSCORE)
                     .convert(field.getName()))
@@ -20,6 +23,7 @@ public class BaseFact {
         String parameters = String.join(
             ", ",
             Arrays.stream(this.getClass().getDeclaredFields())
+                .filter(field -> field.getAnnotation(Transient.class) == null)
                 .map(field -> ":" + field.getName())
                 .collect(Collectors.toList())
         );

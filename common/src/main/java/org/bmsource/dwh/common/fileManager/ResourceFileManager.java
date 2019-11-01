@@ -7,10 +7,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.FileSystems;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -57,6 +54,13 @@ public class ResourceFileManager implements FileManager {
       throw new ItemStreamException(e);
     }
     return FileUtils.openInputStream(file);
+  }
+
+  @Override
+  public OutputStream writeStream(String transactionId, String fileName) throws IOException {
+    String tempDir = System.getProperty("java.io.tmpdir");
+    File file = new File(tempDir + SLASH + transactionId + SLASH + fileName);
+    return FileUtils.openOutputStream(file);
   }
 
   private File createFile(String transactionId, String name) {

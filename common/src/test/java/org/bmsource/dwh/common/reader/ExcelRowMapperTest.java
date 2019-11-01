@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.*;
 
-public class BeanMapperTest {
+public class ExcelRowMapperTest {
 
     @Test
     public void testBeanMappingForTypes() {
@@ -34,8 +34,8 @@ public class BeanMapperTest {
             put("dateColumn1", "dateProp1");
             put("bigDecimalColumn", "bigDecimalProp");
         }};
-        BeanMapper<Bean> mapper = new BeanMapper<>(Bean.class, headerColumn, mapping);
-        Bean bean = mapper.mapRow(row);
+        ExcelRowMapper<Bean> mapper = new ExcelRowMapper<>(Bean.class, headerColumn, mapping);
+        Bean bean = mapper.map(row);
         Assertions.assertEquals(0.1234, bean.getDoubleProp());
         Assertions.assertEquals("string", bean.getStringProp());
         Calendar cal = new Calendar

@@ -3,7 +3,7 @@ package org.bmsource.dwh.importer.web;
 import org.bmsource.dwh.common.fileManager.FileManager;
 import org.bmsource.dwh.common.fileManager.TmpFileManager;
 import org.bmsource.dwh.common.importer.ImportService;
-import org.bmsource.dwh.common.reader.BeanMapper;
+import org.bmsource.dwh.common.reader.ExcelRowMapper;
 import org.bmsource.dwh.common.reader.DataReader;
 import org.bmsource.dwh.common.reader.ExcelReader;
 import org.bmsource.dwh.common.reader.MappingResult;
@@ -73,7 +73,7 @@ public class ImportController {
             fileManager.getStream(transactionId, files.get(0));) {
             DataReader reader = new ExcelReader();
             MappingResult columnMapping = reader.readHeaderRow(stream1);
-            return new BeanMapper<>(Fact.class, columnMapping.getHeaderRow(), mappingParam.getMapping()).mapList(reader.readContent(stream2, 100));
+            return new ExcelRowMapper<>(Fact.class, columnMapping.getHeaderRow(), mappingParam.getMapping()).mapList(reader.readContent(stream2, 100));
         }
     }
 

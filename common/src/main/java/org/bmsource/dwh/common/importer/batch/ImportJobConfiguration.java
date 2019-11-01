@@ -45,25 +45,34 @@ public class ImportJobConfiguration<Fact extends BaseFact> {
 
     private Logger logger = LoggerFactory.getLogger(ImportJobConfiguration.class);
 
-    private static final int BATCH_SIZE = 5000;
+    private static final int BATCH_SIZE = 50;
 
     private static final int MAX_CONCURRENT_FILES = 10;
 
+    @Autowired
+    @Qualifier("fact")
+    private Fact fact;
+
+    @Autowired
     private DataSource dataSource;
 
+    @Autowired
     private StepBuilderFactory stepBuilderFactory;
 
+    @Autowired
     private ImportPartitioner excelImportPartitioner;
 
+    @Autowired(required = false)
     private JobExecutionListener jobListener;
 
+    @Autowired(required = false)
     private ItemWriteListener writeListener;
 
+    @Autowired(required = false)
     private ChunkListener chunkListener;
 
+    @Autowired
     private FactItemProcessor<Fact> processor;
-
-    private Fact fact;
 
     @Autowired
     AppStateService appStateService;
@@ -72,59 +81,17 @@ public class ImportJobConfiguration<Fact extends BaseFact> {
     JobRepository jobRepository;
 
     @Autowired
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-
-    @Autowired
-    public void setStepBuilderFactory(StepBuilderFactory stepBuilderFactory) {
-        this.stepBuilderFactory = stepBuilderFactory;
-    }
-
-    @Autowired
-    public void setExcelImportPartitioner(ImportPartitioner excelImportPartitioner) {
-        this.excelImportPartitioner = excelImportPartitioner;
-    }
-
-    @Autowired(required = false)
-    public void setJobListener(JobExecutionListener jobListener) {
-        this.jobListener = jobListener;
-    }
-
-    @Autowired(required = false)
-    public void setItemWriteListener(ItemWriteListener writeListener) {
-        this.writeListener = writeListener;
-    }
-
-    @Autowired(required = false)
-    public void setChunkListener(ChunkListener chunkListener) {
-        this.chunkListener = chunkListener;
-    }
-
-    @Autowired
-    public void setProcessor(FactItemProcessor<Fact> processor) {
-        this.processor = processor;
-    }
-
-    @Autowired
-    @Qualifier("fact")
-    public void setFact(Fact fact) {
-        this.fact = fact;
-    }
+    CompositeImportItemWriter<Fact> compositeItemWriter;
 
     @Bean
-    JdbcBatchItemWriter<Fact> writer() {
-        JdbcBatchItemWriter<Fact> writer = null;
-        try {
-            writer = new JdbcBatchItemWriterBuilder<Fact>()
-                .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
-                .sql(fact.getClass().newInstance().insertSQL())
-                .dataSource(dataSource)
-                .build();
-        } catch (InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return writer;
+    public JdbcBatchItemWriter<Fact> jdbcWriter() {
+        JdbcBatchItemWriter<Fact> jdbcWriter = new JdbcBatchItemWriterBuilder<Fact>()
+            .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
+            .sql(writeSql())
+            .dataSource(dataSource)
+            .build();
+        jdbcWriter.afterPropertiesSet();
+        return jdbcWriter;
     }
 
     @Bean
@@ -152,11 +119,11 @@ public class ImportJobConfiguration<Fact extends BaseFact> {
 
     @Bean
     public Step excelReadStep() {
-        SimpleStepBuilder<List<Object>, Fact> step = stepBuilderFactory.get("excelReadStep")
-            .<List<Object>, Fact>chunk(BATCH_SIZE)
+        SimpleStepBuilder<List<Object>, ImportItem<Fact>> step = stepBuilderFactory.get("excelReadStep")
+            .<List<Object>, ImportItem<Fact>>chunk(BATCH_SIZE)
             .reader(reader())
             .processor(processor)
-            .writer(writer());
+            .writer(compositeItemWriter);
         if (writeListener != null) {
             step.listener(writeListener);
         }
@@ -270,10 +237,21 @@ public class ImportJobConfiguration<Fact extends BaseFact> {
     @Bean
     public TaskExecutor taskExecutor() {
         ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+        taskExecutor.setThreadNamePrefix("Partition_");
         taskExecutor.setMaxPoolSize(MAX_CONCURRENT_FILES);
         taskExecutor.setCorePoolSize(MAX_CONCURRENT_FILES / 2);
         taskExecutor.setQueueCapacity(MAX_CONCURRENT_FILES / 2);
         taskExecutor.afterPropertiesSet();
         return taskExecutor;
+    }
+
+    private String writeSql() {
+        String sql = null;
+        try {
+            sql = fact.getClass().newInstance().insertSQL();
+        } catch (InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return sql;
     }
 }

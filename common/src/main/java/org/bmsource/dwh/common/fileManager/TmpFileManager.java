@@ -1,8 +1,6 @@
 package org.bmsource.dwh.common.fileManager;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.FileSystems;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -44,6 +42,16 @@ public class TmpFileManager implements FileManager {
   public InputStream getStream(String transactionId, String fileName) throws IOException {
     File src = createFile(transactionId, fileName);
     return FileUtils.openInputStream(src);
+  }
+
+  @Override
+  public OutputStream writeStream(String transactionId, String fileName) throws IOException {
+    File dest = createFile(transactionId, fileName);
+    try {
+      return new FileOutputStream(dest);
+    } catch (FileNotFoundException e) {
+      throw new IOException(e);
+    }
   }
 
   private File createFile(String transactionId, String name) {

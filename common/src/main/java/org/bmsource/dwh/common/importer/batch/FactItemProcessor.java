@@ -2,7 +2,9 @@ package org.bmsource.dwh.common.importer.batch;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.bmsource.dwh.common.BaseFact;
-import org.bmsource.dwh.common.reader.BeanMapper;
+import org.bmsource.dwh.common.reader.ExcelRowMapper;
+import org.bmsource.dwh.common.ExcelRow;
+import org.bmsource.dwh.common.reader.ExcelRowValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.StepExecution;
@@ -22,23 +24,26 @@ import java.util.Map;
 
 @StepScope
 @Component
-public class FactItemProcessor<Fact extends BaseFact> implements ItemProcessor<List<Object>, Fact>, ImportContext {
+public class FactItemProcessor<Fact extends BaseFact> implements ItemProcessor<List<Object>, ImportItem<Fact>>, ImportContext {
 
-    private static final Logger log = LoggerFactory.getLogger(FactItemProcessor.class);
+    private static final Logger logger = LoggerFactory.getLogger(FactItemProcessor.class);
 
     @Value("#{jobParameters['mapping']}")
     private String mappingString;
+
+    @Value("#{stepExecutionContext['fileName']}")
+    private String fileName;
 
     private Map<String, String> mapping;
 
     private StepExecution stepExecution;
 
-    private BeanMapper<Fact> rowMapper;
-
-    private Fact fact;
+    private ExcelRowMapper<Fact> rowMapper;
 
     @Autowired
     @Qualifier("fact")
+    private Fact fact;
+
     public void setFact(Fact fact) {
         this.fact = fact;
     }
@@ -48,20 +53,33 @@ public class FactItemProcessor<Fact extends BaseFact> implements ItemProcessor<L
         this.stepExecution = stepExecution;
         try {
             String mappingString = stepExecution.getJobExecution().getJobParameters().getString("mapping");
-            this.mapping = new ObjectMapper().readValue(mappingString, HashMap.class);
+            mapping = new ObjectMapper().readValue(mappingString, HashMap.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public Fact process(final List<Object> row) {
+    public ImportItem<Fact> process(final List<Object> row) {
         if (rowMapper == null) {
             String[] header = ((String) stepExecution.getExecutionContext().get(headerKey)).split(",");
-            rowMapper = new BeanMapper<>((Class<Fact>)fact.getClass(), Arrays.asList(header), mapping);
+            rowMapper = new ExcelRowMapper<>((Class<Fact>)fact.getClass(), Arrays.asList(header), mapping);
         }
-        Fact fact = rowMapper.mapRow(row);
-        return fact;
+        Fact fact = rowMapper.map(row);
+        ExcelRowValidator<Fact> validator = new ExcelRowValidator(mapping);
+        Map<String, List<String>> validationErrors = validator.getValidationErrors(fact);
+        ExcelRow excelRow = ExcelRow
+            .builder()
+            .row(row)
+            .errors(validationErrors)
+            .build();
+        logger.debug("XXXXX Parsing errors Thread: {}, FileName: {}, Errors: {}, Bean: {}",
+            Thread.currentThread().getName(),
+            fileName,
+            validationErrors,
+            fact.toString()
+        );
+        return new ImportItem<>(fact, excelRow);
     }
 
 }

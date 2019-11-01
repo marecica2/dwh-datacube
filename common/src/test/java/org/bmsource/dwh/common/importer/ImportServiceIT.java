@@ -15,6 +15,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -40,6 +43,8 @@ public class ImportServiceIT {
         put("S. No.", "transactionId");
         put("Origin-City", "originCity");
         put("Zone", "zone");
+        put("Cost (USD)", "cost");
+        put("Billable Weight (lb)", "billableWeight");
     }};
 
     @Autowired
@@ -60,7 +65,9 @@ public class ImportServiceIT {
             "(" +
             "    id BIGINT IDENTITY NOT NULL PRIMARY KEY," +
             "    transaction_id VARCHAR(255)," +
-            "    business_unit  VARCHAR(255)" +
+            "    business_unit  VARCHAR(255)," +
+            "    cost  DECIMAL," +
+            "    billable_weight  INTEGER" +
             ");");
     }
 
@@ -68,15 +75,24 @@ public class ImportServiceIT {
     public void testImport() {
         importService.runImport(tenant, project, transaction, files, mapping);
         int importedRows = template.queryForObject("SELECT count(*) FROM fact", Integer.class);
-        Assertions.assertEquals(476, importedRows);
+        Assertions.assertEquals(474, importedRows);
     }
 
     @Table(name = "fact")
     public static class Fact extends BaseFact {
 
+        @NotNull
         private String businessUnit;
 
+        @NotNull
         private String transactionId;
+
+        @NotNull
+        @Min(0)
+        private BigDecimal cost;
+
+        @NotNull
+        private Integer billableWeight;
 
         public String getBusinessUnit() {
             return businessUnit;
@@ -94,10 +110,29 @@ public class ImportServiceIT {
             this.transactionId = transactionId;
         }
 
+        public Integer getBillableWeight() {
+            return billableWeight;
+        }
+
+        public void setBillableWeight(Integer billableWeight) {
+            this.billableWeight = billableWeight;
+        }
+
+        public BigDecimal getCost() {
+            return cost;
+        }
+
+        public void setCost(BigDecimal cost) {
+            this.cost = cost;
+        }
+
         @Override
         public String toString() {
             return "Fact{" +
+                "businessUnit='" + businessUnit + '\'' +
                 ", transactionId='" + transactionId + '\'' +
+                ", billableWeight=" + billableWeight +
+                ", cost=" + cost +
                 '}';
         }
     }

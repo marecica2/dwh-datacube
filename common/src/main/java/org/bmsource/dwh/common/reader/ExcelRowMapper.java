@@ -14,9 +14,9 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class BeanMapper<Bean> {
+public class ExcelRowMapper<Bean> {
 
-    private static Logger logger = LoggerFactory.getLogger(BeanMapper.class);
+    private static Logger logger = LoggerFactory.getLogger(ExcelRowMapper.class);
 
     private static final String[] datePatterns = {
         "yyyy-MM-dd HH:mm:ss",
@@ -29,17 +29,17 @@ public class BeanMapper<Bean> {
 
     private final Map<Integer, String> indexMapping = new LinkedHashMap<>();
 
-    public BeanMapper(Class<Bean> beanClass, List<String> columns, Map<String, String> mapping) {
+    public ExcelRowMapper(Class<Bean> beanClass, List<String> columns, Map<String, String> mapping) {
         this.typeParameterClass = beanClass;
         mapping.forEach((key, value) -> {
             Optional<String> o = columns.stream().filter(obj -> obj.equals(key)).findFirst();
             o.ifPresent(s -> indexMapping.put(columns.indexOf(s), value));
         });
-        ConvertUtils.register(new MyConverter(datePatterns), Date.class);
-        ConvertUtils.register(new MyConverter(datePatterns), BigDecimal.class);
+        ConvertUtils.register(new ExcelConverter(datePatterns), Date.class);
+        ConvertUtils.register(new ExcelConverter(datePatterns), BigDecimal.class);
     }
 
-    public Bean mapRow(List<Object> row) {
+    public Bean map(List<Object> row) {
         try {
             Bean bean = typeParameterClass.newInstance();
             this.indexMapping.forEach((index, attribute) -> {
@@ -64,15 +64,15 @@ public class BeanMapper<Bean> {
 
     public List<Bean> mapList(List<List<Object>> rows) {
         return rows.stream()
-            .map(row -> mapRow(row))
+            .map(row -> map(row))
             .collect(Collectors.toList());
     }
 
-    private static class MyConverter implements Converter {
+    private static class ExcelConverter implements Converter {
         private static List<SimpleDateFormat> formats = new ArrayList<>();
         private static String[] patterns;
 
-        public MyConverter(String[] patterns) {
+        public ExcelConverter(String[] patterns) {
             for (String pattern : patterns) {
                 formats.add(new SimpleDateFormat(pattern));
             }

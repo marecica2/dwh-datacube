@@ -1,7 +1,7 @@
 package org.bmsource.dwh.masterdata;
 
 import org.bmsource.dwh.common.BaseFact;
-import org.bmsource.dwh.common.reader.BeanMapper;
+import org.bmsource.dwh.common.reader.ExcelRowMapper;
 import org.bmsource.dwh.common.reader.DataHandler;
 import org.bmsource.dwh.common.reader.DataReader;
 import org.bmsource.dwh.common.reader.ExcelReader;
@@ -32,7 +32,7 @@ public class SimpleExcelParser<T extends BaseFact> {
     @Async("asyncExecutor")
     public void parse(InputStream stream) throws Exception {
         DataReader reader = new ExcelReader();
-        final List<BeanMapper<T>> rowMapper = new ArrayList<>();
+        final List<ExcelRowMapper<T>> rowMapper = new ArrayList<>();
 
         reader.readContent(stream, new DataHandler() {
             @Override
@@ -47,7 +47,7 @@ public class SimpleExcelParser<T extends BaseFact> {
                 if (rowMapper.size() == 0) {
                     Map<String, String> simpleMapping =
                         header.stream().collect(Collectors.toMap(String::toString, item -> item));
-                    rowMapper.add(new BeanMapper<T>(classType, header, simpleMapping));
+                    rowMapper.add(new ExcelRowMapper<T>(classType, header, simpleMapping));
                 }
                 List<T> items = rowMapper.get(0).mapList(rows);
                 if (onRead != null)
