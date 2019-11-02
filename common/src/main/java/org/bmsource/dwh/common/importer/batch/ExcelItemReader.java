@@ -46,7 +46,7 @@ public class ExcelItemReader<T> implements ItemStreamReader<List<Object>>, Impor
 
     @Override
     public List<Object> read() {
-        return excelReader.readRow();
+        return excelReader.nextRow();
     }
 
     @Override
@@ -56,7 +56,7 @@ public class ExcelItemReader<T> implements ItemStreamReader<List<Object>>, Impor
             excelReader = new ExcelRead(inputStream);
             logger.debug("Excel file {} opened for reading", this.fileName);
 
-            executionContext.put(ImportContext.totalRowsKey, excelReader.getRowsRead());
+            executionContext.put(ImportContext.totalRowsKey, excelReader.getTotalRowsCount());
             executionContext.put(ImportContext.rowsKey, 0);
             List<String> columns = getHeader();
             executionContext.put(ImportContext.headerKey, String.join(",", columns));
@@ -75,7 +75,7 @@ public class ExcelItemReader<T> implements ItemStreamReader<List<Object>>, Impor
     }
 
     private List<String> getHeader() {
-        return excelReader.readRow()
+        return excelReader.nextRow()
             .stream()
             .map(Object::toString)
             .collect(Collectors.toList());

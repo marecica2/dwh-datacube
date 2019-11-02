@@ -1,37 +1,24 @@
 package org.bmsource.dwh.common.reader;
 
-import com.monitorjbl.xlsx.StreamingReader;
-
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-
-public class ExcelReader implements DataReader {
+public class ExcelBatchReader implements DataReader {
 
     private static Integer DEFAULT_BATCH_SIZE = 5000;
 
     private void readExcelStream(InputStream inputStream, DataHandler dataHandler,
                                  Integer batchSize, Integer rowsLimit, boolean headerExcluded) throws Exception {
         try (
-            Workbook workbook = StreamingReader.builder()
-                .rowCacheSize(batchSize)
-                .bufferSize(32000)
-                .open(inputStream)) {
+            ExcelRead reader = new ExcelRead(inputStream)) {
             dataHandler.onStart();
-            Sheet sheet = workbook.getSheetAt(0);
-            Iterator<Row> rowIterator = sheet.rowIterator();
 
             int totalRows = 0;
             List<List<Object>> rows = new LinkedList<>();
-            List<Object> headerRow = readSingleRow(rowIterator);
+            List<Object> headerRow = reader.nextRow();
             List<String> headerStringRow = headerRow
                 .stream()
                 .map(Object::toString)
@@ -39,35 +26,20 @@ public class ExcelReader implements DataReader {
             if (!headerExcluded) {
                 rows.add(headerRow);
             }
-            while ((rowIterator.hasNext()) && (totalRows < rowsLimit || rowsLimit == -1)) {
-                List<Object> row = readSingleRow(rowIterator);
-                if(row == null) break;
+
+            while ((reader.hasNextRow()) && (totalRows < rowsLimit || rowsLimit == -1)) {
+                List<Object> row = reader.nextRow();
+                if (row == null) break; // TODO remove if possible
                 rows.add(row);
                 totalRows++;
                 if (totalRows % batchSize == 0) {
-                    dataHandler.onRead(rows, headerStringRow, totalRows, sheet.getLastRowNum());
+                    dataHandler.onRead(rows, headerStringRow, totalRows, reader.getTotalRowsCount());
                     rows = new LinkedList<>();
                 }
             }
-            dataHandler.onRead(rows, headerStringRow, totalRows, sheet.getLastRowNum());
-            dataHandler.onFinish(sheet.getLastRowNum());
+            dataHandler.onRead(rows, headerStringRow, totalRows, reader.getTotalRowsCount());
+            dataHandler.onFinish(reader.getTotalRowsCount());
         }
-    }
-
-    private List<Object> readSingleRow(Iterator<Row> rowIterator) {
-        List<Object> rowContainer = new LinkedList<>();
-        int prevCellIndex = 0;
-
-        Row sheetRow = rowIterator.next();
-        for (Cell sheetCell : sheetRow) {
-            int currentIndex = sheetCell.getColumnIndex();
-            fillGaps(rowContainer, prevCellIndex, currentIndex);
-            rowContainer.add(sheetCell.getStringCellValue());
-            prevCellIndex = currentIndex;
-        }
-        if (rowContainer.size() == 1 && rowContainer.get(0).equals(""))
-            return null;
-        return rowContainer;
     }
 
     @Override
@@ -94,8 +66,8 @@ public class ExcelReader implements DataReader {
 
     @Override
     public List<List<Object>> readContent(InputStream inputStream, int rowsToRead) throws Exception {
-        if (rowsToRead > 10000) {
-            throw new IllegalArgumentException("Rows to read must not be greater than 10000");
+        if (rowsToRead > 1000) {
+            throw new IllegalArgumentException("Rows to read must not be greater than 1000");
         }
         List<List<Object>> result = new ArrayList<>();
         readExcelStream(inputStream, (rows, header, rowsCount, totalRowsCount) -> {
@@ -104,12 +76,4 @@ public class ExcelReader implements DataReader {
             rowsToRead, rowsToRead, true);
         return result;
     }
-
-    private void fillGaps(List<Object> row, int prevIndex, int currentIndex) {
-        for (int i = prevIndex + 1; i < currentIndex; i++) {
-            row.add(null);
-        }
-    }
-
-
 }

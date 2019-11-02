@@ -5,7 +5,7 @@ import org.bmsource.dwh.common.fileManager.TmpFileManager;
 import org.bmsource.dwh.common.importer.ImportService;
 import org.bmsource.dwh.common.reader.ExcelRowMapper;
 import org.bmsource.dwh.common.reader.DataReader;
-import org.bmsource.dwh.common.reader.ExcelReader;
+import org.bmsource.dwh.common.reader.ExcelBatchReader;
 import org.bmsource.dwh.common.reader.MappingResult;
 import org.bmsource.dwh.importer.Fact;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +56,7 @@ public class ImportController {
                                          @RequestBody MappingRequestBody filesParam) throws Exception {
         List<String> files = fileManager.getFiles(transactionId);
         try (InputStream stream = fileManager.getStream(transactionId, files.get(0))) {
-            DataReader reader = new ExcelReader();
+            DataReader reader = new ExcelBatchReader();
             MappingResult columnMapping = reader.readHeaderRow(stream);
             return MappingResponse.builder().setSourceFields(columnMapping.getHeaderRow(),
                 columnMapping.getPreviewRow()).setFactModel(Fact.class).autoSuggestionMapping().build();
@@ -71,7 +71,7 @@ public class ImportController {
         List<String> files = fileManager.getFiles(transactionId);
         try (InputStream stream1 = fileManager.getStream(transactionId, files.get(0)); InputStream stream2 =
             fileManager.getStream(transactionId, files.get(0));) {
-            DataReader reader = new ExcelReader();
+            DataReader reader = new ExcelBatchReader();
             MappingResult columnMapping = reader.readHeaderRow(stream1);
             return new ExcelRowMapper<>(Fact.class, columnMapping.getHeaderRow(), mappingParam.getMapping()).mapList(reader.readContent(stream2, 100));
         }

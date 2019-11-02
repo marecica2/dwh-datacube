@@ -4,7 +4,7 @@ import org.bmsource.dwh.common.BaseFact;
 import org.bmsource.dwh.common.reader.ExcelRowMapper;
 import org.bmsource.dwh.common.reader.DataHandler;
 import org.bmsource.dwh.common.reader.DataReader;
-import org.bmsource.dwh.common.reader.ExcelReader;
+import org.bmsource.dwh.common.reader.ExcelBatchReader;
 import org.springframework.scheduling.annotation.Async;
 
 import java.io.InputStream;
@@ -31,7 +31,7 @@ public class SimpleExcelParser<T extends BaseFact> {
 
     @Async("asyncExecutor")
     public void parse(InputStream stream) throws Exception {
-        DataReader reader = new ExcelReader();
+        DataReader reader = new ExcelBatchReader();
         final List<ExcelRowMapper<T>> rowMapper = new ArrayList<>();
 
         reader.readContent(stream, new DataHandler() {
