@@ -1,8 +1,8 @@
-package org.bmsource.dwh.common.excel.reader;
+package org.bmsource.dwh.common.io.reader;
 
 import java.util.List;
 
-public interface DataHandler {
+public interface BatchHandler {
 
     default void onStart() { }
 

@@ -3,10 +3,9 @@ package org.bmsource.dwh.importer.web;
 import org.bmsource.dwh.common.fileManager.FileManager;
 import org.bmsource.dwh.common.fileManager.TmpFileManager;
 import org.bmsource.dwh.common.importer.ImportService;
-import org.bmsource.dwh.common.excel.reader.ExcelRowMapper;
-import org.bmsource.dwh.common.excel.reader.DataReader;
-import org.bmsource.dwh.common.excel.reader.ExcelBatchReader;
-import org.bmsource.dwh.common.excel.reader.MappingResult;
+import org.bmsource.dwh.common.io.reader.ExcelRowMapper;
+import org.bmsource.dwh.common.io.reader.BatchReader;
+import org.bmsource.dwh.common.io.reader.ExcelBatchReader;
 import org.bmsource.dwh.importer.Fact;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController()
@@ -56,8 +56,7 @@ public class ImportController {
                                          @RequestBody MappingRequestBody filesParam) throws Exception {
         List<String> files = fileManager.getFiles(transactionId);
         try (InputStream stream = fileManager.getStream(transactionId, files.get(0))) {
-            DataReader reader = new ExcelBatchReader();
-            MappingResult columnMapping = reader.readHeaderRow(stream);
+            MappingResult columnMapping = readHeaderRow(stream);
             return MappingResponse.builder().setSourceFields(columnMapping.getHeaderRow(),
                 columnMapping.getPreviewRow()).setFactModel(Fact.class).autoSuggestionMapping().build();
         }
@@ -71,8 +70,8 @@ public class ImportController {
         List<String> files = fileManager.getFiles(transactionId);
         try (InputStream stream1 = fileManager.getStream(transactionId, files.get(0)); InputStream stream2 =
             fileManager.getStream(transactionId, files.get(0));) {
-            DataReader reader = new ExcelBatchReader();
-            MappingResult columnMapping = reader.readHeaderRow(stream1);
+            MappingResult columnMapping = readHeaderRow(stream1);
+            BatchReader reader = new ExcelBatchReader();
             return new ExcelRowMapper<>(Fact.class, columnMapping.getHeaderRow(), mappingParam.getMapping()).mapList(reader.readContent(stream2, 100));
         }
     }
@@ -87,5 +86,15 @@ public class ImportController {
         System.out.println(tenant + projectId);
         importService.runImport(tenant, projectId, transactionId, files, uploadRequestBody.getMapping());
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+
+    private MappingResult readHeaderRow(InputStream inputStream) throws Exception {
+        BatchReader reader = new ExcelBatchReader();
+        List<List<Object>> twoRows = reader.readContent(inputStream, 2);
+
+        List<String> headerRow = twoRows.get(0).stream().map(Object::toString).collect(Collectors.toList());
+        List<Object> previewRow = twoRows.get(1);
+        return new MappingResult(headerRow, previewRow);
     }
 }

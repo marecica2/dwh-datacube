@@ -2,7 +2,7 @@ package org.bmsource.dwh.common.importer.job;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.bmsource.dwh.common.fileManager.FileManager;
-import org.bmsource.dwh.common.excel.reader.ExcelRead;
+import org.bmsource.dwh.common.io.reader.ExcelReader;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +32,7 @@ public class ExcelItemReader<T> implements ItemStreamReader<List<Object>> {
 
     private Iterator<Row> rowIterator;
 
-    private ExcelRead excelReader;
+    private ExcelReader excelReader;
 
 
     @Value("#{jobParameters['transaction']}")
@@ -53,7 +53,7 @@ public class ExcelItemReader<T> implements ItemStreamReader<List<Object>> {
     public void open(@NotNull ExecutionContext executionContext) throws ItemStreamException {
         try {
             InputStream inputStream = fileManager.getStream(transaction, fileName);
-            excelReader = new ExcelRead(inputStream);
+            excelReader = new ExcelReader(inputStream);
             logger.debug("Excel file {} opened for reading", this.fileName);
 
             executionContext.put(ImportContext.totalRowsKey, excelReader.getTotalRowsCount());

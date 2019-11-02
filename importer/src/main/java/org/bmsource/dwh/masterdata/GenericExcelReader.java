@@ -1,10 +1,10 @@
 package org.bmsource.dwh.masterdata;
 
 import org.bmsource.dwh.common.BaseFact;
-import org.bmsource.dwh.common.excel.reader.ExcelRowMapper;
-import org.bmsource.dwh.common.excel.reader.DataHandler;
-import org.bmsource.dwh.common.excel.reader.DataReader;
-import org.bmsource.dwh.common.excel.reader.ExcelBatchReader;
+import org.bmsource.dwh.common.io.reader.ExcelRowMapper;
+import org.bmsource.dwh.common.io.reader.BatchHandler;
+import org.bmsource.dwh.common.io.reader.BatchReader;
+import org.bmsource.dwh.common.io.reader.ExcelBatchReader;
 import org.springframework.scheduling.annotation.Async;
 
 import java.io.InputStream;
@@ -14,15 +14,15 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class SimpleExcelParser<T extends BaseFact> {
+public class GenericExcelReader<T extends BaseFact> {
     private Consumer<Void> onStart;
     private Consumer<List<T>> onRead;
     private Consumer<Integer> onFinish;
     private Class<T> classType;
 
-    public SimpleExcelParser(Consumer<Void> onStart, Consumer<List<T>> onRead,
-                             Consumer<Integer> onFinish,
-                             Class<T> classType) {
+    public GenericExcelReader(Consumer<Void> onStart, Consumer<List<T>> onRead,
+                              Consumer<Integer> onFinish,
+                              Class<T> classType) {
         this.onStart = onStart;
         this.onRead = onRead;
         this.onFinish = onFinish;
@@ -31,10 +31,10 @@ public class SimpleExcelParser<T extends BaseFact> {
 
     @Async("asyncExecutor")
     public void parse(InputStream stream) throws Exception {
-        DataReader reader = new ExcelBatchReader();
+        BatchReader reader = new ExcelBatchReader();
         final List<ExcelRowMapper<T>> rowMapper = new ArrayList<>();
 
-        reader.readContent(stream, new DataHandler() {
+        reader.readContent(stream, new BatchHandler() {
             @Override
             public void onStart() {
                 if (onStart != null)

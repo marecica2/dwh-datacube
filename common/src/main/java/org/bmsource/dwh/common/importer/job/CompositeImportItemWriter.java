@@ -1,7 +1,7 @@
 package org.bmsource.dwh.common.importer.job;
 
 import org.bmsource.dwh.common.BaseFact;
-import org.bmsource.dwh.common.excel.ExcelRow;
+import org.bmsource.dwh.common.io.DataRow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -36,7 +36,7 @@ public class CompositeImportItemWriter<Fact extends BaseFact> implements ItemStr
     public void write(List<? extends ImportItem<Fact>> items) throws Exception {
 
         List<Fact> validItems = new LinkedList<>();
-        List<ExcelRow> errorRows = new LinkedList<>();
+        List<DataRow> errorRows = new LinkedList<>();
         for (ImportItem<Fact> item : items) {
             Map<String, List<String>> errors = item.getExcelRow().getErrors();
             if (errors == null || errors.isEmpty()) {

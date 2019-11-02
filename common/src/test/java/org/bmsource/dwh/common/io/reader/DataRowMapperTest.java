@@ -1,4 +1,4 @@
-package org.bmsource.dwh.common.excel.reader;
+package org.bmsource.dwh.common.io.reader;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.*;
 
-public class ExcelRowMapperTest {
+public class DataRowMapperTest {
 
     @Test
     public void testBeanMappingForTypes() {

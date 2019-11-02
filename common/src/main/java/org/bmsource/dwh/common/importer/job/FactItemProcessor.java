@@ -2,9 +2,9 @@ package org.bmsource.dwh.common.importer.job;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.bmsource.dwh.common.BaseFact;
-import org.bmsource.dwh.common.excel.reader.ExcelRowMapper;
-import org.bmsource.dwh.common.excel.ExcelRow;
-import org.bmsource.dwh.common.excel.reader.ExcelRowValidator;
+import org.bmsource.dwh.common.io.reader.ExcelRowMapper;
+import org.bmsource.dwh.common.io.DataRow;
+import org.bmsource.dwh.common.io.reader.ExcelRowValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.StepExecution;
@@ -68,7 +68,7 @@ public class FactItemProcessor<Fact extends BaseFact> implements ItemProcessor<L
         Fact fact = rowMapper.map(row);
         ExcelRowValidator<Fact> validator = new ExcelRowValidator(mapping);
         Map<String, List<String>> validationErrors = validator.getValidationErrors(fact);
-        ExcelRow excelRow = ExcelRow
+        DataRow excelRow = DataRow
             .builder()
             .row(row)
             .errors(validationErrors)

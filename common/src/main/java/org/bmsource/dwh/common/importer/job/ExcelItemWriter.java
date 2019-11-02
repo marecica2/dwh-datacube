@@ -2,8 +2,8 @@ package org.bmsource.dwh.common.importer.job;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.bmsource.dwh.common.excel.ExcelRow;
-import org.bmsource.dwh.common.excel.writer.ExcelWriter;
+import org.bmsource.dwh.common.io.DataRow;
+import org.bmsource.dwh.common.io.writer.ExcelWriter;
 import org.bmsource.dwh.common.fileManager.FileManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +24,7 @@ import java.util.List;
 
 @Component
 @StepScope
-public class ExcelItemWriter implements ItemStreamWriter<ExcelRow> {
+public class ExcelItemWriter implements ItemStreamWriter<DataRow> {
 
     private Logger logger = LoggerFactory.getLogger(ExcelItemReader.class.getName());
 
@@ -65,8 +65,8 @@ public class ExcelItemWriter implements ItemStreamWriter<ExcelRow> {
     }
 
     @Override
-    public void write(List<? extends ExcelRow> items) {
-        writer.writeRows(header, (List<ExcelRow>) items);
+    public void write(List<? extends DataRow> items) {
+        writer.writeRows(header, (List<DataRow>) items);
     }
 
     @Override

@@ -1,6 +1,6 @@
-package org.bmsource.dwh.model;
+package org.bmsource.dwh.common.io.reader;
 
-import org.bmsource.dwh.common.excel.reader.ExcelRowMapper;
+import org.bmsource.dwh.common.io.reader.ExcelRowMapper;
 import org.junit.jupiter.api.Test;
 
 import javax.validation.constraints.NotNull;
@@ -11,7 +11,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ExcelRowMapperTest {
+class DataRowMapper2Test {
 
     private static Map<String, String> columnMapping = new HashMap<>();
     static {

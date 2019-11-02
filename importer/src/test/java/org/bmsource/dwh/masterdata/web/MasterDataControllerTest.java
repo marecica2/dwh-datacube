@@ -1,4 +1,4 @@
-package org.bmsource.dwh.masterdata;
+package org.bmsource.dwh.masterdata.web;
 
 import org.bmsource.dwh.ImporterApplication;
 import org.junit.jupiter.api.BeforeEach;

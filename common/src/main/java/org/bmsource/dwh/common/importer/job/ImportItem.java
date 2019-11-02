@@ -1,12 +1,12 @@
 package org.bmsource.dwh.common.importer.job;
 
-import org.bmsource.dwh.common.excel.ExcelRow;
+import org.bmsource.dwh.common.io.DataRow;
 
 public class ImportItem<Fact> {
     private Fact fact;
-    private ExcelRow excelRow;
+    private DataRow excelRow;
 
-    public ImportItem(Fact fact, ExcelRow excelRow) {
+    public ImportItem(Fact fact, DataRow excelRow) {
         this.fact = fact;
         this.excelRow = excelRow;
     }
@@ -19,11 +19,11 @@ public class ImportItem<Fact> {
         this.fact = fact;
     }
 
-    public ExcelRow getExcelRow() {
+    public DataRow getExcelRow() {
         return excelRow;
     }
 
-    public void setExcelRow(ExcelRow excelRow) {
+    public void setExcelRow(DataRow excelRow) {
         this.excelRow = excelRow;
     }
 }

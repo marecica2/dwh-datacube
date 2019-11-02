@@ -1,4 +1,4 @@
-package org.bmsource.dwh.common.excel.reader;
+package org.bmsource.dwh.common.io.reader;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;

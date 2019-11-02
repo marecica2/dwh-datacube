@@ -1,6 +1,6 @@
-package org.bmsource.dwh.common.excel.writer;
+package org.bmsource.dwh.common.io.writer;
 
-import org.bmsource.dwh.common.excel.ExcelRow;
+import org.bmsource.dwh.common.io.DataRow;
 import org.bmsource.dwh.common.fileManager.FileManager;
 import org.bmsource.dwh.common.fileManager.ResourceFileManager;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ public class ExcelWriterTest {
             put("column2", Arrays.asList(new String[]{ "should not be null"}));
         }};
 
-        List<ExcelRow> rows = new ArrayList<>();
+        List<DataRow> rows = new ArrayList<>();
         rows.add(createRow(new String[]{"column 1 value 1", "column 2 value 1", "value 31"}, null));
         rows.add(createRow(new String[]{"column 1 value 2", "column 2 value 2", "value 32"}, errors));
         rows.add(createRow(new String[]{"column 1 value 3", "column 2 value 3", "value 33"}, null));
@@ -37,8 +37,8 @@ public class ExcelWriterTest {
         writer.close();
     }
 
-    private ExcelRow createRow(String[] values, Map<String, List<String>> errors) {
-        return ExcelRow
+    private DataRow createRow(String[] values, Map<String, List<String>> errors) {
+        return DataRow
             .builder()
             .row(Arrays.asList(values))
             .errors(errors).build();

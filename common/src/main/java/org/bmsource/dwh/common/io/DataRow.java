@@ -1,9 +1,9 @@
-package org.bmsource.dwh.common.excel;
+package org.bmsource.dwh.common.io;
 
 import java.util.List;
 import java.util.Map;
 
-public class ExcelRow {
+public class DataRow {
     private List<Object> row;
     private Map<String, List<String>> errors;
 
@@ -23,29 +23,29 @@ public class ExcelRow {
         this.errors = errors;
     }
 
-    public static ExcelRowBuilder builder() {
-        return new ExcelRowBuilder();
+    public static DataRowBuilder builder() {
+        return new DataRowBuilder();
     }
 
-    public static final class ExcelRowBuilder {
+    public static final class DataRowBuilder {
         private List<Object> row;
         private Map<String, List<String>> errors;
 
-        private ExcelRowBuilder() {
+        private DataRowBuilder() {
         }
 
-        public ExcelRowBuilder row(List<Object> row) {
+        public DataRowBuilder row(List<Object> row) {
             this.row = row;
             return this;
         }
 
-        public ExcelRowBuilder errors(Map<String, List<String>> errors) {
+        public DataRowBuilder errors(Map<String, List<String>> errors) {
             this.errors = errors;
             return this;
         }
 
-        public ExcelRow build() {
-            ExcelRow excelRow = new ExcelRow();
+        public DataRow build() {
+            DataRow excelRow = new DataRow();
             excelRow.setRow(row);
             excelRow.setErrors(errors);
             return excelRow;

@@ -1,4 +1,4 @@
-package org.bmsource.dwh.common.excel.reader;
+package org.bmsource.dwh.common.io.reader;
 
 import com.monitorjbl.xlsx.StreamingReader;
 import org.apache.poi.ss.usermodel.Cell;
@@ -12,7 +12,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ExcelRead implements AutoCloseable {
+public class ExcelReader implements AutoCloseable, DataReader {
 
     private static final int DEFAULT_CACHE_SIZE = 5000;
 
@@ -30,11 +30,11 @@ public class ExcelRead implements AutoCloseable {
 
     private int rowsCount = 0;
 
-    public ExcelRead(InputStream inputStream) {
+    public ExcelReader(InputStream inputStream) {
         this(inputStream, DEFAULT_CACHE_SIZE, DEFAULT_BUFFER_SIZE);
     }
 
-    public ExcelRead(InputStream inputStream, int cacheSize, int bufferSize) {
+    public ExcelReader(InputStream inputStream, int cacheSize, int bufferSize) {
         this.inputStream = inputStream;
         this.workbook = StreamingReader.builder()
             .rowCacheSize(cacheSize)
@@ -45,24 +45,29 @@ public class ExcelRead implements AutoCloseable {
         rowsCount = sheet.getLastRowNum();
     }
 
+    @Override
     public int getTotalRowsCount() {
         return rowsCount;
     }
 
+    @Override
     public int getReadRowsCount() {
         return rowsRead;
     }
 
+    @Override
     public void reset() {
         rowsRead = -1;
         rowIterator = sheet.rowIterator();
     }
 
+    @Override
     public void close() throws IOException {
         workbook.close();
         inputStream.close();
     }
 
+    @Override
     public List<Object> nextRow() {
         List<Object> row = new LinkedList<>();
         if (rowIterator.hasNext()) {
@@ -82,6 +87,7 @@ public class ExcelRead implements AutoCloseable {
         return null;
     }
 
+    @Override
     public boolean hasNextRow() {
         return rowIterator.hasNext() && rowsRead < rowsCount;
     }

@@ -1,6 +1,11 @@
-package org.bmsource.dwh.masterdata;
+package org.bmsource.dwh.masterdata.web;
 
 import org.bmsource.dwh.common.BaseFact;
+import org.bmsource.dwh.masterdata.*;
+import org.bmsource.dwh.masterdata.repository.RateCardRepository;
+import org.bmsource.dwh.masterdata.repository.ServiceTypeMappingRepository;
+import org.bmsource.dwh.masterdata.repository.TaxonomyRepository;
+import org.bmsource.dwh.masterdata.repository.ZipCodeLocationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -112,7 +117,7 @@ public class MasterDataController {
                                                                                Consumer<List<T>> onRead,
                                                                                DeferredResult<ResponseEntity<?>> result
     ) {
-        SimpleExcelParser excelParser = new SimpleExcelParser<T>(
+        GenericExcelReader excelParser = new GenericExcelReader<T>(
             onStart,
             onRead,
             rows -> {

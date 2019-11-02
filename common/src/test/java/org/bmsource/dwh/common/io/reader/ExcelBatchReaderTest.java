@@ -1,4 +1,4 @@
-package org.bmsource.dwh.common.excel.reader;
+package org.bmsource.dwh.common.io.reader;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
@@ -16,11 +16,13 @@ public class ExcelBatchReaderTest {
   @Test
   public void testHeaderRowParsing() throws Exception {
     File xlsx = ResourceUtils.getFile(this.getClass().getResource("/spends.xlsx"));
-    MappingResult mapping =  new ExcelBatchReader().readHeaderRow(FileUtils.openInputStream(xlsx));
-    assertThat(mapping.getHeaderRow().size()).isEqualTo(38);
-    assertThat(mapping.getPreviewRow().size()).isEqualTo(38);
-    assertThat(mapping.getHeaderRow().get(4)).isEqualTo("Origin-State");
-    assertThat(mapping.getPreviewRow().get(4)).isEqualTo("Illinois");
+    List<List<Object>> rows = new ExcelBatchReader().readContent(FileUtils.openInputStream(xlsx), 2, false);
+    List<Object> header = rows.get(0);
+    assertThat(header.size()).isEqualTo(38);
+    List<Object> preview = rows.get(1);
+    assertThat(preview.size()).isEqualTo(38);
+    assertThat(header.get(4)).isEqualTo("Origin-State");
+    assertThat(preview.get(4)).isEqualTo("Illinois");
   }
 
   @Test

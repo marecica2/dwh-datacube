@@ -1,20 +1,20 @@
-package org.bmsource.dwh.common.excel.writer;
+package org.bmsource.dwh.common.io.writer;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.bmsource.dwh.common.excel.ExcelRow;
+import org.bmsource.dwh.common.io.DataRow;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-public class ExcelWriter {
+public class ExcelWriter implements DataWriter {
 
-    int rowNum = 0;
+    private int rowNum = 0;
 
-    int columns = 0;
+    private int columns = 0;
 
     private SXSSFWorkbook workBook;
 
@@ -32,6 +32,7 @@ public class ExcelWriter {
         this.outputStream = outputStream;
     }
 
+    @Override
     public void open() {
         workBook = new SXSSFWorkbook();
         workBook.setCompressTempFiles(true);
@@ -40,6 +41,7 @@ public class ExcelWriter {
         initStyles();
     }
 
+    @Override
     public void writeHeader(List<String> header) {
         columns = header.size();
         Row row = sheet.createRow(rowNum);
@@ -54,8 +56,9 @@ public class ExcelWriter {
         rowNum++;
     }
 
-    public void writeRows(List<String> header, List<ExcelRow> rows) {
-        for (ExcelRow excelRow : rows) {
+    @Override
+    public void writeRows(List<String> header, List<DataRow> rows) {
+        for (DataRow excelRow : rows) {
             Row row = sheet.createRow(rowNum);
             row.setRowStyle(bodyStyle);
             int cellNum = 0;
@@ -78,6 +81,7 @@ public class ExcelWriter {
         }
     }
 
+    @Override
     public void close() throws IOException {
         sheet.trackAllColumnsForAutoSizing();
         for (int i = 0; i < columns; i++) {
@@ -88,7 +92,7 @@ public class ExcelWriter {
         outputStream.close();
     }
 
-    protected static void setCellComment(Cell cell, String message) {
+    private static void setCellComment(Cell cell, String message) {
         Drawing drawing = cell.getSheet().createDrawingPatriarch();
         CreationHelper factory = cell.getSheet().getWorkbook()
             .getCreationHelper();
