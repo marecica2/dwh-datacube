@@ -35,7 +35,8 @@ public class ExcelRowMapper<Bean> {
             Optional<String> o = columns.stream().filter(obj -> obj.equals(key)).findFirst();
             o.ifPresent(s -> indexMapping.put(columns.indexOf(s), value));
         });
-        ConvertUtils.register(new ExcelConverter(datePatterns), Date.class);
+        ExcelConverter converter = new ExcelConverter(datePatterns);
+        ConvertUtils.register(converter, Date.class);
     }
 
     public Bean map(List<Object> row) {

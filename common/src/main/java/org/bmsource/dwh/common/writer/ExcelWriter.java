@@ -32,7 +32,7 @@ public class ExcelWriter {
         this.outputStream = outputStream;
     }
 
-    public void open() throws IOException {
+    public void open() {
         workBook = new SXSSFWorkbook();
         workBook.setCompressTempFiles(true);
         sheet = workBook.createSheet("Sheet 1");
