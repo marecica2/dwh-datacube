@@ -1,6 +1,6 @@
-package org.bmsource.dwh.common.writer;
+package org.bmsource.dwh.common.excel.writer;
 
-import org.bmsource.dwh.common.ExcelRow;
+import org.bmsource.dwh.common.excel.ExcelRow;
 import org.bmsource.dwh.common.fileManager.FileManager;
 import org.bmsource.dwh.common.fileManager.ResourceFileManager;
 import org.junit.jupiter.api.Test;

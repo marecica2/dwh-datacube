@@ -1,16 +1,17 @@
-package org.bmsource.dwh.common.reader;
+package org.bmsource.dwh.common.excel.reader;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.ResourceUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.*;
 
-public class ExcelReaderTest {
+public class ExcelBatchReaderTest {
 
   @Test
   public void testHeaderRowParsing() throws Exception {
@@ -32,10 +33,11 @@ public class ExcelReaderTest {
   @Test
   public void testBatchParsing() throws Exception {
     File xlsx = ResourceUtils.getFile(this.getClass().getResource("/spends.xlsx"));
-    AtomicInteger rowsCount = new AtomicInteger();
-    new ExcelBatchReader().readContent(FileUtils.openInputStream(xlsx), (rows, header, rowsCount1, totalRowsCount) -> {
-      rowsCount.set(rowsCount1);
+    AtomicInteger totalRows = new AtomicInteger();
+    FileInputStream inputStream = FileUtils.openInputStream(xlsx);
+    new ExcelBatchReader().readContent(inputStream, (rows, header, rowsCount, totalRowsCount) -> {
+      totalRows.set(rowsCount);
     });
-    assertThat(rowsCount.get()).isEqualTo(426);
+    assertThat(totalRows.get()).isEqualTo(426);
   }
 }

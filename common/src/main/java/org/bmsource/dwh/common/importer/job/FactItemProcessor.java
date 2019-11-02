@@ -1,10 +1,10 @@
-package org.bmsource.dwh.common.importer.batch;
+package org.bmsource.dwh.common.importer.job;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.bmsource.dwh.common.BaseFact;
-import org.bmsource.dwh.common.reader.ExcelRowMapper;
-import org.bmsource.dwh.common.ExcelRow;
-import org.bmsource.dwh.common.reader.ExcelRowValidator;
+import org.bmsource.dwh.common.excel.reader.ExcelRowMapper;
+import org.bmsource.dwh.common.excel.ExcelRow;
+import org.bmsource.dwh.common.excel.reader.ExcelRowValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.StepExecution;
@@ -52,7 +52,7 @@ public class FactItemProcessor<Fact extends BaseFact> implements ItemProcessor<L
     public void beforeStep(StepExecution stepExecution) {
         this.stepExecution = stepExecution;
         try {
-            String mappingString = stepExecution.getJobExecution().getJobParameters().getString("mapping");
+            String mappingString = stepExecution.getJobExecution().getJobParameters().getString(ImportContext.mappingKey);
             mapping = new ObjectMapper().readValue(mappingString, HashMap.class);
         } catch (IOException e) {
             e.printStackTrace();

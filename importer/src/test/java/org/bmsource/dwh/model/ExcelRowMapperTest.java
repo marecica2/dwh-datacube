@@ -1,6 +1,6 @@
 package org.bmsource.dwh.model;
 
-import org.bmsource.dwh.common.reader.ExcelRowMapper;
+import org.bmsource.dwh.common.excel.reader.ExcelRowMapper;
 import org.junit.jupiter.api.Test;
 
 import javax.validation.constraints.NotNull;

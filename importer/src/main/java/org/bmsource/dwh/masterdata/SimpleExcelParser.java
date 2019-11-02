@@ -1,10 +1,10 @@
 package org.bmsource.dwh.masterdata;
 
 import org.bmsource.dwh.common.BaseFact;
-import org.bmsource.dwh.common.reader.ExcelRowMapper;
-import org.bmsource.dwh.common.reader.DataHandler;
-import org.bmsource.dwh.common.reader.DataReader;
-import org.bmsource.dwh.common.reader.ExcelBatchReader;
+import org.bmsource.dwh.common.excel.reader.ExcelRowMapper;
+import org.bmsource.dwh.common.excel.reader.DataHandler;
+import org.bmsource.dwh.common.excel.reader.DataReader;
+import org.bmsource.dwh.common.excel.reader.ExcelBatchReader;
 import org.springframework.scheduling.annotation.Async;
 
 import java.io.InputStream;

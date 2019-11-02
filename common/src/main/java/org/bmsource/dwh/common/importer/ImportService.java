@@ -2,7 +2,7 @@ package org.bmsource.dwh.common.importer;
 
 import org.bmsource.dwh.common.appstate.AppStateService;
 import org.bmsource.dwh.common.appstate.EnableImportEvents;
-import org.bmsource.dwh.common.importer.batch.ImportJobConfiguration;
+import org.bmsource.dwh.common.importer.job.ImportJobConfiguration;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.JobLauncher;

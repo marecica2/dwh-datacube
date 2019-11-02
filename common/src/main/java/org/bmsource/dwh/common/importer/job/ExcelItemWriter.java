@@ -1,12 +1,10 @@
-package org.bmsource.dwh.common.importer.batch;
+package org.bmsource.dwh.common.importer.job;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.bmsource.dwh.common.excel.ExcelRow;
+import org.bmsource.dwh.common.excel.writer.ExcelWriter;
 import org.bmsource.dwh.common.fileManager.FileManager;
-import org.bmsource.dwh.common.ExcelRow;
-import org.bmsource.dwh.common.writer.ExcelWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -19,7 +17,9 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 
 @Component
@@ -52,7 +52,7 @@ public class ExcelItemWriter implements ItemStreamWriter<ExcelRow> {
     @Override
     public void open(ExecutionContext executionContext) throws ItemStreamException {
         try {
-            String headerString = executionContext.getString("header");
+            String headerString = executionContext.getString(ImportContext.headerKey);
             header = Arrays.asList(headerString.split(","));
 
             outputStream = fileManager.writeStream(transaction, makeFileName(fileName));

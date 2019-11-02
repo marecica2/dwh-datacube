@@ -1,7 +1,9 @@
-package org.bmsource.dwh.common.importer.batch;
+package org.bmsource.dwh.common.importer.job;
 
 public interface ImportContext {
+    String transactionKey = "transaction";
     String headerKey = "header";
+    String mappingKey = "mapping";
     String totalRowsKey = "totalRows";
     String rowsKey = "rows";
     String fileNameKey = "fileName";

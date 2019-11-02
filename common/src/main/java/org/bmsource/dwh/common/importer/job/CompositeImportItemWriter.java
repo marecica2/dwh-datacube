@@ -1,7 +1,7 @@
-package org.bmsource.dwh.common.importer.batch;
+package org.bmsource.dwh.common.importer.job;
 
 import org.bmsource.dwh.common.BaseFact;
-import org.bmsource.dwh.common.ExcelRow;
+import org.bmsource.dwh.common.excel.ExcelRow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -45,7 +45,7 @@ public class CompositeImportItemWriter<Fact extends BaseFact> implements ItemStr
                 errorRows.add(item.getExcelRow());
             }
         }
-        logger.debug("Thread {} File: {}, Items count: {}, Valid items: {}, Invalid rows: {} XXXX",
+        logger.trace("Thread {} File: {}, Items count: {}, Valid items: {}, Invalid rows: {}",
             Thread.currentThread().getName(),
             fileName,
             items.size(),

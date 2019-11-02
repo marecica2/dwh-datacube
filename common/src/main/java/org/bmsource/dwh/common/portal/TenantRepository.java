@@ -1,4 +1,4 @@
-package org.bmsource.dwh.common.repository;
+package org.bmsource.dwh.common.portal;
 
 import org.springframework.stereotype.Service;
 

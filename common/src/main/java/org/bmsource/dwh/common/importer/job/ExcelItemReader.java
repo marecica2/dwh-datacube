@@ -1,8 +1,8 @@
-package org.bmsource.dwh.common.importer.batch;
+package org.bmsource.dwh.common.importer.job;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.bmsource.dwh.common.fileManager.FileManager;
-import org.bmsource.dwh.common.reader.ExcelRead;
+import org.bmsource.dwh.common.excel.reader.ExcelRead;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @Component
 @StepScope
 @Scope("prototype")
-public class ExcelItemReader<T> implements ItemStreamReader<List<Object>>, ImportContext {
+public class ExcelItemReader<T> implements ItemStreamReader<List<Object>> {
 
     private Logger logger = LoggerFactory.getLogger(ExcelItemReader.class.getName());
 

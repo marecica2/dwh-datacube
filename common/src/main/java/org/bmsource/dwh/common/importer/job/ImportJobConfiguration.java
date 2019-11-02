@@ -1,4 +1,4 @@
-package org.bmsource.dwh.common.importer.batch;
+package org.bmsource.dwh.common.importer.job;
 
 import org.bmsource.dwh.common.BaseFact;
 import org.bmsource.dwh.common.appstate.AppStateService;
