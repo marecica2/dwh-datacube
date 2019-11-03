@@ -73,7 +73,7 @@ public class FactItemProcessor<Fact extends BaseFact> implements ItemProcessor<L
             .row(row)
             .errors(validationErrors)
             .build();
-        logger.debug("XXXXX Parsing errors Thread: {}, FileName: {}, Errors: {}, Bean: {}",
+        logger.debug("Parsing errors Thread: {}, FileName: {}, Errors: {}, Bean: {}",
             Thread.currentThread().getName(),
             fileName,
             validationErrors,

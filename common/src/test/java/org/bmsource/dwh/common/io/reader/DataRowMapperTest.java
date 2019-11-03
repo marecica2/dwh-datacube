@@ -8,32 +8,33 @@ import java.util.*;
 
 public class DataRowMapperTest {
 
+    List<String> headerColumn = new ArrayList<String>() {{
+        add("integerColumn");
+        add("doubleColumn");
+        add("stringColumn");
+        add("dateColumn");
+        add("bigDecimalColumn");
+    }};
+
+    Map<String, String> mapping = new HashMap<String, String>() {{
+        put("integerColumn", "integerProp");
+        put("doubleColumn", "doubleProp");
+        put("stringColumn", "stringProp");
+        put("dateColumn", "dateProp");
+        put("bigDecimalColumn", "bigDecimalProp");
+    }};
+
     @Test
     public void testBeanMappingForTypes() {
-        List<String> headerColumn = new ArrayList<String>() {{
-            add("integerColumn");
-            add("doubleColumn");
-            add("stringColumn");
-            add("dateColumn");
-            add("dateColumn1");
-            add("bigDecimalColumn");
-        }};
+
         List<Object> row = new ArrayList<Object>() {{
             add("123");
             add("0.1234");
             add("string");
             add("2019-10-24 12:00:00");
-            add("02/05/2018");
             add("999999.99");
         }};
-        Map<String, String> mapping = new HashMap<String, String>() {{
-            put("integerColumn", "integerProp");
-            put("doubleColumn", "doubleProp");
-            put("stringColumn", "stringProp");
-            put("dateColumn", "dateProp");
-            put("dateColumn1", "dateProp1");
-            put("bigDecimalColumn", "bigDecimalProp");
-        }};
+
         ExcelRowMapper<Bean> mapper = new ExcelRowMapper<>(Bean.class, headerColumn, mapping);
         Bean bean = mapper.map(row);
         Assertions.assertEquals(0.1234, bean.getDoubleProp());
@@ -52,7 +53,6 @@ public class DataRowMapperTest {
             .set(Calendar.DAY_OF_MONTH, 2)
             .build();
         Assertions.assertEquals(cal.getTime(),bean.getDateProp());
-        Assertions.assertEquals(cal1.getTime(),bean.getDateProp1());
         Assertions.assertEquals(new BigDecimal("999999.99"),bean.getBigDecimalProp());
     }
 
@@ -64,8 +64,6 @@ public class DataRowMapperTest {
         private String stringProp;
 
         private Date dateProp;
-
-        private Date dateProp1;
 
         private BigDecimal bigDecimalProp;
 
@@ -109,14 +107,6 @@ public class DataRowMapperTest {
             this.bigDecimalProp = bigDecimalProp;
         }
 
-        public Date getDateProp1() {
-            return dateProp1;
-        }
-
-        public void setDateProp1(Date dateProp1) {
-            this.dateProp1 = dateProp1;
-        }
-
         @Override
         public String toString() {
             return "Bean{" +
@@ -124,7 +114,6 @@ public class DataRowMapperTest {
                 ", doubleProp=" + doubleProp +
                 ", stringProp='" + stringProp + '\'' +
                 ", dateProp=" + dateProp +
-                ", dateProp1=" + dateProp1 +
                 ", bigDecimalProp=" + bigDecimalProp +
                 '}';
         }

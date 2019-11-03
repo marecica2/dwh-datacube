@@ -8,9 +8,11 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Function;
 
 public class ExcelReader implements AutoCloseable, DataReader {
 
@@ -30,6 +32,8 @@ public class ExcelReader implements AutoCloseable, DataReader {
 
     private int rowsCount = 0;
 
+    private List<Function<Cell, Object>> parsers = new ArrayList<>();
+
     public ExcelReader(InputStream inputStream) {
         this(inputStream, DEFAULT_CACHE_SIZE, DEFAULT_BUFFER_SIZE);
     }
@@ -43,6 +47,11 @@ public class ExcelReader implements AutoCloseable, DataReader {
         sheet = workbook.getSheetAt(0);
         rowIterator = sheet.rowIterator();
         rowsCount = sheet.getLastRowNum();
+
+        parsers.add(Cell::getBooleanCellValue);
+        parsers.add(Cell::getNumericCellValue);
+        parsers.add(Cell::getDateCellValue);
+        parsers.add(Cell::getStringCellValue);
     }
 
     @Override
@@ -58,6 +67,7 @@ public class ExcelReader implements AutoCloseable, DataReader {
     @Override
     public void reset() {
         rowsRead = -1;
+        sheet = workbook.getSheetAt(0);
         rowIterator = sheet.rowIterator();
     }
 
@@ -98,42 +108,14 @@ public class ExcelReader implements AutoCloseable, DataReader {
         }
     }
 
-//    private List<Object> readSingleRow(Iterator<Row> rowIterator) {
-//        List<Object> rowContainer = new LinkedList<>();
-//        int prevCellIndex = 0;
-//
-//        Row sheetRow = rowIterator.next();
-//        for (Cell sheetCell : sheetRow) {
-//            int currentIndex = sheetCell.getColumnIndex();
-//            fillGaps(rowContainer, prevCellIndex, currentIndex);
-//
-//            Object value = null;
-//            List<Function<Cell, Object>> parsers = new ArrayList<Function<Cell, Object>>() {{
-//                add(Cell::getDateCellValue);
-//                add(Cell::getBooleanCellValue);
-//                add(Cell::getNumericCellValue);
-//                add(Cell::getStringCellValue);
-//            }};
-//            value = getDateValue(sheetCell, parsers);
-//            rowContainer.add(value);
-//            prevCellIndex = currentIndex;
-//        }
-//        if (rowContainer.size() == 1 && rowContainer.get(0).equals(""))
-//            return null;
-//        return rowContainer;
-//    }
-//
-//    private Object getDateValue(Cell sheetCell, List<Function<Cell, Object>> parsers) {
-//        Object value;
-//
-//        for (Function<Cell, Object> parser : parsers) {
-//            try {
-//                return parser.apply(sheetCell);
-//                //return sheetCell.getDateCellValue();
-//            } catch (Exception e) {
-//                // Omitted
-//            }
-//        }
-//        return null;
-//    }
+    private Object getDateValue(Cell sheetCell, List<Function<Cell, Object>> parsers) {
+        for (Function<Cell, Object> parser : parsers) {
+            try {
+                return parser.apply(sheetCell);
+            } catch (Exception e) {
+                // Omitted
+            }
+        }
+        return null;
+    }
 }

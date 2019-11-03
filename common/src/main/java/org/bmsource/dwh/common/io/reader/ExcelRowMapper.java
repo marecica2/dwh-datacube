@@ -35,7 +35,7 @@ public class ExcelRowMapper<Bean> {
             Optional<String> o = columns.stream().filter(obj -> obj.equals(key)).findFirst();
             o.ifPresent(s -> indexMapping.put(columns.indexOf(s), value));
         });
-        ExcelConverter converter = new ExcelConverter(datePatterns);
+        ValueConverter converter = new ValueConverter(datePatterns);
         ConvertUtils.register(converter, Date.class);
     }
 
@@ -68,11 +68,11 @@ public class ExcelRowMapper<Bean> {
             .collect(Collectors.toList());
     }
 
-    private static class ExcelConverter implements Converter {
+    private static class ValueConverter implements Converter {
         private static List<SimpleDateFormat> formats = new ArrayList<>();
         private static String[] patterns;
 
-        public ExcelConverter(String[] patterns) {
+        public ValueConverter(String[] patterns) {
             for (String pattern : patterns) {
                 formats.add(new SimpleDateFormat(pattern));
             }
