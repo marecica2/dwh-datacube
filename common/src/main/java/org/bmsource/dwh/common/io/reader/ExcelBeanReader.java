@@ -1,0 +1,125 @@
+package org.bmsource.dwh.common.io.reader;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+public class ExcelBeanReader<Bean> implements DataReader<Bean> {
+
+    private static final int DEFAULT_CACHE_SIZE = 5000;
+
+    private static final int DEFAULT_BUFFER_SIZE = 1024;
+
+    private final Map<String, Function<Cell, Comparable>> parsers;
+
+    private final ExcelRowMapper<Bean> rowMapper;
+
+    private final ExcelReader<List<Object>> reader;
+
+    public ExcelBeanReader(InputStream inputStream, Class<Bean> beanClass, Map<String, String> mapping) {
+        this(inputStream, beanClass, mapping, DEFAULT_CACHE_SIZE, DEFAULT_BUFFER_SIZE);
+    }
+
+    public ExcelBeanReader(InputStream inputStream, Class<Bean> beanClass, Map<String, String> mapping, int cacheSize,
+                           int bufferSize) {
+        reader = new ExcelReader<>(inputStream, cacheSize, bufferSize);
+        parsers = initCellParsers(beanClass, mapping);
+        rowMapper = new ExcelRowMapper<>(beanClass, reader.getHeader(), mapping);
+    }
+
+    @Override
+    public List<String> getHeader() {
+        return reader.getHeader();
+    }
+
+    @Override
+    public boolean hasNextRow() {
+        return reader.hasNextRow();
+    }
+
+    @Override
+    public Bean nextRow() {
+        List<Object> row = new LinkedList<>();
+        if (reader.rowIterator.hasNext()) {
+            int prevCellIndex = 0;
+            Row sheetRow = reader.rowIterator.next();
+            for (Cell sheetCell : sheetRow) {
+                int currentIndex = sheetCell.getColumnIndex();
+                reader.fillGaps(row, prevCellIndex, currentIndex);
+                row.add(readCellValue(sheetCell));
+                prevCellIndex = currentIndex;
+            }
+            reader.rowsRead++;
+            if (row.size() > 0 && row.get(0) != null) {
+                return rowMapper.map(row);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void close() throws IOException {
+        reader.close();
+    }
+
+    @Override
+    public int getTotalRowsCount() {
+        return reader.getTotalRowsCount();
+    }
+
+    @Override
+    public int getReadRowsCount() {
+        return reader.getReadRowsCount();
+    }
+
+    private Comparable readCellValue(Cell cell) {
+        if (cell.getColumnIndex() >= reader.getHeader().size())
+            return null;
+
+        String column = reader.getHeader().get(cell.getColumnIndex());
+        if (parsers.get(column) == null)
+            return null;
+        try {
+            return parsers.get(column).apply(cell);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            return null;
+        }
+    }
+
+    private Map<String, Function<Cell, Comparable>> initCellParsers(Class<Bean> beanClass, Map<String, String> mapping) {
+        return mapping
+            .entrySet()
+            .stream().collect(Collectors.toMap(Map.Entry::getKey,
+                entry -> {
+                    try {
+                        Function<Cell, Comparable> fn;
+                        Field field = beanClass.getDeclaredField(entry.getValue());
+
+                        if (Number.class.isAssignableFrom(field.getType()))
+                            return Cell::getNumericCellValue;
+
+                        switch (field.getType().getSimpleName()) {
+                            case "Boolean":
+                                fn = Cell::getBooleanCellValue;
+                                break;
+                            case "Date":
+                                fn = Cell::getDateCellValue;
+                                break;
+                            default:
+                                fn = Cell::getStringCellValue;
+                                break;
+                        }
+                        return fn;
+                    } catch (NoSuchFieldException e) {
+                        return Cell::getStringCellValue;
+                    }
+                }));
+    }
+}

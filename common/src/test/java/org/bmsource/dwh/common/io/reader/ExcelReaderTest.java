@@ -27,5 +27,6 @@ public class ExcelReaderTest {
         assertEquals(38, header.size());
         assertEquals("S. No.", header.get(0));
         assertEquals(rowsCount, reader.getTotalRowsCount());
+        assertEquals(rowsCount, reader.getReadRowsCount());
     }
 }

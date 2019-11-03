@@ -75,10 +75,7 @@ public class ExcelItemReader<T> implements ItemStreamReader<List<Object>> {
     }
 
     private List<String> getHeader() {
-        return excelReader.nextRow()
-            .stream()
-            .map(Object::toString)
-            .collect(Collectors.toList());
+        return excelReader.getHeader();
     }
 
     @Override

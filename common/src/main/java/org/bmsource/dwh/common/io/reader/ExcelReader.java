@@ -8,13 +8,12 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Function;
+import java.util.stream.Collectors;
 
-public class ExcelReader implements AutoCloseable, DataReader {
+public class ExcelReader<T> implements DataReader<List<Object>> {
 
     private static final int DEFAULT_CACHE_SIZE = 5000;
 
@@ -24,21 +23,21 @@ public class ExcelReader implements AutoCloseable, DataReader {
 
     private InputStream inputStream;
 
-    private Iterator<Row> rowIterator;
-
     private Sheet sheet;
 
-    private int rowsRead = -1;
+    private int rowsCount;
 
-    private int rowsCount = 0;
+    private List<String> header;
 
-    private List<Function<Cell, Object>> parsers = new ArrayList<>();
+    int rowsRead = 0;
+
+    Iterator<Row> rowIterator;
 
     public ExcelReader(InputStream inputStream) {
         this(inputStream, DEFAULT_CACHE_SIZE, DEFAULT_BUFFER_SIZE);
     }
 
-    public ExcelReader(InputStream inputStream, int cacheSize, int bufferSize) {
+    ExcelReader(InputStream inputStream, int cacheSize, int bufferSize) {
         this.inputStream = inputStream;
         this.workbook = StreamingReader.builder()
             .rowCacheSize(cacheSize)
@@ -46,12 +45,10 @@ public class ExcelReader implements AutoCloseable, DataReader {
             .open(inputStream);
         sheet = workbook.getSheetAt(0);
         rowIterator = sheet.rowIterator();
-        rowsCount = sheet.getLastRowNum();
-
-        parsers.add(Cell::getBooleanCellValue);
-        parsers.add(Cell::getNumericCellValue);
-        parsers.add(Cell::getDateCellValue);
-        parsers.add(Cell::getStringCellValue);
+        rowsCount = sheet.getLastRowNum() - 1;
+        header = nextRow().stream()
+            .map(Object::toString)
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -62,13 +59,6 @@ public class ExcelReader implements AutoCloseable, DataReader {
     @Override
     public int getReadRowsCount() {
         return rowsRead;
-    }
-
-    @Override
-    public void reset() {
-        rowsRead = -1;
-        sheet = workbook.getSheetAt(0);
-        rowIterator = sheet.rowIterator();
     }
 
     @Override
@@ -86,7 +76,7 @@ public class ExcelReader implements AutoCloseable, DataReader {
             for (Cell sheetCell : sheetRow) {
                 int currentIndex = sheetCell.getColumnIndex();
                 fillGaps(row, prevCellIndex, currentIndex);
-                row.add(sheetCell.getStringCellValue());
+                row.add(readCellValue(sheetCell));
                 prevCellIndex = currentIndex;
             }
             rowsRead++;
@@ -98,24 +88,22 @@ public class ExcelReader implements AutoCloseable, DataReader {
     }
 
     @Override
+    public List<String> getHeader() {
+        return header;
+    }
+
+    @Override
     public boolean hasNextRow() {
         return rowIterator.hasNext() && rowsRead < rowsCount;
     }
 
-    private void fillGaps(List<Object> row, int prevIndex, int currentIndex) {
+    Comparable readCellValue(Cell cell) {
+        return cell.getStringCellValue();
+    }
+
+    void fillGaps(List<Object> row, int prevIndex, int currentIndex) {
         for (int i = prevIndex + 1; i < currentIndex; i++) {
             row.add(null);
         }
-    }
-
-    private Object getDateValue(Cell sheetCell, List<Function<Cell, Object>> parsers) {
-        for (Function<Cell, Object> parser : parsers) {
-            try {
-                return parser.apply(sheetCell);
-            } catch (Exception e) {
-                // Omitted
-            }
-        }
-        return null;
     }
 }
