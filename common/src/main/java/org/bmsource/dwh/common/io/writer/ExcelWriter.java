@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-public class ExcelWriter implements DataWriter {
+public class ExcelWriter<Fact> implements DataWriter<Fact> {
 
     private int rowNum = 0;
 
@@ -57,8 +57,8 @@ public class ExcelWriter implements DataWriter {
     }
 
     @Override
-    public void writeRows(List<String> header, List<DataRow> rows) {
-        for (DataRow excelRow : rows) {
+    public void writeRows(List<String> header, List<DataRow<Fact>> rows) {
+        for (DataRow<Fact> excelRow : rows) {
             Row row = sheet.createRow(rowNum);
             row.setRowStyle(bodyStyle);
             int cellNum = 0;

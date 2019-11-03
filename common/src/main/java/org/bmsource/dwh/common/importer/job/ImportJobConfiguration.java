@@ -2,6 +2,7 @@ package org.bmsource.dwh.common.importer.job;
 
 import org.bmsource.dwh.common.BaseFact;
 import org.bmsource.dwh.common.appstate.AppStateService;
+import org.bmsource.dwh.common.io.DataRow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.*;
@@ -119,8 +120,8 @@ public class ImportJobConfiguration<Fact extends BaseFact> {
 
     @Bean
     public Step excelReadStep() {
-        SimpleStepBuilder<List<Object>, ImportItem<Fact>> step = stepBuilderFactory.get("excelReadStep")
-            .<List<Object>, ImportItem<Fact>>chunk(BATCH_SIZE)
+        SimpleStepBuilder<List<Object>, DataRow<Fact>> step = stepBuilderFactory.get("excelReadStep")
+            .<DataRow<Fact>, DataRow<Fact>>chunk(BATCH_SIZE)
             .reader(reader())
             .processor(processor)
             .writer(compositeItemWriter);
@@ -165,7 +166,7 @@ public class ImportJobConfiguration<Fact extends BaseFact> {
             @Override
             public void beforeJob(JobExecution jobExecution) {
                 String tenant = jobExecution.getJobParameters().getString("tenant");
-                if(tenant == null)
+                if (tenant == null)
                     return;
 
                 String transaction = jobExecution.getJobParameters().getString("transaction");
@@ -184,7 +185,7 @@ public class ImportJobConfiguration<Fact extends BaseFact> {
             @Override
             public void afterJob(JobExecution jobExecution) {
                 String tenant = jobExecution.getJobParameters().getString("tenant");
-                if(tenant == null)
+                if (tenant == null)
                     return;
 
                 String project = jobExecution.getJobParameters().getString("project");
@@ -215,7 +216,7 @@ public class ImportJobConfiguration<Fact extends BaseFact> {
                 String project = (String) context.getStepContext().getJobParameters().get(ImportContext.projectKey);
                 String file = (String) ec.get(ImportContext.fileNameKey);
                 List<String> files =
-                    Arrays.asList(((String)context.getStepContext().getJobParameters().get("files")).split(","));
+                    Arrays.asList(((String) context.getStepContext().getJobParameters().get("files")).split(","));
 
                 logger.info("Import {} {} of {} rows", file, rows, totalRows);
 

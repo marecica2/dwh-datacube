@@ -20,8 +20,8 @@ public class ExcelWriterTest {
             add("column3");
         }};
 
-        Map<String, List<String>> errors = new HashMap<String, List<String>>(){{
-            put("column2", Arrays.asList(new String[]{ "should not be null"}));
+        Map<String, List<String>> errors = new HashMap<String, List<String>>() {{
+            put("column2", Arrays.asList(new String[]{"should not be null"}));
         }};
 
         List<DataRow> rows = new ArrayList<>();
@@ -38,10 +38,13 @@ public class ExcelWriterTest {
     }
 
     private DataRow createRow(String[] values, Map<String, List<String>> errors) {
-        return DataRow
-            .builder()
-            .row(Arrays.asList(values))
-            .errors(errors).build();
+        DataRow<Fact> data = new DataRow<>();
+        data.setRow(Arrays.asList(values));
+        data.setErrors(errors);
+        return data;
+    }
+
+    private static class Fact {
     }
 
 }

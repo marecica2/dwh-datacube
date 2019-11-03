@@ -64,10 +64,10 @@ public class ImportServiceIT {
             "CREATE TABLE fact" +
             "(" +
             "    id BIGINT IDENTITY NOT NULL PRIMARY KEY," +
-            "    transaction_id VARCHAR(255)," +
-            "    business_unit  VARCHAR(255)," +
-            "    cost  DECIMAL," +
-            "    billable_weight  INTEGER" +
+            "    transaction_id VARCHAR(255) NOT NULL," +
+            "    business_unit  VARCHAR(255) NOT NULL," +
+            "    cost  DECIMAL NOT NULL," +
+            "    billable_weight FLOAT NOT NULL" +
             ");");
     }
 
@@ -75,7 +75,7 @@ public class ImportServiceIT {
     public void testImport() {
         importService.runImport(tenant, project, transaction, files, mapping);
         int importedRows = template.queryForObject("SELECT count(*) FROM fact", Integer.class);
-        Assertions.assertEquals(458, importedRows);
+        Assertions.assertEquals(472, importedRows);
     }
 
     @Table(name = "fact")

@@ -35,11 +35,11 @@ public class ExcelRowMapper<Bean> {
             Optional<String> o = columns.stream().filter(obj -> obj.equals(key)).findFirst();
             o.ifPresent(s -> indexMapping.put(columns.indexOf(s), value));
         });
-//        ValueConverter converter = new ValueConverter(datePatterns);
-//        ConvertUtils.register(converter, Date.class);
     }
 
     public Bean map(List<Object> row) {
+        if(row == null)
+            return null;
         try {
             Bean bean = typeParameterClass.newInstance();
             this.indexMapping.forEach((index, attribute) -> {
@@ -66,49 +66,5 @@ public class ExcelRowMapper<Bean> {
         return rows.stream()
             .map(row -> map(row))
             .collect(Collectors.toList());
-    }
-
-    private static class ValueConverter implements Converter {
-        private static List<SimpleDateFormat> formats = new ArrayList<>();
-        private static String[] patterns;
-
-        public ValueConverter(String[] patterns) {
-            for (String pattern : patterns) {
-                formats.add(new SimpleDateFormat(pattern));
-            }
-        }
-
-        @Override
-        public Object convert(Class type, Object value) {
-            String stringValue;
-
-            if (value == null)
-                return null;
-
-            if (value instanceof String) {
-                stringValue = (String) value;
-            } else {
-                throw new ConversionException("not String");
-            }
-
-            if (stringValue.trim().length() == 0) {
-                return null;
-            }
-
-            for (SimpleDateFormat format : formats) {
-                try {
-                    Date date = format.parse(stringValue);
-                    return date;
-                } catch (ParseException pe) {
-                    // Omitted
-                }
-            }
-
-            try {
-                return new BigDecimal(stringValue.replaceAll("[^0-9\\.]", ""));
-            } catch (NumberFormatException nfe) {
-                throw new ConversionException("not Number");
-            }
-        }
     }
 }

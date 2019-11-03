@@ -20,7 +20,7 @@
 <!--    <logger name="org.springframework.jdbc.core.StatementCreatorUtils" level="TRACE"/>-->
     <logger name="org.flywaydb.core.internal.database.ExecutableSqlScript" level="INFO"/>
 
-    <logger name="org.bmsource" level="TRACE"/>
+    <logger name="org.bmsource" level="DEBUG"/>
 
     <turboFilter class="ch.qos.logback.classic.turbo.MarkerFilter">
         <Marker>PROFILER</Marker>

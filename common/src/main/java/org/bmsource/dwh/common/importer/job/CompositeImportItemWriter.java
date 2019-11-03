@@ -19,7 +19,7 @@ import java.util.Map;
 
 @Component
 @StepScope
-public class CompositeImportItemWriter<Fact extends BaseFact> implements ItemStreamWriter<ImportItem<Fact>> {
+public class CompositeImportItemWriter<Fact extends BaseFact> implements ItemStreamWriter<DataRow<Fact>> {
 
     private static Logger logger = LoggerFactory.getLogger(CompositeImportItemWriter.class);
 
@@ -33,19 +33,18 @@ public class CompositeImportItemWriter<Fact extends BaseFact> implements ItemStr
     private ExcelItemWriter excelItemWriter;
 
     @Override
-    public void write(List<? extends ImportItem<Fact>> items) throws Exception {
+    public void write(List<? extends DataRow<Fact>> items) throws Exception {
 
         List<Fact> validItems = new LinkedList<>();
         List<DataRow> errorRows = new LinkedList<>();
-        for (ImportItem<Fact> item : items) {
-            Map<String, List<String>> errors = item.getExcelRow().getErrors();
-            if (errors == null || errors.isEmpty()) {
+        for (DataRow<Fact> item : items) {
+            if (item.isValid()) {
                 validItems.add(item.getFact());
             } else {
-                errorRows.add(item.getExcelRow());
+                errorRows.add(item);
             }
         }
-        logger.trace("Thread {} File: {}, Items count: {}, Valid items: {}, Invalid rows: {}",
+        logger.debug("Thread {} File: {}, Items count: {}, Valid items: {}, Invalid rows: {}",
             Thread.currentThread().getName(),
             fileName,
             items.size(),

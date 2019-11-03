@@ -1,11 +1,17 @@
 package org.bmsource.dwh.common.io;
 
+import javax.validation.constraints.NotNull;
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-public class DataRow {
+public class DataRow<Fact> {
     private List<Object> row;
     private Map<String, List<String>> errors;
+    private Fact fact;
+    private Map<String, String> mapping;
+    private boolean valid = true;
 
     public List<Object> getRow() {
         return row;
@@ -23,32 +29,39 @@ public class DataRow {
         this.errors = errors;
     }
 
-    public static DataRowBuilder builder() {
-        return new DataRowBuilder();
+    public Fact getFact() {
+        return fact;
     }
 
-    public static final class DataRowBuilder {
-        private List<Object> row;
-        private Map<String, List<String>> errors;
+    public void setFact(Fact fact) {
+        this.fact = fact;
+    }
 
-        private DataRowBuilder() {
-        }
+    public Map<String, String> getMapping() {
+        return mapping;
+    }
 
-        public DataRowBuilder row(List<Object> row) {
-            this.row = row;
-            return this;
-        }
+    public void setMapping(Map<String, String> mapping) {
+        this.mapping = mapping.entrySet()
+            .stream()
+            .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));;
+    }
 
-        public DataRowBuilder errors(Map<String, List<String>> errors) {
-            this.errors = errors;
-            return this;
+    public void validate() {
+        for (Field field : fact.getClass().getDeclaredFields()) {
+            if (field.getAnnotation(NotNull.class) != null && errors.get(mapping.get(field.getName())) != null) {
+                valid = false;
+            } else if(errors.get(field.getName()) != null) {
+                try {
+                    field.set(fact, null);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
         }
+    }
 
-        public DataRow build() {
-            DataRow excelRow = new DataRow();
-            excelRow.setRow(row);
-            excelRow.setErrors(errors);
-            return excelRow;
-        }
+    public boolean isValid() {
+        return valid;
     }
 }

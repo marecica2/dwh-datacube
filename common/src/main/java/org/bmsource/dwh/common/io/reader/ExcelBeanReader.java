@@ -2,6 +2,7 @@ package org.bmsource.dwh.common.io.reader;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.bmsource.dwh.common.io.DataRow;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,15 +23,21 @@ public class ExcelBeanReader<Bean> implements DataReader<Bean> {
 
     private final ExcelReader<List<Object>> reader;
 
+    private final ExcelRowValidator<Object> validator;
+
+    private final Map<String, String> mapping;
+
     public ExcelBeanReader(InputStream inputStream, Class<Bean> beanClass, Map<String, String> mapping) {
         this(inputStream, beanClass, mapping, DEFAULT_CACHE_SIZE, DEFAULT_BUFFER_SIZE);
     }
 
     public ExcelBeanReader(InputStream inputStream, Class<Bean> beanClass, Map<String, String> mapping, int cacheSize,
                            int bufferSize) {
+        this.mapping = mapping;
         reader = new ExcelReader<>(inputStream, cacheSize, bufferSize);
         parsers = initCellParsers(beanClass, mapping);
         rowMapper = new ExcelRowMapper<>(beanClass, reader.getHeader(), mapping);
+        validator = new ExcelRowValidator<>(mapping);
     }
 
     @Override
@@ -45,6 +52,26 @@ public class ExcelBeanReader<Bean> implements DataReader<Bean> {
 
     @Override
     public Bean nextRow() {
+        return rowMapper.map(next());
+    }
+
+    public DataRow<Bean> nextValidatedRow() {
+        List<Object> row = next();
+        if (row != null) {
+            Bean bean = rowMapper.map(row);
+            Map<String, List<String>> validationErrors = validator.getValidationErrors(bean);
+            DataRow data = new DataRow();
+            data.setErrors(validationErrors);
+            data.setMapping(mapping);
+            data.setFact(bean);
+            data.setRow(row);
+            data.validate();
+            return data;
+        }
+        return null;
+    }
+
+    private List<Object> next() {
         List<Object> row = new LinkedList<>();
         if (reader.rowIterator.hasNext()) {
             int prevCellIndex = 0;
@@ -57,7 +84,7 @@ public class ExcelBeanReader<Bean> implements DataReader<Bean> {
             }
             reader.rowsRead++;
             if (row.size() > 0 && row.get(0) != null) {
-                return rowMapper.map(row);
+                return row;
             }
         }
         return null;
@@ -93,7 +120,8 @@ public class ExcelBeanReader<Bean> implements DataReader<Bean> {
         }
     }
 
-    private Map<String, Function<Cell, Comparable>> initCellParsers(Class<Bean> beanClass, Map<String, String> mapping) {
+    private Map<String, Function<Cell, Comparable>> initCellParsers(Class<Bean> beanClass,
+                                                                    Map<String, String> mapping) {
         return mapping
             .entrySet()
             .stream().collect(Collectors.toMap(Map.Entry::getKey,
