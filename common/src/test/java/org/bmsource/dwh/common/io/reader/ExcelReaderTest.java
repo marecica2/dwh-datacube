@@ -15,13 +15,13 @@ public class ExcelReaderTest {
     public void testRowsReading() throws IOException {
         InputStream stream = new ClassPathResource("/spends.xlsx").getInputStream();
         ExcelReader reader = new ExcelReader(stream);
-        List<Object> header = reader.nextRow();
-        int rowsCount = 0;
+        List<Object> header = reader.getHeader();
+        int rowsCount = 1;
         while(reader.hasNextRow()) {
+            rowsCount++;
             List<Object> row = reader.nextRow();
             System.out.println(row);
             assertTrue(row.get(0) instanceof String);
-            rowsCount++;
         }
         reader.close();
         assertEquals(38, header.size());

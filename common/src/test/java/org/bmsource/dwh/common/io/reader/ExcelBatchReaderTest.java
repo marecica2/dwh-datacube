@@ -16,12 +16,9 @@ public class ExcelBatchReaderTest {
   @Test
   public void testHeaderRowParsing() throws Exception {
     File xlsx = ResourceUtils.getFile(this.getClass().getResource("/spends.xlsx"));
-    List<List<Object>> rows = new ExcelBatchReader().readContent(FileUtils.openInputStream(xlsx), 2, false);
-    List<Object> header = rows.get(0);
-    assertThat(header.size()).isEqualTo(38);
-    List<Object> preview = rows.get(1);
+    List<List<Object>> rows = new ExcelBatchReader().readContent(FileUtils.openInputStream(xlsx), 2);
+    List<Object> preview = rows.get(0);
     assertThat(preview.size()).isEqualTo(38);
-    assertThat(header.get(4)).isEqualTo("Origin-State");
     assertThat(preview.get(4)).isEqualTo("Illinois");
   }
 
@@ -40,6 +37,6 @@ public class ExcelBatchReaderTest {
     new ExcelBatchReader().readContent(inputStream, (rows, header, rowsCount, totalRowsCount) -> {
       totalRows.set(rowsCount);
     });
-    assertThat(totalRows.get()).isEqualTo(426);
+    assertThat(totalRows.get()).isEqualTo(424);
   }
 }

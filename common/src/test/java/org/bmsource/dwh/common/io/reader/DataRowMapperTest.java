@@ -12,7 +12,6 @@ public class DataRowMapperTest {
         add("integerColumn");
         add("doubleColumn");
         add("stringColumn");
-        add("dateColumn");
         add("bigDecimalColumn");
     }};
 
@@ -20,7 +19,6 @@ public class DataRowMapperTest {
         put("integerColumn", "integerProp");
         put("doubleColumn", "doubleProp");
         put("stringColumn", "stringProp");
-        put("dateColumn", "dateProp");
         put("bigDecimalColumn", "bigDecimalProp");
     }};
 
@@ -28,31 +26,17 @@ public class DataRowMapperTest {
     public void testBeanMappingForTypes() {
 
         List<Object> row = new ArrayList<Object>() {{
-            add("123");
-            add("0.1234");
+            add(123);
+            add(0.1234);
             add("string");
-            add("2019-10-24 12:00:00");
-            add("999999.99");
+            add(999999.99);
         }};
 
         ExcelRowMapper<Bean> mapper = new ExcelRowMapper<>(Bean.class, headerColumn, mapping);
         Bean bean = mapper.map(row);
+        Assertions.assertEquals(123, bean.getIntegerProp());
         Assertions.assertEquals(0.1234, bean.getDoubleProp());
         Assertions.assertEquals("string", bean.getStringProp());
-        Calendar cal = new Calendar
-            .Builder()
-            .set(Calendar.YEAR, 2019)
-            .set(Calendar.MONTH, Calendar.OCTOBER)
-            .set(Calendar.DAY_OF_MONTH, 24)
-            .set(Calendar.HOUR, 12)
-            .build();
-        Calendar cal1 = new Calendar
-            .Builder()
-            .set(Calendar.YEAR, 2018)
-            .set(Calendar.MONTH, Calendar.MAY)
-            .set(Calendar.DAY_OF_MONTH, 2)
-            .build();
-        Assertions.assertEquals(cal.getTime(),bean.getDateProp());
         Assertions.assertEquals(new BigDecimal("999999.99"),bean.getBigDecimalProp());
     }
 

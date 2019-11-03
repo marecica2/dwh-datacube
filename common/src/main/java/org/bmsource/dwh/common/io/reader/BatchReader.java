@@ -9,7 +9,5 @@ public interface BatchReader {
 
     void readContent(InputStream inputStream, BatchHandler rowsHandler, Integer batchSize) throws Exception;
 
-    List<List<Object>> readContent(InputStream inputStream, int rowsToRead, boolean excludeHeader) throws Exception;
-
     List<List<Object>> readContent(InputStream inputStream, int rowsToRead) throws Exception;
 }
