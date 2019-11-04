@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.*;
 
-public class DataRowMapperTest {
+public class ExcelRowMapperTest {
 
     List<String> headerColumn = new ArrayList<String>() {{
         add("integerColumn");
