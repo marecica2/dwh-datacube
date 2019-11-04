@@ -3,6 +3,7 @@ package org.bmsource.dwh.common.io.writer;
 import org.bmsource.dwh.common.io.DataRow;
 import org.bmsource.dwh.common.fileManager.FileManager;
 import org.bmsource.dwh.common.fileManager.ResourceFileManager;
+import org.bmsource.dwh.common.io.reader.ExcelRowValidator;
 import org.junit.jupiter.api.Test;
 
 import java.io.OutputStream;
@@ -40,7 +41,7 @@ public class ExcelWriterTest {
     private DataRow createRow(String[] values, Map<String, List<String>> errors) {
         DataRow<Fact> data = new DataRow<>();
         data.setRow(Arrays.asList(values));
-        data.setErrors(errors);
+        data.setErrors(new ExcelRowValidator.ValidationErrors(errors, errors));
         return data;
     }
 

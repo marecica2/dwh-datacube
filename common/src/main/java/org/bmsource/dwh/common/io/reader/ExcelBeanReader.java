@@ -3,6 +3,8 @@ package org.bmsource.dwh.common.io.reader;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.bmsource.dwh.common.io.DataRow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +14,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class ExcelBeanReader<Bean> implements DataReader<Bean> {
+
+    private static Logger logger = LoggerFactory.getLogger(ExcelBeanReader.class);
 
     private static final int DEFAULT_CACHE_SIZE = 5000;
 
@@ -59,10 +63,10 @@ public class ExcelBeanReader<Bean> implements DataReader<Bean> {
         List<Object> row = next();
         if (row != null) {
             Bean bean = rowMapper.map(row);
-            Map<String, List<String>> validationErrors = validator.getValidationErrors(bean);
+            ExcelRowValidator.ValidationErrors errors = validator.getValidationErrors(bean);
             DataRow data = new DataRow();
-            data.setErrors(validationErrors);
-            data.setMapping(mapping);
+            data.setErrors(errors);
+            data.setColumnMapping(mapping);
             data.setFact(bean);
             data.setRow(row);
             data.validate();
@@ -76,14 +80,14 @@ public class ExcelBeanReader<Bean> implements DataReader<Bean> {
         if (reader.rowIterator.hasNext()) {
             int prevCellIndex = 0;
             Row sheetRow = reader.rowIterator.next();
-            for (Cell sheetCell : sheetRow) {
-                int currentIndex = sheetCell.getColumnIndex();
+            for (Cell cell : sheetRow) {
+                int currentIndex = cell.getColumnIndex();
                 reader.fillGaps(row, prevCellIndex, currentIndex);
-                row.add(readCellValue(sheetCell));
+                row.add(readCellValue(cell));
                 prevCellIndex = currentIndex;
             }
             reader.rowsRead++;
-            if (row.size() > 0 && row.get(0) != null) {
+            if (row.size() > 0) {
                 return row;
             }
         }
@@ -115,7 +119,7 @@ public class ExcelBeanReader<Bean> implements DataReader<Bean> {
         try {
             return parsers.get(column).apply(cell);
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            logger.trace("{}", e.toString());
             return null;
         }
     }

@@ -3,9 +3,8 @@ package org.bmsource.dwh.importer.web;
 import org.bmsource.dwh.common.fileManager.FileManager;
 import org.bmsource.dwh.common.fileManager.TmpFileManager;
 import org.bmsource.dwh.common.importer.ImportService;
-import org.bmsource.dwh.common.io.reader.ExcelRowMapper;
-import org.bmsource.dwh.common.io.reader.BatchReader;
-import org.bmsource.dwh.common.io.reader.ExcelBatchReader;
+import org.bmsource.dwh.common.io.DataRow;
+import org.bmsource.dwh.common.io.reader.*;
 import org.bmsource.dwh.importer.Fact;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,7 +17,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @RestController()
@@ -56,23 +54,30 @@ public class ImportController {
                                          @RequestBody MappingRequestBody filesParam) throws Exception {
         List<String> files = fileManager.getFiles(transactionId);
         try (InputStream stream = fileManager.getStream(transactionId, files.get(0))) {
-            MappingResult columnMapping = readHeaderRow(stream);
+            MappingResult columnMapping = getColumnMapping(stream);
             return MappingResponse.builder().setSourceFields(columnMapping.getHeaderRow(),
                 columnMapping.getPreviewRow()).setFactModel(Fact.class).autoSuggestionMapping().build();
         }
     }
 
     @PostMapping(value = "/{transactionId}/preview", consumes = "application/json")
-    public List<Fact> preview(@PathVariable("projectId") String projectId,
-                              @PathVariable("transactionId") String transactionId,
-                              @RequestBody PreviewRequestBody mappingParam) throws Exception {
+    public List<PreviewResponse> preview(@PathVariable("projectId") String projectId,
+                                         @PathVariable("transactionId") String transactionId,
+                                         @RequestBody PreviewRequestBody mappingParam) throws Exception {
 
         List<String> files = fileManager.getFiles(transactionId);
-        try (InputStream stream1 = fileManager.getStream(transactionId, files.get(0)); InputStream stream2 =
-            fileManager.getStream(transactionId, files.get(0));) {
-            MappingResult columnMapping = readHeaderRow(stream1);
-            BatchReader reader = new ExcelBatchReader();
-            return new ExcelRowMapper<>(Fact.class, columnMapping.getHeaderRow(), mappingParam.getMapping()).mapList(reader.readContent(stream2, 100));
+        List<PreviewResponse> rows = new ArrayList<>();
+        try (
+            InputStream stream1 = fileManager.getStream(transactionId, files.get(0));
+            ExcelBeanReader<Fact> reader = new ExcelBeanReader<>(stream1, Fact.class, mappingParam.getMapping());
+        ) {
+            int count = 0;
+            while (reader.hasNextRow() && count < 100) {
+                DataRow<Fact> item = reader.nextValidatedRow();
+                rows.add(new PreviewResponse(item.getFact(), item.getErrors().getFieldErrors(), item.isValid()));
+                count++;
+            }
+            return rows;
         }
     }
 
@@ -89,12 +94,11 @@ public class ImportController {
     }
 
 
-    private MappingResult readHeaderRow(InputStream inputStream) throws Exception {
-        BatchReader reader = new ExcelBatchReader();
-        List<List<Object>> twoRows = reader.readContent(inputStream, 2);
-
-        List<String> headerRow = twoRows.get(0).stream().map(Object::toString).collect(Collectors.toList());
-        List<Object> previewRow = twoRows.get(1);
+    private MappingResult getColumnMapping(InputStream inputStream) throws Exception {
+        ExcelReader<List<Object>> reader = new ExcelReader<>(inputStream);
+        List<String> headerRow = reader.getHeader();
+        List<Object> previewRow = reader.nextRow();
+        reader.close();
         return new MappingResult(headerRow, previewRow);
     }
 }

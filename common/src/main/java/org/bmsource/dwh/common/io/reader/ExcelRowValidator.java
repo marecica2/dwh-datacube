@@ -18,21 +18,53 @@ public class ExcelRowValidator<Bean> {
         this.mapping = inverseMapping(columnPropertyMapping);
     }
 
-    public Map<String, List<String>> getValidationErrors(Bean bean) {
-        Map<String, List<String>> errors = new HashMap<>();
+    public ValidationErrors getValidationErrors(Bean bean) {
+        Map<String, List<String>> columnErrors = new HashMap<>();
+        Map<String, List<String>> fieldErrors = new HashMap<>();
 
         Set<ConstraintViolation<Object>> validationErrors = validator.validate(bean);
         if (validationErrors != null && validationErrors.size() > 0) {
-            ConstraintViolation<Object> error = validationErrors.iterator().next();
-            String beanPropertyName = error.getPropertyPath().toString();
-            String columnName = mapping.get(beanPropertyName);
-            List<String> errorMessages = validationErrors
-                .stream()
-                .map(err -> err.getMessage())
-                .collect(Collectors.toList());
-            errors.put(columnName, errorMessages);
+            for (ConstraintViolation<Object> error : validationErrors) {
+                String beanPropertyName = error.getPropertyPath().toString();
+                String columnName = getErrorKey(beanPropertyName);
+                List<String> errorMessages = Collections.singletonList(error.getMessage());
+
+                if (columnErrors.get(columnName) == null) {
+                    columnErrors.put(columnName, errorMessages);
+                } else {
+                    columnErrors.get(columnName).addAll(errorMessages);
+                }
+
+                if (fieldErrors.get(beanPropertyName) == null) {
+                    fieldErrors.put(beanPropertyName, errorMessages);
+                } else {
+                    fieldErrors.get(beanPropertyName).addAll(errorMessages);
+                }
+            }
         }
-        return errors;
+        return new ValidationErrors(columnErrors, fieldErrors);
+    }
+
+    public static class ValidationErrors {
+        Map<String, List<String>> columnErrors;
+        Map<String, List<String>> fieldErrors;
+
+        public ValidationErrors(Map<String, List<String>> columnErrors, Map<String, List<String>> fieldErrors) {
+            this.columnErrors = columnErrors;
+            this.fieldErrors = fieldErrors;
+        }
+
+        public Map<String, List<String>> getColumnErrors() {
+            return columnErrors;
+        }
+
+        public Map<String, List<String>> getFieldErrors() {
+            return fieldErrors;
+        }
+    }
+
+    private String getErrorKey(String beanPropertyName) {
+        return mapping.get(beanPropertyName);
     }
 
     private Map<String, String> inverseMapping(Map<String, String> columnPropertyMapping) {

@@ -64,15 +64,15 @@ public class ExcelWriter<Fact> implements DataWriter<Fact> {
             int cellNum = 0;
             for (Object value : excelRow.getRow()) {
                 Cell cell = row.createCell(cellNum);
-                if (excelRow.getErrors() != null && cellNum < header.size()) {
-                    List<String> errors = excelRow.getErrors().get(header.get(cellNum));
+                if (excelRow.getErrors() != null && excelRow.getErrors().getColumnErrors() != null && cellNum < header.size()) {
+                    List<String> errors = excelRow.getErrors().getColumnErrors().get(header.get(cellNum));
                     if (errors != null) {
                         String errorComment = String.join("\r\n", errors);
                         cell.setCellStyle(errorStyle);
                         setCellComment(cell, errorComment);
                     }
                 }
-                if(value != null) {
+                if (value != null) {
                     cell.setCellValue(value.toString());
                 }
                 cellNum++;

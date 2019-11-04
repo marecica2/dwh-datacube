@@ -16,12 +16,12 @@ export default function Loader() {
   const classes = useStyles();
   return (
     <div className={classes.root}>
-      <div className="lds-ring">
-        <div className={classes.color} />
-        <div className={classes.color} />
-        <div className={classes.color} />
-        <div className={classes.color} />
-      </div>
+      {/*<div className="lds-ring">*/}
+      {/*  <div className={classes.color} />*/}
+      {/*  <div className={classes.color} />*/}
+      {/*  <div className={classes.color} />*/}
+      {/*  <div className={classes.color} />*/}
+      {/*</div>*/}
     </div>
   );
 }

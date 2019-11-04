@@ -302,4 +302,19 @@ public class Fact extends BaseFact {
   public void setDistance(Double distance) {
     this.distance = distance;
   }
+
+  @Override
+  public String toString() {
+    return "Fact{" +
+        "transactionId='" + transactionId + '\'' +
+        ", supplierName='" + supplierName + '\'' +
+        ", businessUnit='" + businessUnit + '\'' +
+        ", zone='" + zone + '\'' +
+        ", shipmentDate=" + shipmentDate +
+        ", serviceType='" + serviceType + '\'' +
+        ", billableWeight=" + billableWeight +
+        ", discount=" + discount +
+        ", distance=" + distance +
+        '}';
+  }
 }
