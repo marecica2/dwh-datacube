@@ -29,7 +29,6 @@ import java.util.List;
 
 @Component
 @StepScope
-@Scope("prototype")
 public class ExcelItemReader<Fact extends BaseFact> implements ItemStreamReader<DataRow<Fact>> {
 
     private Logger logger = LoggerFactory.getLogger(ExcelItemReader.class.getName());

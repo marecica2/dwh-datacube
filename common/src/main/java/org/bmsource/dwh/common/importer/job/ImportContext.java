@@ -6,6 +6,7 @@ public interface ImportContext {
     String mappingKey = "mapping";
     String totalRowsKey = "totalRows";
     String rowsKey = "rows";
+    String skippedRowsKey = "skippedRows";
     String fileNameKey = "fileName";
     String filesKey = "files";
     String tenantKey = "tenant";

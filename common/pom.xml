@@ -133,6 +133,12 @@
             <artifactId>spring-batch-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.dbunit</groupId>
+            <artifactId>dbunit</artifactId>
+            <version>2.5.1</version>
+            <scope>test</scope>
+        </dependency>
 
 
         <dependency>

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 @StepScope
@@ -31,6 +32,8 @@ public class CompositeImportItemWriter<Fact extends BaseFact> implements ItemStr
 
     @Autowired
     private ExcelItemWriter excelItemWriter;
+
+    private Integer skippedRows = 0;
 
     @Override
     public void write(List<? extends DataRow<Fact>> items) throws Exception {
@@ -54,6 +57,7 @@ public class CompositeImportItemWriter<Fact extends BaseFact> implements ItemStr
 
         jdbcBatchItemWriter.write(validItems);
         excelItemWriter.write(errorRows);
+        skippedRows +=  errorRows.size();
     }
 
     @Override
@@ -63,6 +67,7 @@ public class CompositeImportItemWriter<Fact extends BaseFact> implements ItemStr
 
     @Override
     public void update(ExecutionContext executionContext) throws ItemStreamException {
+        executionContext.put(ImportContext.skippedRowsKey, skippedRows);
         excelItemWriter.update(executionContext);
     }
 

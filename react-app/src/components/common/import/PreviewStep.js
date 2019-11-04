@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import pink from '@material-ui/core/colors/pink';
+import green from '@material-ui/core/colors/lightGreen';
 import ErrorIcon from '@material-ui/icons/Clear';
 import OkIcon from '@material-ui/icons/Check';
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
@@ -25,6 +26,9 @@ const useStyles = makeStyles(() => ({
   },
   error: {
     backgroundColor: pink[100],
+  },
+  success: {
+    color: green,
   },
 }));
 
@@ -62,7 +66,7 @@ function PreviewStep({ transaction, mappingConfig, mapping, preview, setPreview 
           {Object.entries(row.entity).map(([key, cell], idx) => {
             const error = row.errors[key] != null ? row.errors[key].join(',') : null;
             if (key === 'valid')
-              return <TableCell key={`${preview.indexOf(row)}_${idx}`}>{cell ? <OkIcon color="primary" /> : <ErrorIcon color="secondary"/>}</TableCell>;
+              return <TableCell key={`${preview.indexOf(row)}_${idx}`}>{cell ? <OkIcon style={{color: green}} /> : <ErrorIcon color="secondary"/>}</TableCell>;
 
             return (
               <TableCell
