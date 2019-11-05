@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Typography,
@@ -11,6 +11,8 @@ import {
 } from '@material-ui/core';
 import { AppContext } from '../context/AppContext';
 import ImportJob from '../common/import/ImportJob';
+import importApi from '../../shared/api/import.api';
+
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -58,6 +60,14 @@ const importStats = [
 function Home() {
   const classes = useStyles();
   const { state } = useContext(AppContext);
+
+  useEffect(() => {
+    const api = async () => {
+      const resp = await importApi.getStats();
+      console.log(resp);
+    };
+    api();
+  }, []);
 
   const renderJobs = () => {
     if (state.importStatus && state.importStatus.running) {

@@ -83,7 +83,7 @@ function MappingStep({ transaction, mappingConfig, setMappingConfig, mapping, se
     }
 
     fetchData();
-  }, [transaction, mappingConfig, setMappingConfig, files, setLoaded, selectColumn, setAssignedColumns]);
+  }, [transaction, mappingConfig, autoSuggestMapping, setMappingConfig, files, setLoaded, selectColumn, setAssignedColumns]);
 
   useEffect(() => {
     async function api() {

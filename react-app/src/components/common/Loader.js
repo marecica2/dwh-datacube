@@ -18,7 +18,7 @@ export default function Loader({ size = 70, variant = 'simple', height = 200 }) 
   const classes = useStyles();
   const spinner = (
     <span className={classes.root}>
-      <img className={classes.color} src={spinnerGif} height={size} width={size} />
+      <img alt="loading" className={classes.color} src={spinnerGif} height={size} width={size} />
     </span>
   );
   const wrapper = (
