@@ -12,7 +12,7 @@ spring:
       hibernate:
         physical_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
         temp.use_jdbc_metadata_defaults: false
-    database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+    database-platform: org.bmsource.dwh.CustomPostgreSQLDialect
     hibernate:
       ddl-auto: update
   flyway:
@@ -25,7 +25,6 @@ spring:
     port: 6379
 dwh:
   property: prodvalue
-
 
 ---
 

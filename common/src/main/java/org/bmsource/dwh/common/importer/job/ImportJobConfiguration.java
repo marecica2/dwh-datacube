@@ -52,7 +52,7 @@ public class ImportJobConfiguration<Fact extends BaseFact> {
 
     private Logger logger = LoggerFactory.getLogger(ImportJobConfiguration.class);
 
-    private static final int BATCH_SIZE = 50;
+    private static final int BATCH_SIZE = 5000;
 
     private static final int MAX_CONCURRENT_FILES = 10;
 

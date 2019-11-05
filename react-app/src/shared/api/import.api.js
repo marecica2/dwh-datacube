@@ -43,4 +43,19 @@ export default {
     })();
     return data;
   },
+
+  createMappingPreset: async (mapping) => {
+    const { data } = await httpRequest(`${baseUrl}/mapping-presets`, {
+      method: 'POST',
+      data: mapping,
+    })();
+    return data;
+  },
+
+  getMappingPresets: async () => {
+    const { data } = await httpRequest(`${baseUrl}/mapping-presets`, {
+      method: 'GET',
+    })();
+    return data;
+  },
 };

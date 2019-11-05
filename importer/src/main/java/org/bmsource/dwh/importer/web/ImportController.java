@@ -6,6 +6,8 @@ import org.bmsource.dwh.common.importer.ImportService;
 import org.bmsource.dwh.common.io.DataRow;
 import org.bmsource.dwh.common.io.reader.*;
 import org.bmsource.dwh.importer.Fact;
+import org.bmsource.dwh.importer.MappingPreset;
+import org.bmsource.dwh.importer.MappingPresetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController()
@@ -27,6 +30,9 @@ public class ImportController {
 
     @Autowired
     ImportService importService;
+
+    @Autowired
+    MappingPresetRepository mappingPresetRepository;
 
     @GetMapping
     public String initUpload() {
@@ -91,6 +97,20 @@ public class ImportController {
         System.out.println(tenant + projectId);
         importService.runImport(tenant, projectId, transactionId, files, uploadRequestBody.getMapping());
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @GetMapping("/mapping-presets")
+    public Iterable<MappingPreset> mappingPresets(@RequestHeader("x-tenant") String tenant,
+                                                  @PathVariable("projectId") String projectId) {
+        return mappingPresetRepository.findAll();
+    }
+
+    @PostMapping("/mapping-presets")
+    public MappingPreset saveMappingPreset(@RequestHeader("x-tenant") String tenant,
+                                           @PathVariable("projectId") String projectId,
+                                           @RequestBody MappingPreset mappingPreset
+    ) {
+        return mappingPresetRepository.save(mappingPreset);
     }
 
 

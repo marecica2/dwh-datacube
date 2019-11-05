@@ -104,7 +104,7 @@ function PreviewStep({ transaction, mappingConfig, mapping, preview, setPreview 
               {renderRows()}
             </TableBody>
           </Table>
-        ) : <Loader/>
+        ) : <Loader variant="wrapped" />
         }
       </div>
     </div>
