@@ -12,6 +12,7 @@ import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -56,6 +57,7 @@ public class ImportService {
         }};
     }
 
+    @Async("asyncExecutor")
     public void runImport(String tenant, String project, String transaction, List<String> files,
                           Map<String, String> columnMapping) {
         try {
