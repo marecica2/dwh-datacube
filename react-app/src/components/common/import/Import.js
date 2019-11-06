@@ -106,12 +106,12 @@ export default function Import(props) {
   }, [setTransaction]);
 
   const handleFinish = async () => {
-      ImportApi.doImport(transaction, mapping, config);
+      await ImportApi.doImport(transaction, mapping, config);
       setActiveStep(0);
       setFiles({});
       setMappingConfig();
       setMapping({});
-      setPreview();
+      setTransaction(null)
   };
 
   const handleNext = () => {

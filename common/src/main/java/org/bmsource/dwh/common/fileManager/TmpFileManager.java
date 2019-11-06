@@ -2,6 +2,7 @@ package org.bmsource.dwh.common.fileManager;
 
 import java.io.*;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
@@ -13,14 +14,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class TmpFileManager implements FileManager {
 
-  private static String SLASH = FileSystems.getDefault().getSeparator();
+  static String SLASH = FileSystems.getDefault().getSeparator();
 
-  private static String BASE_DIR = Paths.get(".") + SLASH + "tmp" + SLASH;
+  String baseDir() {
+    return System.getProperty("java.io.tmpdir") + SLASH + "dwh";
+  }
 
   @Override
   public String createTransaction() {
     String transaction =  UUID.randomUUID().toString();
-    File baseDir = new File(BASE_DIR + SLASH + transaction);
+    File baseDir = new File(baseDir() + SLASH + transaction);
     baseDir.mkdirs();
     return transaction;
   }
@@ -34,7 +37,7 @@ public class TmpFileManager implements FileManager {
 
   @Override
   public List<String> getFiles(String transactionId) {
-    File baseDir = new File(BASE_DIR + SLASH + transactionId);
+    File baseDir = new File(baseDir() + SLASH + transactionId);
     return Arrays.stream(baseDir.listFiles()).map(file -> file.getName()).collect(Collectors.toList());
   }
 
@@ -54,7 +57,15 @@ public class TmpFileManager implements FileManager {
     }
   }
 
-  private File createFile(String transactionId, String name) {
-    return new File(BASE_DIR + SLASH + transactionId + SLASH + name);
+  @Override
+  public String errorFile(String fileName) {
+    return SLASH + "errors" + SLASH + fileName;
+  };
+
+  File createFile(String transactionId, String name) throws IOException {
+    File file = new File(baseDir() + SLASH + transactionId + SLASH + name);
+    file.getParentFile().mkdirs();
+    file.createNewFile();
+    return file;
   }
 }

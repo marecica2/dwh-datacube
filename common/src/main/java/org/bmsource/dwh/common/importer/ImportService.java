@@ -5,6 +5,7 @@ import org.bmsource.dwh.common.appstate.EnableImportEvents;
 import org.bmsource.dwh.common.importer.job.ImportJobConfiguration;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.batch.core.*;
+import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
@@ -16,6 +17,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @ComponentScan
@@ -26,9 +28,13 @@ public class ImportService {
 
     JobLauncher jobLauncher;
 
+    JobExplorer jobExplorer;
+
     Job importJob;
 
     AppStateService appStateService;
+
+    ImportJobRepository repository;
 
     @Autowired
     public void setImportJobConfiguration(ImportJobConfiguration importJobConfiguration) {
@@ -50,6 +56,16 @@ public class ImportService {
         this.appStateService = appStateService;
     }
 
+    @Autowired
+    public void setJobExplorer(JobExplorer jobExplorer) {
+        this.jobExplorer = jobExplorer;
+    }
+
+    @Autowired
+    public void setRepository(ImportJobRepository repository) {
+        this.repository = repository;
+    }
+
     @Bean
     public List<String> channels() {
         return new ArrayList<String>() {{
@@ -64,6 +80,7 @@ public class ImportService {
             JobParameters params = new JobParametersBuilder()
                 .addString("tenant", tenant)
                 .addString("project", project)
+                .addString("tenantProject", tenant + ":" + project)
                 .addString("transaction", transaction)
                 .addString("files", String.join(",", files))
                 .addString("mapping", new JSONObject(columnMapping).toString())
@@ -72,5 +89,22 @@ public class ImportService {
         } catch (JobParametersInvalidException | JobInstanceAlreadyCompleteException | JobRestartException | JobExecutionAlreadyRunningException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Map<String, Object> getStatistics(String tenant, String project) {
+        Long id = repository.getJobExecutionId(tenant, project);
+        if (id != null) {
+            JobExecution jobExecution = jobExplorer.getJobExecution(id);
+            Map<String, Object> params = jobExecution.getExecutionContext()
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            params.put("status", jobExecution.getStatus());
+            params.put("startTime", jobExecution.getStartTime());
+            params.put("endTime", jobExecution.getEndTime());
+            params.put("duration", jobExecution.getEndTime().getTime() - jobExecution.getStartTime().getTime());
+            return params;
+        }
+        return null;
     }
 }

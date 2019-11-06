@@ -55,7 +55,7 @@ public class ExcelItemWriter implements ItemStreamWriter<DataRow> {
             String headerString = executionContext.getString(ImportContext.headerKey);
             header = Arrays.asList(headerString.split(","));
 
-            outputStream = fileManager.writeStream(transaction, makeFileName(fileName));
+            outputStream = fileManager.writeStream(transaction, fileManager.errorFile(fileName));
             writer = new ExcelWriter(outputStream);
             writer.open();
             writer.writeHeader(header);
@@ -82,9 +82,5 @@ public class ExcelItemWriter implements ItemStreamWriter<DataRow> {
     @Override
     public void update(ExecutionContext executionContext) throws ItemStreamException {
 
-    }
-
-    private String makeFileName(String fileName) {
-        return fileName.replaceAll(".xlsx", "_errors.xlsx");
     }
 }

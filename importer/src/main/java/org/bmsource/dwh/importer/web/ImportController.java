@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 
 @RestController()
@@ -56,8 +57,7 @@ public class ImportController {
 
     @PostMapping(value = "/{transactionId}/mapping", consumes = "application/json")
     public MappingResponse columnMapping(@PathVariable("projectId") String projectId,
-                                         @PathVariable("transactionId") String transactionId,
-                                         @RequestBody MappingRequestBody filesParam) throws Exception {
+                                         @PathVariable("transactionId") String transactionId) throws Exception {
         List<String> files = fileManager.getFiles(transactionId);
         try (InputStream stream = fileManager.getStream(transactionId, files.get(0))) {
             MappingResult columnMapping = getColumnMapping(stream);
@@ -94,7 +94,6 @@ public class ImportController {
                                 @PathVariable("transactionId") String transactionId,
                                 @RequestBody UploadRequestBody uploadRequestBody) {
         List<String> files = fileManager.getFiles(transactionId);
-        System.out.println(tenant + projectId);
         importService.runImport(tenant, projectId, transactionId, files, uploadRequestBody.getMapping());
         return new ResponseEntity(HttpStatus.OK);
     }
@@ -111,6 +110,12 @@ public class ImportController {
                                            @RequestBody MappingPreset mappingPreset
     ) {
         return mappingPresetRepository.save(mappingPreset);
+    }
+
+    @GetMapping("/stats")
+    public Map<String, Object> statistics(@RequestHeader("x-tenant") String tenant,
+                                 @PathVariable("projectId") String projectId) {
+        return importService.getStatistics(tenant, projectId);
     }
 
 

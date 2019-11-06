@@ -52,7 +52,7 @@ public class ExcelWriterTest {
         writer.close();
 
         String tempDir = System.getProperty("java.io.tmpdir");
-        File errorFile = new File(tempDir + SLASH + "1234" + SLASH + "errors.xlsx");
+        File errorFile = new File(tempDir + SLASH + "dwh-test" + SLASH + "1234" + SLASH + "errors.xlsx");
         InputStream actual = FileUtils.openInputStream(errorFile);
         ExcelReader<Fact> reader = new ExcelReader<>(actual);
         Assert.assertArrayEquals(new String[]{"column1", "column2", "column3"}, reader.getHeader().toArray());

@@ -9,7 +9,6 @@ import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.SimpleJobBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.support.SimpleJobLauncher;
@@ -76,6 +75,8 @@ public class ImportJobConfiguration<Fact extends BaseFact> {
 
     private CompositeImportItemWriter<Fact> compositeItemWriter;
 
+    private AfterImportTasklet afterImportTasklet;
+
     @Autowired
     @Qualifier("fact")
     public void setFact(Fact fact) {
@@ -127,6 +128,11 @@ public class ImportJobConfiguration<Fact extends BaseFact> {
         this.compositeItemWriter = compositeItemWriter;
     }
 
+    @Autowired
+    public void setAfterImportTasklet(AfterImportTasklet afterImportTasklet) {
+        this.afterImportTasklet = afterImportTasklet;
+    }
+
     @Bean
     public JdbcBatchItemWriter<Fact> jdbcWriter() {
         JdbcBatchItemWriter<Fact> jdbcWriter = new JdbcBatchItemWriterBuilder<Fact>()
@@ -156,6 +162,13 @@ public class ImportJobConfiguration<Fact extends BaseFact> {
     }
 
     @Bean
+    public Step cleanupStep() {
+        return this.stepBuilderFactory.get("cleanupStep")
+            .tasklet(afterImportTasklet)
+            .build();
+    }
+
+    @Bean
     public Step excelReadStep() {
         SimpleStepBuilder<DataRow<Fact>, DataRow<Fact>> step = stepBuilderFactory.get("excelReadStep")
             .<DataRow<Fact>, DataRow<Fact>>chunk(BATCH_SIZE)
@@ -174,14 +187,23 @@ public class ImportJobConfiguration<Fact extends BaseFact> {
 
     @Bean
     public Job importJob(@Autowired JobBuilderFactory jobBuilderFactory) {
-        SimpleJobBuilder jobBuilder = jobBuilderFactory.get("importJob")
-            //.incrementer(new RunIdIncrementer())
-            .start(excelReadPartitionStep());
+        SimpleJobBuilder jobBuilder = jobBuilderFactory
+            .get("importJob")
+            .start(excelReadPartitionStep())
+            .next(cleanupStep());
+
         if (jobListener != null) {
             jobBuilder = jobBuilder
                 .listener(jobListener);
         }
         return jobBuilder.build();
+    }
+
+    @Bean
+    public ExecutionContextPromotionListener promotionListener() {
+        ExecutionContextPromotionListener listener = new ExecutionContextPromotionListener();
+        listener.setKeys(new String[]{ImportContext.skippedRowsKey, ImportContext.totalRowsKey});
+        return listener;
     }
 
     @Bean
@@ -269,6 +291,13 @@ public class ImportJobConfiguration<Fact extends BaseFact> {
         return jobLauncher;
     }
 
+//    @Bean
+//    public JobExplorer jobExplorer() throws Exception {
+//        JobExplorerFactoryBean factoryBean = new JobExplorerFactoryBean();
+//        factoryBean.setDataSource(dataSource);
+//        return factoryBean.getObject();
+//    }
+
     @Primary
     @Bean
     public JobRepository myJobRepository() {
@@ -285,13 +314,6 @@ public class ImportJobConfiguration<Fact extends BaseFact> {
             e.printStackTrace();
         }
         return jr;
-    }
-
-    @Bean
-    public ExecutionContextPromotionListener promotionListener() {
-        ExecutionContextPromotionListener listener = new ExecutionContextPromotionListener();
-        listener.setKeys(new String[]{ImportContext.skippedRowsKey, ImportContext.totalRowsKey});
-        return listener;
     }
 
     @Bean

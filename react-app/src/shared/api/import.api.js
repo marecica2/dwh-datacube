@@ -58,4 +58,11 @@ export default {
     })();
     return data;
   },
+
+  getStats: async () => {
+    const { data } = await httpRequest(`${baseUrl}/stats`, {
+      method: 'GET',
+    })();
+    return data;
+  },
 };
