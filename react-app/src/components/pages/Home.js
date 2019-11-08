@@ -1,6 +1,7 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
+  Button,
   Typography,
   Grid,
   Paper,
@@ -9,10 +10,11 @@ import {
   TableRow,
   TableBody,
 } from '@material-ui/core';
+import handleStreamingDownload from '../../shared/util/download';
+import msToTime from '../../shared/util/time';
 import { AppContext } from '../context/AppContext';
 import ImportJob from '../common/import/ImportJob';
 import importApi from '../../shared/api/import.api';
-
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -24,50 +26,23 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const importStats = [
-  {
-    label: 'Rows imported',
-    key: 'rows',
-    value: 20000,
-  },
-  {
-    label: 'Dashboard',
-    key: 'dashboard',
-    value: 'calculated',
-  },
-  {
-    label: 'Levers',
-    key: 'levers',
-    value: 'calculated',
-  },
-  {
-    label: 'Last import',
-    key: 'updated',
-    value: '2019/10/02 10:43',
-  },
-  {
-    label: 'Errors file',
-    key: 'errors',
-    value: 'Download errors.zip',
-  },
-  {
-    label: 'Imported by',
-    key: 'importedBy',
-    value: 'John Doe',
-  },
-];
-
 function Home() {
   const classes = useStyles();
   const { state } = useContext(AppContext);
+  const [stats, setStats] = useState();
 
   useEffect(() => {
     const api = async () => {
-      const resp = await importApi.getStats();
-      console.log(resp);
+      const data = await importApi.getStats();
+      setStats(data);
     };
     api();
-  }, []);
+  }, [setStats, state.importStatus.running]);
+
+  const click = async () => {
+    const response = await importApi.getErrors();
+    handleStreamingDownload(response);
+  };
 
   const renderJobs = () => {
     if (state.importStatus && state.importStatus.running) {
@@ -102,12 +77,34 @@ function Home() {
             </Typography>
             <Table className={classes.table}>
               <TableBody>
-                {importStats.map(row => (
-                  <TableRow key={row.key}>
-                    <TableCell scope="row">{row.label}</TableCell>
-                    <TableCell align="right">{row.value}</TableCell>
-                  </TableRow>
-                ))}
+                <TableRow key="status">
+                  <TableCell scope="row">Status</TableCell>
+                  <TableCell align="right">
+                    {stats != null && stats.status}
+                  </TableCell>
+                </TableRow>
+                <TableRow key="duration">
+                  <TableCell scope="row">Duration</TableCell>
+                  <TableCell align="right">
+                    {stats != null && msToTime(stats.duration)}
+                  </TableCell>
+                </TableRow>
+                <TableRow key="totalRows">
+                  <TableCell scope="row">Rows imported</TableCell>
+                  <TableCell align="right">{stats && stats.totalRows != null && stats.totalRows - stats.skippedRows}</TableCell>
+                </TableRow>
+                <TableRow key="skippedRows">
+                  <TableCell scope="row">Rows skipped</TableCell>
+                  <TableCell align="right">
+                    {stats != null && stats.skippedRows}
+                  </TableCell>
+                </TableRow>
+                <TableRow key="download">
+                  <TableCell scope="row">Errors download</TableCell>
+                  <TableCell align="right">
+                    {stats && stats.status === 'COMPLETED' && <Button onClick={click} color="primary">errors.zip</Button>}
+                  </TableCell>
+                </TableRow>
               </TableBody>
             </Table>
           </Paper>

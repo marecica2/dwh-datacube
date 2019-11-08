@@ -75,7 +75,7 @@ public class ImportJobConfiguration<Fact extends BaseFact> {
 
     private CompositeImportItemWriter<Fact> compositeItemWriter;
 
-    private AfterImportTasklet afterImportTasklet;
+    private ZipErrorsTasklet zipErrorsTasklet;
 
     @Autowired
     @Qualifier("fact")
@@ -129,8 +129,8 @@ public class ImportJobConfiguration<Fact extends BaseFact> {
     }
 
     @Autowired
-    public void setAfterImportTasklet(AfterImportTasklet afterImportTasklet) {
-        this.afterImportTasklet = afterImportTasklet;
+    public void setZipErrorsTasklet(ZipErrorsTasklet zipErrorsTasklet) {
+        this.zipErrorsTasklet = zipErrorsTasklet;
     }
 
     @Bean
@@ -164,7 +164,7 @@ public class ImportJobConfiguration<Fact extends BaseFact> {
     @Bean
     public Step cleanupStep() {
         return this.stepBuilderFactory.get("cleanupStep")
-            .tasklet(afterImportTasklet)
+            .tasklet(zipErrorsTasklet)
             .build();
     }
 

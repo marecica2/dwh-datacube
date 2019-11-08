@@ -1,5 +1,6 @@
 package org.bmsource.dwh.importer.web;
 
+import org.apache.commons.io.IOUtils;
 import org.bmsource.dwh.common.fileManager.FileManager;
 import org.bmsource.dwh.common.fileManager.TmpFileManager;
 import org.bmsource.dwh.common.importer.ImportService;
@@ -9,12 +10,12 @@ import org.bmsource.dwh.importer.Fact;
 import org.bmsource.dwh.importer.MappingPreset;
 import org.bmsource.dwh.importer.MappingPresetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -114,10 +115,20 @@ public class ImportController {
 
     @GetMapping("/stats")
     public Map<String, Object> statistics(@RequestHeader("x-tenant") String tenant,
-                                 @PathVariable("projectId") String projectId) {
+                                          @PathVariable("projectId") String projectId) {
         return importService.getStatistics(tenant, projectId);
     }
 
+    @RequestMapping(method = RequestMethod.GET, path = "/errors.zip", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public void getErrorStream(@RequestHeader("x-tenant") String tenant,
+                               @PathVariable("projectId") String projectId,
+                               HttpServletResponse response) throws IOException {
+        response.setHeader("Content-Disposition", "attachment; filename=" + "errors.zip");
+        try (InputStream is = fileManager.getStream(tenant, projectId, "errors.zip")) {
+            IOUtils.copy(is, response.getOutputStream());
+        }
+        response.flushBuffer();
+    }
 
     private MappingResult getColumnMapping(InputStream inputStream) throws Exception {
         ExcelReader<List<Object>> reader = new ExcelReader<>(inputStream);

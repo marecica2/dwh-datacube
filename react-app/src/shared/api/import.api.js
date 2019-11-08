@@ -65,4 +65,16 @@ export default {
     })();
     return data;
   },
+
+  getErrors: async () => {
+    const resp = await httpRequest(`${baseUrl}/errors.zip`, {
+      method: 'GET',
+      responseType: 'blob',
+      headers: {
+        Accept: 'application/octet-stream',
+        'Content-Type': 'application/octet-stream',
+      },
+    })();
+    return resp;
+  },
 };

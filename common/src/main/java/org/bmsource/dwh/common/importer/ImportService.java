@@ -102,7 +102,9 @@ public class ImportService {
             params.put("status", jobExecution.getStatus());
             params.put("startTime", jobExecution.getStartTime());
             params.put("endTime", jobExecution.getEndTime());
-            params.put("duration", jobExecution.getEndTime().getTime() - jobExecution.getStartTime().getTime());
+            params.put("duration",
+                jobExecution.getEndTime() != null ?
+                    jobExecution.getEndTime().getTime() - jobExecution.getStartTime().getTime() : 0);
             return params;
         }
         return null;

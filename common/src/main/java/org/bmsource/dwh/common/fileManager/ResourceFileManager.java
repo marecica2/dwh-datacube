@@ -25,7 +25,7 @@ public class ResourceFileManager extends TmpFileManager {
     public InputStream getStream(String transactionId, String fileName) throws IOException {
         try {
             File resourceFile = ResourceUtils.getFile(this.getClass().getResource(fileName));
-            File file = createFile(transactionId, fileName);
+            File file = createFile(transactionId + SLASH + fileName);
             FileUtils.copyFile(resourceFile, file);
             return FileUtils.openInputStream(file);
         } catch (FileNotFoundException e) {

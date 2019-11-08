@@ -55,7 +55,7 @@ public class ExcelItemWriter implements ItemStreamWriter<DataRow> {
             String headerString = executionContext.getString(ImportContext.headerKey);
             header = Arrays.asList(headerString.split(","));
 
-            outputStream = fileManager.writeStream(transaction, fileManager.errorFile(fileName));
+            outputStream = fileManager.writeErrorStream(transaction, fileName);
             writer = new ExcelWriter(outputStream);
             writer.open();
             writer.writeHeader(header);
