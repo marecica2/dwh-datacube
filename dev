@@ -89,6 +89,16 @@ function init() {
   success "== Done =="
 }
 
+function migrations() {
+  mvn exec:java -pl migrator
+  success "== Done =="
+}
+
+function migrationsTest() {
+  mvn exec:java -pl migrator -Dspring.profiles.active=unit-test
+  success "== Done =="
+}
+
 
 if [[ $# -gt 0 ]]; then
 
@@ -110,6 +120,12 @@ if [[ $# -gt 0 ]]; then
 
   elif [[ "$1" == "init" ]]; then
     init
+
+  elif [[ "$1" == "migrations" ]]; then
+    migrations
+
+  elif [[ "$1" == "migrations-test" ]]; then
+    migrationsTest
 
   elif [[ "$1" == "reset" ]]; then
     appStop

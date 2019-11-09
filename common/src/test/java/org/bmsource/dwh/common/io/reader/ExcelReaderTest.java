@@ -20,7 +20,6 @@ public class ExcelReaderTest {
         while(reader.hasNextRow()) {
             rowsCount++;
             List<Object> row = reader.nextRow();
-            System.out.println(row);
             assertTrue(row.get(0) instanceof String);
         }
         reader.close();

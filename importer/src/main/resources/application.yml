@@ -12,9 +12,9 @@ spring:
       hibernate:
         physical_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
         temp.use_jdbc_metadata_defaults: false
-    database-platform: org.bmsource.dwh.CustomPostgreSQLDialect
+    database-platform: org.bmsource.dwh.common.db.CustomPostgreSQLDialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
   flyway:
     baseline-version: 1
   servlet:
@@ -23,44 +23,15 @@ spring:
   redis:
     host: localhost
     port: 6379
-dwh:
-  property: prodvalue
 
 ---
 
 spring:
   profiles: unit-test
   datasource:
-    url: jdbc:h2:mem:myDb;MODE=PostgreSQL;DB_CLOSE_DELAY=-1
-    driver-class-name: org.h2.Driver
-  jpa:
-    properties:
-      hibernate:
-        format_sql: true
-        dialect: org.hibernate.dialect.PostgreSQL9Dialect
-    hibernate:
-      ddl-auto: create-drop
-  flyway:
-    enabled: false
-dwh:
-  property: testvalue
-logging:
-  level:
-    org.hibernate.SQL: debug
-    org.hibernate.type.descriptor.sql.BasicBinder: trace
-    org.flywaydb.core.internal.database.ExecutableSqlScript: debug
-
-
----
-
-spring:
-  profiles: integration-test
-  datasource:
-    url: jdbc:postgresql://localhost:30002/dwh-test
-    username: dwh
-    password: dwh
-logging:
-  level:
-    org.hibernate.SQL: debug
-    org.hibernate.type.descriptor.sql.BasicBinder: trace
-    org.flywaydb.core.internal.database.ExecutableSqlScript: debug
+    url: jdbc:postgresql://localhost:30002/dwh-dev
+    username: dwh-dev
+    password: dwh-dev
+    hikari:
+      minimum-idle: 1
+      maximum-pool-size: 1

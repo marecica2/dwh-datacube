@@ -6,10 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
@@ -23,6 +21,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
+import javax.transaction.Transactional;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -34,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
+@Transactional
 @SpringBootTest
 @Component
 @ExtendWith(SpringExtension.class)
@@ -57,7 +57,7 @@ public class MasterDataControllerTest {
     }
 
     @Test
-    public void testDeferred() throws Exception {
+    public void testUpload() throws Exception {
         URL file = this.getClass().getResource("/zipcode_locations.xlsx");
         String url = "/zip-code-locations/import";
 

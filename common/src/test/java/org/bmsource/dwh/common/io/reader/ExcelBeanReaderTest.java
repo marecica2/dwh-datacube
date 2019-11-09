@@ -24,8 +24,7 @@ public class ExcelBeanReaderTest {
         int rowsCount = 1;
         while (reader.hasNextRow()) {
             rowsCount++;
-            Bean row = reader.nextRow();
-            System.out.println(row);
+            reader.nextRow();
         }
         reader.close();
         assertEquals(38, header.size());

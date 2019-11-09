@@ -1,4 +1,4 @@
-package org.bmsource.dwh;
+package org.bmsource.dwh.common.db;
 
 import com.vladmihalcea.hibernate.type.array.IntArrayType;
 import com.vladmihalcea.hibernate.type.array.StringArrayType;
