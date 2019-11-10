@@ -1,9 +1,10 @@
-package org.bmsource.dwh.common.importer.job.importer;
+package org.bmsource.dwh.common.job.step.importer;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.poi.ss.usermodel.Row;
 import org.bmsource.dwh.common.BaseFact;
+import org.bmsource.dwh.common.job.JobConstants;
 import org.bmsource.dwh.common.filemanager.FileManager;
 import org.bmsource.dwh.common.io.DataRow;
 import org.bmsource.dwh.common.io.reader.ExcelBeanReader;
@@ -69,10 +70,10 @@ public class ExcelItemReader<Fact extends BaseFact> implements ItemStreamReader<
             excelReader = new ExcelBeanReader<>(inputStream, (Class<Fact>) fact.getClass(), mapping);
             validator = new ExcelRowValidator<>(mapping);
 
-            executionContext.put(ImportContext.totalRowsKey, excelReader.getTotalRowsCount());
-            executionContext.put(ImportContext.rowsKey, 0);
+            executionContext.put(JobConstants.totalRowsKey, excelReader.getTotalRowsCount());
+            executionContext.put(JobConstants.rowsKey, 0);
             List<String> columns = excelReader.getHeader();
-            executionContext.put(ImportContext.headerKey, String.join(",", columns));
+            executionContext.put(JobConstants.headerKey, String.join(",", columns));
         } catch (Throwable t) {
             t.printStackTrace();
             try {

@@ -1,4 +1,4 @@
-package org.bmsource.dwh.common.importer.job.importer;
+package org.bmsource.dwh.common.job.step;
 
 import org.bmsource.dwh.common.filemanager.FileManager;
 import org.springframework.batch.core.StepContribution;

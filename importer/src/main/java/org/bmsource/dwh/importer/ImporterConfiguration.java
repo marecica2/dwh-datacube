@@ -1,20 +1,14 @@
 package org.bmsource.dwh.importer;
 
-import org.bmsource.dwh.common.appstate.EnableImportEvents;
-import org.bmsource.dwh.common.importer.ImportService;
+import org.bmsource.dwh.common.job.JobService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 @Configuration
-@Import(ImportService.class)
+@Import(JobService.class)
 public class ImporterConfiguration {
 
     public enum StateType {

@@ -1,7 +1,8 @@
-package org.bmsource.dwh.common.importer.job.importer;
+package org.bmsource.dwh.common.job.step.importer;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.bmsource.dwh.common.job.JobConstants;
 import org.bmsource.dwh.common.io.DataRow;
 import org.bmsource.dwh.common.io.writer.ExcelWriter;
 import org.bmsource.dwh.common.filemanager.FileManager;
@@ -52,7 +53,7 @@ public class ExcelItemWriter implements ItemStreamWriter<DataRow> {
     @Override
     public void open(ExecutionContext executionContext) throws ItemStreamException {
         try {
-            String headerString = executionContext.getString(ImportContext.headerKey);
+            String headerString = executionContext.getString(JobConstants.headerKey);
             header = Arrays.asList(headerString.split(","));
 
             outputStream = fileManager.writeErrorStream(transaction, fileName);

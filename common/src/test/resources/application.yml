@@ -1,7 +1,4 @@
 spring:
-  servlet:
-    multipart:
-      enabled: false
   redis:
     host: localhost
     port: 6379

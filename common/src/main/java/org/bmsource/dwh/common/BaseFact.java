@@ -8,6 +8,10 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public class BaseFact {
+    public String selectSQL() {
+        String tableName = getTableName();
+        return String.format("SELECT * FROM (%s) ORDER BY id ASC", tableName);
+    }
 
     public String insertSQL() {
         String columns = String.join(
@@ -28,16 +32,21 @@ public class BaseFact {
                 .collect(Collectors.toList())
         );
 
+        String tableName = getTableName();
+        return String.format("INSERT INTO %s (%s) VALUES (%s)",
+            tableName,
+            columns,
+            parameters
+        );
+    }
+
+    private String getTableName() {
         String tableName;
         try {
             tableName = this.getClass().getAnnotation(Table.class).name();
         } catch (NullPointerException npe) {
             tableName = this.getClass().getSimpleName();
         }
-        return String.format("INSERT INTO %s (%s) VALUES (%s)",
-            tableName,
-            columns,
-            parameters
-        );
+        return tableName;
     }
 }

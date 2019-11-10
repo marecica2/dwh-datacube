@@ -1,8 +1,7 @@
-package org.bmsource.dwh.common.importer;
+package org.bmsource.dwh.common.job;
 
 import org.bmsource.dwh.common.appstate.AppStateService;
 import org.bmsource.dwh.common.appstate.EnableImportEvents;
-import org.bmsource.dwh.common.importer.job.ImportJobConfiguration;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.explore.JobExplorer;
@@ -11,7 +10,6 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.Async;
@@ -23,9 +21,9 @@ import java.util.stream.Collectors;
 @Component
 @ComponentScan
 @EnableImportEvents
-public class ImportService {
+public class JobService {
 
-    ImportJobConfiguration importJobConfiguration;
+    JobConfiguration jobConfiguration;
 
     JobLauncher jobLauncher;
 
@@ -35,11 +33,11 @@ public class ImportService {
 
     AppStateService appStateService;
 
-    ImportJobRepository repository;
+    JdbcJobRepository repository;
 
     @Autowired
-    public void setImportJobConfiguration(ImportJobConfiguration importJobConfiguration) {
-        this.importJobConfiguration = importJobConfiguration;
+    public void setJobConfiguration(JobConfiguration jobConfiguration) {
+        this.jobConfiguration = jobConfiguration;
     }
 
     @Autowired
@@ -63,7 +61,7 @@ public class ImportService {
     }
 
     @Autowired
-    public void setRepository(ImportJobRepository repository) {
+    public void setRepository(JdbcJobRepository repository) {
         this.repository = repository;
     }
 
@@ -93,7 +91,7 @@ public class ImportService {
     }
 
     public Map<String, Object> getStatistics(String tenant, String project) {
-        Long id = repository.getJobExecutionId(tenant, project);
+        Long id = repository.getLastJobExecutionId(tenant, project);
         if (id != null) {
             JobExecution jobExecution = jobExplorer.getJobExecution(id);
             Map<String, Object> params = jobExecution.getExecutionContext()

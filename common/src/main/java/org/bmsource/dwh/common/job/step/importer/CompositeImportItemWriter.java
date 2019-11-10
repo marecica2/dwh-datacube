@@ -1,6 +1,7 @@
-package org.bmsource.dwh.common.importer.job.importer;
+package org.bmsource.dwh.common.job.step.importer;
 
 import org.bmsource.dwh.common.BaseFact;
+import org.bmsource.dwh.common.job.JobConstants;
 import org.bmsource.dwh.common.io.DataRow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +66,7 @@ public class CompositeImportItemWriter<Fact extends BaseFact> implements ItemStr
 
     @Override
     public void update(ExecutionContext executionContext) throws ItemStreamException {
-        executionContext.put(ImportContext.skippedRowsKey, skippedRows);
+        executionContext.put(JobConstants.skippedRowsKey, skippedRows);
         excelItemWriter.update(executionContext);
     }
 

@@ -1,4 +1,4 @@
-package org.bmsource.dwh.common.importer;
+package org.bmsource.dwh.common.job;
 
 import org.bmsource.dwh.common.BaseFact;
 import org.junit.jupiter.api.Assertions;
@@ -16,6 +16,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.persistence.Table;
+import javax.transaction.Transactional;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -24,13 +25,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-@SpringBootTest
-@Component
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {ImportService.class})
 @ActiveProfiles("unit-test")
+@Component
+@SpringBootTest
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {JobService.class})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class ImportServiceIT {
+public class JobServiceIT {
     private String tenant = "000000-00000-00001";
     private String project = "1";
     private String transaction = "123456789";
@@ -52,16 +53,31 @@ public class ImportServiceIT {
     @Autowired
     JdbcTemplate template;
 
+    @Bean("rawFact")
+    public RawFact rawFact() {
+        return new RawFact();
+    }
+
     @Bean("fact")
     public Fact fact() {
         return new Fact();
     }
 
     @Autowired
-    ImportService importService;
+    JobService jobService;
 
     @BeforeAll
     public void createTable() {
+        template.execute("DROP TABLE raw_fact IF EXISTS;" +
+            "CREATE TABLE raw_fact" +
+            "(" +
+            "    id BIGINT IDENTITY NOT NULL PRIMARY KEY," +
+            "    transaction_id VARCHAR(255) NOT NULL," +
+            "    business_unit  VARCHAR(255) NOT NULL," +
+            "    cost  DECIMAL NOT NULL," +
+            "    billable_weight FLOAT NOT NULL" +
+            ");");
+
         template.execute("DROP TABLE fact IF EXISTS;" +
             "CREATE TABLE fact" +
             "(" +
@@ -75,9 +91,68 @@ public class ImportServiceIT {
 
     @Test
     public void testImport() {
-        importService.runImport(tenant, project, transaction, files, mapping);
-        int importedRows = template.queryForObject("SELECT count(*) FROM fact", Integer.class);
+        jobService.runImport(tenant, project, transaction, files, mapping);
+        int importedRows = template.queryForObject("SELECT count(*) FROM raw_fact", Integer.class);
         Assertions.assertEquals(472, importedRows);
+    }
+
+    @Table(name = "raw_fact")
+    public static class RawFact extends BaseFact {
+
+        @NotNull
+        private String businessUnit;
+
+        @NotNull
+        private String transactionId;
+
+        @NotNull
+        @Min(0)
+        private BigDecimal cost;
+
+        @NotNull
+        private Integer billableWeight;
+
+        public String getBusinessUnit() {
+            return businessUnit;
+        }
+
+        public void setBusinessUnit(String businessUnit) {
+            this.businessUnit = businessUnit;
+        }
+
+        public String getTransactionId() {
+            return transactionId;
+        }
+
+        public void setTransactionId(String transactionId) {
+            this.transactionId = transactionId;
+        }
+
+        public Integer getBillableWeight() {
+            return billableWeight;
+        }
+
+        public void setBillableWeight(Integer billableWeight) {
+            this.billableWeight = billableWeight;
+        }
+
+        public BigDecimal getCost() {
+            return cost;
+        }
+
+        public void setCost(BigDecimal cost) {
+            this.cost = cost;
+        }
+
+        @Override
+        public String toString() {
+            return "RawFact{" +
+                "businessUnit='" + businessUnit + '\'' +
+                ", transactionId='" + transactionId + '\'' +
+                ", billableWeight=" + billableWeight +
+                ", cost=" + cost +
+                '}';
+        }
     }
 
     @Table(name = "fact")

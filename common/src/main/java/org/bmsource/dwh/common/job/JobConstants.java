@@ -1,6 +1,8 @@
-package org.bmsource.dwh.common.importer.job.importer;
+package org.bmsource.dwh.common.job;
 
-public interface ImportContext {
+public interface JobConstants {
+    String jobName = "importJob";
+    String tenantProjectKey = "tenantProject";
     String transactionKey = "transaction";
     String headerKey = "header";
     String mappingKey = "mapping";

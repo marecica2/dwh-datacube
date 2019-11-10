@@ -3,7 +3,7 @@ package org.bmsource.dwh.importer.web;
 import org.apache.commons.io.IOUtils;
 import org.bmsource.dwh.common.filemanager.FileManager;
 import org.bmsource.dwh.common.filemanager.TmpFileManager;
-import org.bmsource.dwh.common.importer.ImportService;
+import org.bmsource.dwh.common.job.JobService;
 import org.bmsource.dwh.common.io.DataRow;
 import org.bmsource.dwh.common.io.reader.*;
 import org.bmsource.dwh.importer.Fact;
@@ -30,7 +30,7 @@ public class ImportController {
     private FileManager fileManager = new TmpFileManager();
 
     @Autowired
-    ImportService importService;
+    JobService jobService;
 
     @Autowired
     MappingPresetRepository mappingPresetRepository;
@@ -94,7 +94,7 @@ public class ImportController {
                                 @PathVariable("transactionId") String transactionId,
                                 @RequestBody UploadRequestBody uploadRequestBody) {
         List<String> files = fileManager.getFiles(transactionId);
-        importService.runImport(tenant, projectId, transactionId, files, uploadRequestBody.getMapping());
+        jobService.runImport(tenant, projectId, transactionId, files, uploadRequestBody.getMapping());
         return new ResponseEntity(HttpStatus.OK);
     }
 
@@ -115,7 +115,7 @@ public class ImportController {
     @GetMapping("/stats")
     public Map<String, Object> statistics(@RequestHeader("x-tenant") String tenant,
                                           @PathVariable("projectId") String projectId) {
-        return importService.getStatistics(tenant, projectId);
+        return jobService.getStatistics(tenant, projectId);
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/errors.zip", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
