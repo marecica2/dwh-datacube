@@ -1,6 +1,6 @@
-package org.bmsource.dwh.common.importer.job;
+package org.bmsource.dwh.common.importer.job.importer;
 
-import org.bmsource.dwh.common.fileManager.FileManager;
+import org.bmsource.dwh.common.filemanager.FileManager;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.scope.context.ChunkContext;

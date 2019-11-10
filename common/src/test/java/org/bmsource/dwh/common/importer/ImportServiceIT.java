@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -27,6 +28,7 @@ import java.util.Map;
 @Component
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {ImportService.class})
+@ActiveProfiles("unit-test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ImportServiceIT {
     private String tenant = "000000-00000-00001";

@@ -1,4 +1,4 @@
-package org.bmsource.dwh.common.fileManager;
+package org.bmsource.dwh.common.filemanager;
 
 import java.io.IOException;
 import java.io.InputStream;

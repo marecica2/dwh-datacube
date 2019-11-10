@@ -1,4 +1,4 @@
-package org.bmsource.dwh.common.fileManager;
+package org.bmsource.dwh.common.filemanager;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.context.annotation.Primary;

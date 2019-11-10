@@ -1,8 +1,8 @@
 package org.bmsource.dwh.importer.web;
 
 import org.apache.commons.io.IOUtils;
-import org.bmsource.dwh.common.fileManager.FileManager;
-import org.bmsource.dwh.common.fileManager.TmpFileManager;
+import org.bmsource.dwh.common.filemanager.FileManager;
+import org.bmsource.dwh.common.filemanager.TmpFileManager;
 import org.bmsource.dwh.common.importer.ImportService;
 import org.bmsource.dwh.common.io.DataRow;
 import org.bmsource.dwh.common.io.reader.*;
@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 
 @RestController()

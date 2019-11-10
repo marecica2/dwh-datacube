@@ -1,4 +1,4 @@
-package org.bmsource.dwh.common.importer.job;
+package org.bmsource.dwh.common.importer.job.importer;
 
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.partition.support.Partitioner;

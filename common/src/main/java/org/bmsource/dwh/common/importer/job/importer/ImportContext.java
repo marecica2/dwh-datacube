@@ -1,4 +1,4 @@
-package org.bmsource.dwh.common.importer.job;
+package org.bmsource.dwh.common.importer.job.importer;
 
 public interface ImportContext {
     String transactionKey = "transaction";

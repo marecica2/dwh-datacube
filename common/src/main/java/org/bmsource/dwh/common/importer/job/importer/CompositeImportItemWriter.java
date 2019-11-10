@@ -1,4 +1,4 @@
-package org.bmsource.dwh.common.importer.job;
+package org.bmsource.dwh.common.importer.job.importer;
 
 import org.bmsource.dwh.common.BaseFact;
 import org.bmsource.dwh.common.io.DataRow;
@@ -15,8 +15,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 @StepScope

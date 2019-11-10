@@ -1,10 +1,10 @@
-package org.bmsource.dwh.common.importer.job;
+package org.bmsource.dwh.common.importer.job.importer;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.bmsource.dwh.common.io.DataRow;
 import org.bmsource.dwh.common.io.writer.ExcelWriter;
-import org.bmsource.dwh.common.fileManager.FileManager;
+import org.bmsource.dwh.common.filemanager.FileManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;

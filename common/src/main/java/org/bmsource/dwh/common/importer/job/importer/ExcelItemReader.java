@@ -1,10 +1,10 @@
-package org.bmsource.dwh.common.importer.job;
+package org.bmsource.dwh.common.importer.job.importer;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.poi.ss.usermodel.Row;
 import org.bmsource.dwh.common.BaseFact;
-import org.bmsource.dwh.common.fileManager.FileManager;
+import org.bmsource.dwh.common.filemanager.FileManager;
 import org.bmsource.dwh.common.io.DataRow;
 import org.bmsource.dwh.common.io.reader.ExcelBeanReader;
 import org.bmsource.dwh.common.io.reader.ExcelRowValidator;
@@ -18,7 +18,6 @@ import org.springframework.batch.item.ItemStreamReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
