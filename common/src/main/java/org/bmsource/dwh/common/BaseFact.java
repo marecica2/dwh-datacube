@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 public class BaseFact {
     public String selectSQL() {
         String tableName = getTableName();
-        return String.format("SELECT * FROM (%s) ORDER BY id ASC", tableName);
+        return String.format("SELECT * FROM %s ORDER BY id ASC", tableName);
     }
 
     public String insertSQL() {

@@ -8,13 +8,18 @@ spring:
 spring:
   profiles: unit-test
   datasource:
-    url: jdbc:h2:mem:myDb;MODE=PostgreSQL;DB_CLOSE_DELAY=-1
-    driver-class-name: org.h2.Driver
+    url: jdbc:postgresql://localhost:30002/dwh-dev
+    username: dwh-dev
+    password: dwh-dev
+    hikari:
+      minimum-idle: 2
+      maximum-pool-size: 10
   jpa:
     properties:
       hibernate:
+        jdbc.lob.non_contextual_creation: true
         format_sql: true
-        dialect: org.hibernate.dialect.H2Dialect
+        dialect: org.hibernate.dialect.PostgreSQL95Dialect
     hibernate:
       ddl-auto: create-drop
   flyway:

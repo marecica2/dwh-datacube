@@ -11,6 +11,7 @@ spring:
     properties:
       hibernate:
         physical_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+        jdbc.lob.non_contextual_creation: true
         temp.use_jdbc_metadata_defaults: false
     database-platform: org.bmsource.dwh.common.db.CustomPostgreSQLDialect
     hibernate:

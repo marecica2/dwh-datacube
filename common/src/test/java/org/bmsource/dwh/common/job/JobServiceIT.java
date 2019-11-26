@@ -1,11 +1,13 @@
 package org.bmsource.dwh.common.job;
 
 import org.bmsource.dwh.common.BaseFact;
+import org.bmsource.dwh.common.utils.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
@@ -16,14 +18,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.persistence.Table;
-import javax.transaction.Transactional;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @ActiveProfiles("unit-test")
 @Component
@@ -34,7 +32,7 @@ import java.util.Map;
 public class JobServiceIT {
     private String tenant = "000000-00000-00001";
     private String project = "1";
-    private String transaction = "123456789";
+    private String transaction = UUID.randomUUID().toString();
     private List<String> files = new ArrayList<String>() {{
         add("/spends.xlsx");
         add("/spends2.xlsx");
@@ -63,26 +61,41 @@ public class JobServiceIT {
         return new Fact();
     }
 
+    @Bean("normalizerProcessor")
+    public ItemProcessor<RawFact, Fact> normalizerProcessor() {
+        return item -> {
+            Fact fact = new Fact();
+            fact.setBillableWeight(item.getBillableWeight());
+            fact.setBusinessUnit(item.getBusinessUnit());
+            fact.setCost(item.getCost());
+            fact.setServiceType(StringUtils.normalize(item.getServiceType()));
+            fact.setTransactionId(item.getTransactionId());
+            return fact;
+        };
+    }
+
     @Autowired
     JobService jobService;
 
     @BeforeAll
     public void createTable() {
-        template.execute("DROP TABLE raw_fact IF EXISTS;" +
+        template.execute("DROP TABLE IF EXISTS raw_fact;" +
             "CREATE TABLE raw_fact" +
             "(" +
-            "    id BIGINT IDENTITY NOT NULL PRIMARY KEY," +
+            "    id SERIAL PRIMARY KEY," +
             "    transaction_id VARCHAR(255) NOT NULL," +
+            "    service_type VARCHAR(255)," +
             "    business_unit  VARCHAR(255) NOT NULL," +
             "    cost  DECIMAL NOT NULL," +
             "    billable_weight FLOAT NOT NULL" +
             ");");
 
-        template.execute("DROP TABLE fact IF EXISTS;" +
+        template.execute("DROP TABLE IF EXISTS fact;" +
             "CREATE TABLE fact" +
             "(" +
-            "    id BIGINT IDENTITY NOT NULL PRIMARY KEY," +
+            "    id SERIAL PRIMARY KEY," +
             "    transaction_id VARCHAR(255) NOT NULL," +
+            "    service_type VARCHAR(255)," +
             "    business_unit  VARCHAR(255) NOT NULL," +
             "    cost  DECIMAL NOT NULL," +
             "    billable_weight FLOAT NOT NULL" +
@@ -93,6 +106,8 @@ public class JobServiceIT {
     public void testImport() {
         jobService.runImport(tenant, project, transaction, files, mapping);
         int importedRows = template.queryForObject("SELECT count(*) FROM raw_fact", Integer.class);
+        Assertions.assertEquals(472, importedRows);
+        importedRows = template.queryForObject("SELECT count(*) FROM fact", Integer.class);
         Assertions.assertEquals(472, importedRows);
     }
 
@@ -112,6 +127,8 @@ public class JobServiceIT {
         @NotNull
         private Integer billableWeight;
 
+        private String serviceType;
+
         public String getBusinessUnit() {
             return businessUnit;
         }
@@ -144,6 +161,14 @@ public class JobServiceIT {
             this.cost = cost;
         }
 
+        public String getServiceType() {
+            return serviceType;
+        }
+
+        public void setServiceType(String serviceType) {
+            this.serviceType = serviceType;
+        }
+
         @Override
         public String toString() {
             return "RawFact{" +
@@ -160,6 +185,8 @@ public class JobServiceIT {
 
         @NotNull
         private String businessUnit;
+
+        private String serviceType;
 
         @NotNull
         private String transactionId;
@@ -201,6 +228,14 @@ public class JobServiceIT {
 
         public void setCost(BigDecimal cost) {
             this.cost = cost;
+        }
+
+        public String getServiceType() {
+            return serviceType;
+        }
+
+        public void setServiceType(String serviceType) {
+            this.serviceType = serviceType;
         }
 
         @Override

@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.step.builder.SimpleStepBuilder;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
@@ -19,6 +20,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 
 import javax.sql.DataSource;
+import java.util.function.Function;
 
 @Configuration
 public class NormalizerStepConfiguration<RawFact extends BaseFact, Fact extends BaseFact> {
@@ -27,14 +29,20 @@ public class NormalizerStepConfiguration<RawFact extends BaseFact, Fact extends 
 
     private static final int BATCH_SIZE = 5000;
 
-    private static final int MAX_CONCURRENT_FILES = 10;
-
     private RawFact rawFact;
 
     @Autowired
     @Qualifier("rawFact")
     public void setRawFact(RawFact rawFact) {
         this.rawFact = rawFact;
+    }
+
+    private Fact fact;
+
+    @Autowired
+    @Qualifier("fact")
+    public void setFact(Fact fact) {
+        this.fact = fact;
     }
 
     private DataSource dataSource;
@@ -49,6 +57,14 @@ public class NormalizerStepConfiguration<RawFact extends BaseFact, Fact extends 
     @Autowired
     public void setStepBuilderFactory(StepBuilderFactory stepBuilderFactory) {
         this.stepBuilderFactory = stepBuilderFactory;
+    }
+
+    private ItemProcessor<RawFact, Fact> normalizerProcessor;
+
+    @Autowired
+    @Qualifier("normalizerProcessor")
+    public void setNormalizerProcessor(ItemProcessor<RawFact, Fact> procesor) {
+        this.normalizerProcessor = procesor;
     }
 
     public JdbcBatchItemWriter<Fact> jdbcWriter() {
@@ -74,6 +90,7 @@ public class NormalizerStepConfiguration<RawFact extends BaseFact, Fact extends 
         SimpleStepBuilder<RawFact, Fact> step = stepBuilderFactory.get("normalizerStep")
             .<RawFact, Fact>chunk(BATCH_SIZE)
             .reader(jdbcReader())
+            .processor(normalizerProcessor)
             .writer(jdbcWriter());
         return step
             .build();
@@ -92,7 +109,7 @@ public class NormalizerStepConfiguration<RawFact extends BaseFact, Fact extends 
     private String writeSql() {
         String sql = null;
         try {
-            sql = rawFact.getClass().newInstance().insertSQL();
+            sql = fact.getClass().newInstance().insertSQL();
         } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }

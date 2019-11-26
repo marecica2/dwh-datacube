@@ -79,7 +79,7 @@ public class JobConfiguration {
     }
 
     @Bean
-    public Step cleanupStep() {
+    public Step postImportStep() {
         return this.stepBuilderFactory.get("cleanupStep")
             .tasklet(zipErrorsTasklet)
             .build();
@@ -98,8 +98,8 @@ public class JobConfiguration {
         SimpleJobBuilder jobBuilder = jobBuilderFactory
             .get(JobConstants.jobName)
             .start(excelStep)
-            .next(cleanupStep());
-            //.next(normalizerStep);
+            .next(postImportStep())
+            .next(normalizerStep);
 
         if (jobListener != null) {
             jobBuilder = jobBuilder
