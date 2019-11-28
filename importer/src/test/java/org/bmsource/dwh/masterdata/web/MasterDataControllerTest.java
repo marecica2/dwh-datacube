@@ -53,11 +53,37 @@ public class MasterDataControllerTest {
     }
 
     @Test
-    public void testUpload() throws Exception {
+    public void testTaxonomyUpload() throws Exception {
         URL file = this.getClass().getResource("/taxonomy.xlsx");
         String url = "/taxonomy/import";
+        String fileName = "taxonomy.xlsx";
+        upload(file, url, fileName);
+        int importedRows = template.queryForObject("SELECT count(*) FROM service_type_taxonomy", Integer.class);
+        Assertions.assertEquals(34, importedRows);
+    }
 
-        MockMultipartFile mockMultipartFile = new MockMultipartFile("file", "taxonomy.xlsx",
+    @Test
+    public void testServiceTypeUpload() throws Exception {
+        URL file = this.getClass().getResource("/matrix.xlsx");
+        String url = "/service-types/import";
+        String fileName = "matrix.xlsx";
+        upload(file, url, fileName);
+        int importedRows = template.queryForObject("SELECT count(*) FROM service_type_mapping", Integer.class);
+        Assertions.assertEquals(56, importedRows);
+    }
+
+    @Test
+    public void testRateCardUpload() throws Exception {
+        URL file = this.getClass().getResource("/standard_rate_card.xlsx");
+        String url = "/rate-cards/import";
+        String fileName = "standard_rate_card.xlsx";
+        upload(file, url, fileName);
+        int importedRows = template.queryForObject("SELECT count(*) FROM standard_rate_card", Integer.class);
+        Assertions.assertEquals(4554, importedRows);
+    }
+
+    private void upload(URL file, String url, String fileName) throws Exception {
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("file", fileName,
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", Files.readAllBytes(Paths.get(file.toURI())));
 
         Map<String, String> contentTypeParams = new HashMap<String, String>();
@@ -77,9 +103,6 @@ public class MasterDataControllerTest {
 
         mockMvc.perform(asyncDispatch(resultActions))
             .andExpect(status().is2xxSuccessful());
-
-        int importedRows = template.queryForObject("SELECT count(*) FROM service_type_taxonomy", Integer.class);
-        Assertions.assertEquals(34, importedRows);
     }
 
 }
