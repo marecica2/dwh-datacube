@@ -3,6 +3,11 @@ spring:
     url: jdbc:postgresql://localhost:30001/dwh-dev
     username: dwh-dev
     password: dwh-dev
+  jpa:
+    properties:
+      hibernate:
+        physical_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+        jdbc.lob.non_contextual_creation: true
   flyway:
     baseline-version: 1
     enabled: false

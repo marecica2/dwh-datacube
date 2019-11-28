@@ -1,38 +1,20 @@
 package org.bmsource.dwh.importer;
 
-import org.bmsource.dwh.common.job.JobService;
+import org.bmsource.dwh.Fact;
+import org.bmsource.dwh.RawFact;
+import org.bmsource.dwh.common.job.EnableImportJob;
+import org.bmsource.dwh.common.utils.StringUtils;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.web.multipart.MultipartResolver;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 @Configuration
-@Import(JobService.class)
+@EnableImportJob
 public class ImporterConfiguration {
 
-    public enum StateType {
-        IMPORT_STATUS_STATE("importStatus");
-
-        private String value;
-
-        StateType(final String value) {
-            this.value = value;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        @Override
-        public String toString() {
-            return this.getValue();
-        }
-    }
-
-    @Bean
-    MultipartResolver multipartResolver() {
-        return new CommonsMultipartResolver();
+    @Bean("rawFact")
+    public RawFact rawFact() {
+        return new RawFact();
     }
 
     @Bean("fact")
@@ -40,10 +22,37 @@ public class ImporterConfiguration {
         return new Fact();
     }
 
-//    @Bean
-//    public List<String> channels() {
-//        return  Stream.of(StateType.values())
-//            .map(StateType::getValue)
-//            .collect(Collectors.toList());
-//    }
+    @Bean("normalizerProcessor")
+    public ItemProcessor<RawFact, Fact> normalizerProcessor() {
+        return item -> {
+            Fact fact = new Fact();
+            fact.setTransactionId(item.getTransactionId());
+            fact.setBusinessUnit(item.getBusinessUnit());
+            fact.setServiceType(StringUtils.normalize(item.getServiceType()));
+            fact.setOriginCity(item.getOriginCity());
+            fact.setOriginState(item.getOriginState());
+            fact.setOriginZip(item.getOriginZip());
+            fact.setOriginCountry(item.getOriginCountry());
+
+            fact.setDestinationCity(item.getDestinationCity());
+            fact.setDestinationState(item.getDestinationState());
+            fact.setDestinationCountry(item.getDestinationCountry());
+            fact.setDestinationZip(item.getDestinationZip());
+
+            fact.setDeliveryDate(item.getDeliveryDate());
+            fact.setShipmentDate(item.getShipmentDate());
+            fact.setCost(item.getCost());
+            fact.setBillableWeight(item.getBillableWeight());
+            fact.setActualWeight(item.getActualWeight());
+            fact.setLength(item.getLength());
+            fact.setWidth(item.getWidth());
+            fact.setHeight(item.getHeight());
+
+            fact.setAccessorialService1(item.getAccessorialService1());
+            fact.setAccessorialCharge1(item.getAccessorialCharge1());
+            fact.setAccessorialService2(item.getAccessorialService2());
+            fact.setAccessorialCharge2(item.getAccessorialCharge2());
+            return fact;
+        };
+    }
 }

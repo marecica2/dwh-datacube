@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.bmsource.dwh.importer.Fact;
+import org.bmsource.dwh.RawFact;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;
@@ -26,7 +26,7 @@ public class MappingResponseTest {
     private MappingResponse mappingResponse = MappingResponse
         .builder()
         .setSourceFields(columns, previewValues)
-        .setFactModel(Fact.class)
+        .setFactModel(RawFact.class)
         .autoSuggestionMapping()
         .build();
 

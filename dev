@@ -132,6 +132,8 @@ if [[ $# -gt 0 ]]; then
     ${COMPOSE} rm -f
     ${COMPOSE} pull
     stackStart
+    migrations
+    migrationsTest
     sleep 10
     init
     appStart $@

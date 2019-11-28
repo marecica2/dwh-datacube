@@ -87,7 +87,7 @@ public class JobConfiguration {
 
     private Step normalizerStep;
 
-    @Autowired
+    @Autowired(required = false)
     @Qualifier("normalizerStep")
     public void setNormalizerStep(Step step) {
         this.normalizerStep = step;
@@ -98,8 +98,11 @@ public class JobConfiguration {
         SimpleJobBuilder jobBuilder = jobBuilderFactory
             .get(JobConstants.jobName)
             .start(excelStep)
-            .next(postImportStep())
-            .next(normalizerStep);
+            .next(postImportStep());
+
+        if (normalizerStep != null) {
+            jobBuilder = jobBuilder.next(normalizerStep);
+        }
 
         if (jobListener != null) {
             jobBuilder = jobBuilder
@@ -117,7 +120,7 @@ public class JobConfiguration {
 
             @Override
             public void beforeJob(JobExecution jobExecution) {
-                if(jobExecution.getJobParameters().getParameters().size() == 0)
+                if (jobExecution.getJobParameters().getParameters().size() == 0)
                     return;
                 String tenant = jobExecution.getJobParameters().getString("tenant");
                 String transaction = jobExecution.getJobParameters().getString("transaction");
@@ -135,7 +138,7 @@ public class JobConfiguration {
 
             @Override
             public void afterJob(JobExecution jobExecution) {
-                if(jobExecution.getJobParameters().getParameters().size() == 0)
+                if (jobExecution.getJobParameters().getParameters().size() == 0)
                     return;
                 String tenant = jobExecution.getJobParameters().getString("tenant");
                 String project = jobExecution.getJobParameters().getString("project");

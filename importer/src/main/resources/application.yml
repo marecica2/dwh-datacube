@@ -34,5 +34,5 @@ spring:
     username: dwh-dev
     password: dwh-dev
     hikari:
-      minimum-idle: 1
-      maximum-pool-size: 1
+      minimum-idle: 5
+      maximum-pool-size: 10

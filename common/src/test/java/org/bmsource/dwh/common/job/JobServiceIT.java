@@ -2,10 +2,7 @@ package org.bmsource.dwh.common.job;
 
 import org.bmsource.dwh.common.BaseFact;
 import org.bmsource.dwh.common.utils.StringUtils;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,8 +76,8 @@ public class JobServiceIT {
 
     @BeforeAll
     public void createTable() {
-        template.execute("DROP TABLE IF EXISTS raw_fact;" +
-            "CREATE TABLE raw_fact" +
+        template.execute("DROP TABLE IF EXISTS test_raw_fact;" +
+            "CREATE TABLE test_raw_fact" +
             "(" +
             "    id SERIAL PRIMARY KEY," +
             "    transaction_id VARCHAR(255) NOT NULL," +
@@ -90,8 +87,8 @@ public class JobServiceIT {
             "    billable_weight FLOAT NOT NULL" +
             ");");
 
-        template.execute("DROP TABLE IF EXISTS fact;" +
-            "CREATE TABLE fact" +
+        template.execute("DROP TABLE IF EXISTS test_fact;" +
+            "CREATE TABLE test_fact" +
             "(" +
             "    id SERIAL PRIMARY KEY," +
             "    transaction_id VARCHAR(255) NOT NULL," +
@@ -100,6 +97,12 @@ public class JobServiceIT {
             "    cost  DECIMAL NOT NULL," +
             "    billable_weight FLOAT NOT NULL" +
             ");");
+    }
+
+    @AfterAll
+    public void dropTables() {
+        template.execute("DROP TABLE IF EXISTS test_raw_fact;");
+        template.execute("DROP TABLE IF EXISTS test_fact;");
     }
 
     @Test
@@ -111,7 +114,7 @@ public class JobServiceIT {
         Assertions.assertEquals(472, importedRows);
     }
 
-    @Table(name = "raw_fact")
+    @Table(name = "test_raw_fact")
     public static class RawFact extends BaseFact {
 
         @NotNull
@@ -180,7 +183,7 @@ public class JobServiceIT {
         }
     }
 
-    @Table(name = "fact")
+    @Table(name = "test_fact")
     public static class Fact extends BaseFact {
 
         @NotNull

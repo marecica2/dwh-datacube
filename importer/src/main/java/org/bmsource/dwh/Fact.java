@@ -1,4 +1,4 @@
-package org.bmsource.dwh.importer;
+package org.bmsource.dwh;
 
 import org.bmsource.dwh.common.BaseFact;
 
@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 
-@Table(name = "fact_raw")
+@Table(name = "fact")
 public class Fact extends BaseFact {
 
   String transactionId;

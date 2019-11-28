@@ -6,7 +6,7 @@ import org.bmsource.dwh.common.filemanager.TmpFileManager;
 import org.bmsource.dwh.common.job.JobService;
 import org.bmsource.dwh.common.io.DataRow;
 import org.bmsource.dwh.common.io.reader.*;
-import org.bmsource.dwh.importer.Fact;
+import org.bmsource.dwh.RawFact;
 import org.bmsource.dwh.importer.MappingPreset;
 import org.bmsource.dwh.importer.MappingPresetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +62,7 @@ public class ImportController {
         try (InputStream stream = fileManager.getStream(transactionId, files.get(0))) {
             MappingResult columnMapping = getColumnMapping(stream);
             return MappingResponse.builder().setSourceFields(columnMapping.getHeaderRow(),
-                columnMapping.getPreviewRow()).setFactModel(Fact.class).autoSuggestionMapping().build();
+                columnMapping.getPreviewRow()).setFactModel(RawFact.class).autoSuggestionMapping().build();
         }
     }
 
@@ -75,11 +75,11 @@ public class ImportController {
         List<PreviewResponse> rows = new ArrayList<>();
         try (
             InputStream stream1 = fileManager.getStream(transactionId, files.get(0));
-            ExcelBeanReader<Fact> reader = new ExcelBeanReader<>(stream1, Fact.class, mappingParam.getMapping());
+            ExcelBeanReader<RawFact> reader = new ExcelBeanReader<>(stream1, RawFact.class, mappingParam.getMapping());
         ) {
             int count = 0;
             while (reader.hasNextRow() && count < 100) {
-                DataRow<Fact> item = reader.nextValidatedRow();
+                DataRow<RawFact> item = reader.nextValidatedRow();
                 rows.add(new PreviewResponse(item.getFact(), item.getErrors().getFieldErrors(), item.isValid()));
                 count++;
             }

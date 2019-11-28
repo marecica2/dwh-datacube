@@ -1,26 +1,26 @@
 package org.bmsource.dwh.importer.web;
 
-import org.bmsource.dwh.importer.Fact;
+import org.bmsource.dwh.RawFact;
 
 import java.util.List;
 import java.util.Map;
 
 public class PreviewResponse {
-    private Fact entity;
+    private RawFact entity;
     private boolean valid;
     private Map<String, List<String>> errors;
 
-    public PreviewResponse(Fact entity, Map<String, List<String>> errors, boolean valid) {
+    public PreviewResponse(RawFact entity, Map<String, List<String>> errors, boolean valid) {
         this.entity = entity;
         this.errors = errors;
         this.valid = valid;
     }
 
-    public Fact getEntity() {
+    public RawFact getEntity() {
         return entity;
     }
 
-    public void setEntity(Fact entity) {
+    public void setEntity(RawFact entity) {
         this.entity = entity;
     }
 
