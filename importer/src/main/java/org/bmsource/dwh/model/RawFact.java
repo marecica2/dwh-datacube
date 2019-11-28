@@ -1,4 +1,4 @@
-package org.bmsource.dwh;
+package org.bmsource.dwh.model;
 
 import org.bmsource.dwh.common.BaseFact;
 

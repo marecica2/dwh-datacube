@@ -2,6 +2,10 @@ package org.bmsource.dwh.masterdata.web;
 
 import org.bmsource.dwh.common.BaseFact;
 import org.bmsource.dwh.masterdata.*;
+import org.bmsource.dwh.masterdata.model.RateCard;
+import org.bmsource.dwh.masterdata.model.ServiceTypeMapping;
+import org.bmsource.dwh.masterdata.model.Taxonomy;
+import org.bmsource.dwh.masterdata.model.ZipCodeLocation;
 import org.bmsource.dwh.masterdata.repository.RateCardRepository;
 import org.bmsource.dwh.masterdata.repository.ServiceTypeMappingRepository;
 import org.bmsource.dwh.masterdata.repository.TaxonomyRepository;

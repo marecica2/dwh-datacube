@@ -1,6 +1,6 @@
 package org.bmsource.dwh.masterdata.repository;
 
-import org.bmsource.dwh.masterdata.ServiceTypeMapping;
+import org.bmsource.dwh.masterdata.model.ServiceTypeMapping;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Component;

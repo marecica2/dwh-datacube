@@ -3,14 +3,17 @@ package org.bmsource.dwh.importer.web;
 import org.apache.commons.io.IOUtils;
 import org.bmsource.dwh.common.filemanager.FileManager;
 import org.bmsource.dwh.common.filemanager.TmpFileManager;
-import org.bmsource.dwh.common.job.JobService;
 import org.bmsource.dwh.common.io.DataRow;
-import org.bmsource.dwh.common.io.reader.*;
-import org.bmsource.dwh.RawFact;
+import org.bmsource.dwh.common.io.reader.ExcelBeanReader;
+import org.bmsource.dwh.common.io.reader.ExcelReader;
+import org.bmsource.dwh.common.job.JobService;
 import org.bmsource.dwh.importer.MappingPreset;
 import org.bmsource.dwh.importer.MappingPresetRepository;
+import org.bmsource.dwh.model.RawFact;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -22,8 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
-@RestController()
+@RestController
 @RequestMapping("{projectId}/import")
 public class ImportController {
 

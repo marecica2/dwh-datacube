@@ -1,10 +1,10 @@
 package org.bmsource.dwh;
 
 import org.bmsource.dwh.importer.MappingPreset;
-import org.bmsource.dwh.masterdata.RateCard;
-import org.bmsource.dwh.masterdata.ServiceTypeMapping;
-import org.bmsource.dwh.masterdata.Taxonomy;
-import org.bmsource.dwh.masterdata.ZipCodeLocation;
+import org.bmsource.dwh.masterdata.model.RateCard;
+import org.bmsource.dwh.masterdata.model.ServiceTypeMapping;
+import org.bmsource.dwh.masterdata.model.Taxonomy;
+import org.bmsource.dwh.masterdata.model.ZipCodeLocation;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
 import org.springframework.stereotype.Component;
