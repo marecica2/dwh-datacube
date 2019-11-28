@@ -15,17 +15,11 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class GenericExcelReader<T extends BaseFact> {
-    private Consumer<Void> onStart;
-    private Consumer<List<T>> onRead;
-    private Consumer<Integer> onFinish;
+    private ExcelReaderHandler handler;
     private Class<T> classType;
 
-    public GenericExcelReader(Consumer<Void> onStart, Consumer<List<T>> onRead,
-                              Consumer<Integer> onFinish,
-                              Class<T> classType) {
-        this.onStart = onStart;
-        this.onRead = onRead;
-        this.onFinish = onFinish;
+    public GenericExcelReader(ExcelReaderHandler handler, Class<T> classType) {
+        this.handler = handler;
         this.classType = classType;
     }
 
@@ -37,8 +31,7 @@ public class GenericExcelReader<T extends BaseFact> {
         reader.readContent(stream, new BatchHandler() {
             @Override
             public void onStart() {
-                if (onStart != null)
-                    onStart.accept(null);
+                handler.onStart();
             }
 
             @Override
@@ -50,14 +43,12 @@ public class GenericExcelReader<T extends BaseFact> {
                     rowMapper.add(new ExcelRowMapper<T>(classType, header, simpleMapping));
                 }
                 List<T> items = rowMapper.get(0).mapList(rows);
-                if (onRead != null)
-                    onRead.accept(items);
+                handler.onRead(items);
             }
 
             @Override
             public void onFinish(int totalRowsCount) {
-                if (onFinish != null)
-                    onFinish.accept(totalRowsCount);
+                handler.onFinish(totalRowsCount);
             }
         });
     }

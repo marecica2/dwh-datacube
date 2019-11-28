@@ -1,6 +1,7 @@
 package org.bmsource.dwh.masterdata.web;
 
 import org.bmsource.dwh.ImporterApplication;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -16,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.transaction.Transactional;
@@ -31,17 +34,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @ActiveProfiles({"unit-test"})
-@Transactional
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {ImporterApplication.class})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class MasterDataControllerTest {
+    private MockMvc mockMvc;
 
     @Autowired
     private WebApplicationContext wac;
 
-    private MockMvc mockMvc;
+    @Autowired
+    JdbcTemplate template;
 
     @BeforeEach
     public void setup() {
@@ -50,14 +54,14 @@ public class MasterDataControllerTest {
 
     @Test
     public void testUpload() throws Exception {
-        URL file = this.getClass().getResource("/zipcode_locations.xlsx");
-        String url = "/zip-code-locations/import";
+        URL file = this.getClass().getResource("/taxonomy.xlsx");
+        String url = "/taxonomy/import";
 
-        MockMultipartFile mockMultipartFile = new MockMultipartFile("file", "zipcode_locations.xlsx",
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("file", "taxonomy.xlsx",
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", Files.readAllBytes(Paths.get(file.toURI())));
 
         Map<String, String> contentTypeParams = new HashMap<String, String>();
-        contentTypeParams.put("boundary", "------WebKitFormBoundarybBQfomP0f8B2dsWP");
+        contentTypeParams.put("boundary", "------SomeBoundary");
         MediaType mediaType = new MediaType("multipart", "form-data", contentTypeParams);
 
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
@@ -67,11 +71,15 @@ public class MasterDataControllerTest {
 
         MvcResult resultActions = mockMvc
             .perform(builder)
+            .andDo(MockMvcResultHandlers.print())
             .andExpect(request().asyncStarted())
             .andReturn();
 
         mockMvc.perform(asyncDispatch(resultActions))
             .andExpect(status().is2xxSuccessful());
+
+        int importedRows = template.queryForObject("SELECT count(*) FROM service_type_taxonomy", Integer.class);
+        Assertions.assertEquals(34, importedRows);
     }
 
 }

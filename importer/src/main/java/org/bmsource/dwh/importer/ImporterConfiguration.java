@@ -1,25 +1,14 @@
 package org.bmsource.dwh.importer;
 
+import org.bmsource.dwh.common.utils.StringUtils;
 import org.bmsource.dwh.model.Fact;
 import org.bmsource.dwh.model.RawFact;
-import org.bmsource.dwh.common.job.EnableImportJob;
-import org.bmsource.dwh.common.utils.StringUtils;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-
-import javax.annotation.PostConstruct;
 
 @Configuration
 public class ImporterConfiguration {
-
-    @PostConstruct
-    public void aa() {
-        System.out.println("BBB");
-        System.out.println("BBB");
-        System.out.println("BBB");
-    }
 
     @Bean("rawFact")
     public RawFact rawFact() {

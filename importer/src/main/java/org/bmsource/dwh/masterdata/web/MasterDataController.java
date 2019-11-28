@@ -42,93 +42,123 @@ public class MasterDataController {
     public DeferredResult<ResponseEntity<?>> importZipCodes(MultipartHttpServletRequest request) {
         Class<ZipCodeLocation> classType = ZipCodeLocation.class;
         DeferredResult<ResponseEntity<?>> result = new DeferredResult<>();
-        return importModel(
-            request,
-            classType,
-            (Void) -> zipCodeRepository.deleteAll(),
-            zipCodeLocations -> {
+
+        ExcelReaderHandler<ZipCodeLocation> handler = new ExcelReaderHandler<ZipCodeLocation>() {
+            @Override
+            public void onStart() {
+                zipCodeRepository.deleteAll();
+            }
+
+            @Override
+            public void onRead(List<ZipCodeLocation> items) {
                 try {
-                    zipCodeRepository.saveAll(zipCodeLocations);
+                    zipCodeRepository.saveAll(items);
                 } catch (Exception e) {
                     new ResponseEntity<Integer>(HttpStatus.INTERNAL_SERVER_ERROR);
+                    throw e;
                 }
-            },
-            result
-        );
+            }
+
+            @Override
+            public void onFinish(int rowCount) {
+                result.setResult(new ResponseEntity<Integer>(HttpStatus.CREATED));
+            }
+        };
+        return importModel(request, classType, handler, result);
     }
 
     @PostMapping(value = "/service-types/import")
     public DeferredResult<ResponseEntity<?>> importServiceTypes(MultipartHttpServletRequest request) {
         Class<ServiceTypeMapping> classType = ServiceTypeMapping.class;
         DeferredResult<ResponseEntity<?>> result = new DeferredResult<>();
-        return importModel(
-            request,
-            classType,
-            (Void) -> serviceTypeMappingRepository.deleteAll(),
-            items -> {
+
+        ExcelReaderHandler<ServiceTypeMapping> handler = new ExcelReaderHandler<ServiceTypeMapping>() {
+            @Override
+            public void onStart() {
+                serviceTypeMappingRepository.deleteAll();
+            }
+
+            @Override
+            public void onRead(List<ServiceTypeMapping> items) {
                 try {
                     serviceTypeMappingRepository.saveAll(items);
                 } catch (Exception e) {
+                    e.printStackTrace();
                     new ResponseEntity<Integer>(HttpStatus.INTERNAL_SERVER_ERROR);
                 }
-            },
-            result
-        );
+            }
+
+            @Override
+            public void onFinish(int rowCount) {
+                result.setResult(new ResponseEntity<Integer>(HttpStatus.CREATED));
+            }
+        };
+        return importModel(request, classType, handler, result);
     }
 
     @PostMapping(value = "/taxonomy/import")
     public DeferredResult<ResponseEntity<?>> importTaxonomy(MultipartHttpServletRequest request) {
         Class<Taxonomy> classType = Taxonomy.class;
         DeferredResult<ResponseEntity<?>> result = new DeferredResult<>();
-        return importModel(
-            request,
-            classType,
-            (Void) -> taxonomyRepository.deleteAll(),
-            items -> {
+        ExcelReaderHandler<Taxonomy> handler = new ExcelReaderHandler<Taxonomy>() {
+            @Override
+            public void onStart() {
+                taxonomyRepository.deleteAll();
+            }
+
+            @Override
+            public void onRead(List<Taxonomy> items) {
                 try {
                     taxonomyRepository.saveAll(items);
                 } catch (Exception e) {
+                    e.printStackTrace();
                     new ResponseEntity<Integer>(HttpStatus.INTERNAL_SERVER_ERROR);
                 }
-            },
-            result
-        );
+            }
+
+            @Override
+            public void onFinish(int rowCount) {
+                result.setResult(new ResponseEntity<Integer>(HttpStatus.CREATED));
+            }
+        };
+        return importModel(request, classType, handler, result);
     }
 
     @PostMapping(value = "/rate-cards/import")
     public DeferredResult<ResponseEntity<?>> importRateCards(MultipartHttpServletRequest request) {
         Class<RateCard> classType = RateCard.class;
         DeferredResult<ResponseEntity<?>> result = new DeferredResult<>();
-        return importModel(
-            request,
-            classType,
-            (Void) -> rateCardRepository.deleteAll(),
-            items -> {
+
+        ExcelReaderHandler<RateCard> handler = new ExcelReaderHandler<RateCard>() {
+            @Override
+            public void onStart() {
+                rateCardRepository.deleteAll();
+            }
+
+            @Override
+            public void onRead(List<RateCard> items) {
                 try {
                     rateCardRepository.saveAll(items);
                 } catch (Exception e) {
                     e.printStackTrace();
                     new ResponseEntity<Integer>(HttpStatus.INTERNAL_SERVER_ERROR);
                 }
-            },
-            result
-        );
+            }
+
+            @Override
+            public void onFinish(int rowCount) {
+                result.setResult(new ResponseEntity<Integer>(HttpStatus.CREATED));
+            }
+        };
+        return importModel(request, classType, handler, result);
     }
 
     private <T extends BaseFact> DeferredResult<ResponseEntity<?>> importModel(MultipartHttpServletRequest request,
                                                                                Class<T> classType,
-                                                                               Consumer<Void> onStart,
-                                                                               Consumer<List<T>> onRead,
+                                                                               ExcelReaderHandler<T> handler,
                                                                                DeferredResult<ResponseEntity<?>> result
     ) {
-        GenericExcelReader excelParser = new GenericExcelReader<T>(
-            onStart,
-            onRead,
-            rows -> {
-                result.setResult(new ResponseEntity<Integer>(HttpStatus.CREATED));
-            },
-            classType
-        );
+        GenericExcelReader excelParser = new GenericExcelReader<T>(handler, classType);
         try {
             MultipartFile multipartFile = request.getFile("file");
             String name = multipartFile.getOriginalFilename();
