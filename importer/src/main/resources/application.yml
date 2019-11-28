@@ -30,9 +30,28 @@ spring:
 spring:
   profiles: unit-test
   datasource:
-    url: jdbc:postgresql://localhost:30002/dwh-dev
-    username: dwh-dev
-    password: dwh-dev
+    url: jdbc:h2:mem:myDb;MODE=PostgreSQL;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
+    database-platform: org.bmsource.dwh.common.db.CustomPostgreSQLDialect
+    hibernate:
+      ddl-auto: create-drop
+  flyway:
+    baseline-version: 1
+
+
+---
+
+spring:
+  profiles: integration-test
+  datasource:
+    url: jdbc:postgresql://localhost:30002/dwh-test
+    username: dwh-test
+    password: dwh-test
     hikari:
       minimum-idle: 5
       maximum-pool-size: 10

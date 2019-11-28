@@ -20,7 +20,7 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.*;
 
-@ActiveProfiles("unit-test")
+@ActiveProfiles("integration-test")
 @Component
 @SpringBootTest
 @ExtendWith(SpringExtension.class)

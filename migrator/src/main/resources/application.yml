@@ -13,8 +13,8 @@ spring:
     enabled: false
 ---
 spring:
-  profiles: unit-test
+  profiles: integration-test
   datasource:
-    url: jdbc:postgresql://localhost:30002/dwh-dev
-    username: dwh-dev
-    password: dwh-dev
+    url: jdbc:postgresql://localhost:30002/dwh-test
+    username: dwh-test
+    password: dwh-test

@@ -28,9 +28,9 @@ services:
     ports:
     - 30002:5432
     environment:
-      POSTGRES_DB: dwh-dev
-      POSTGRES_USER: dwh-dev
-      POSTGRES_PASSWORD: dwh-dev
+      POSTGRES_DB: dwh-test
+      POSTGRES_USER: dwh-test
+      POSTGRES_PASSWORD: dwh-test
   redis:
     image: redis:4.0.5-alpine
     container_name: redis

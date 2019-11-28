@@ -10,7 +10,7 @@ if [[ ! -f .env ]]; then
 fi
 
 if ! [[ -x "$(command -v docker-compose)" ]]; then
-  echo "Please install Docker for Mac (https://docs.docker.com/docker-for-mac/install/#what-to-know-before-you-install), and then fire the script again"
+  echo "Please install Docker and then fire the script again"
   quit
 fi
 
@@ -90,12 +90,12 @@ function init() {
 }
 
 function migrations() {
-  mvn exec:java -pl migrator
+  mvn package -DskipTests -pl migrator && mvn exec:java -pl migrator
   success "== Done =="
 }
 
 function migrationsTest() {
-  mvn exec:java -pl migrator -Dspring.profiles.active=unit-test
+  mvn package -DskipTests -pl migrator && mvn exec:java -pl migrator -Dspring.profiles.active=integration-test
   success "== Done =="
 }
 

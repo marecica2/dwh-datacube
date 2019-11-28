@@ -1,10 +1,7 @@
 package org.bmsource.dwh.importer.web;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.bmsource.dwh.ImporterApplication;
-import org.bmsource.dwh.importer.ImporterConfiguration;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +20,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultHandler;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -30,29 +28,26 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
-import javax.transaction.Transactional;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
-import static org.hamcrest.Matchers.*;
 
-@ActiveProfiles("unit-test")
+@ActiveProfiles("integration-test")
 @Component
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {ImporterApplication.class})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class ImportControllerTest {
-
+public class ImportControllerIT {
+    private boolean printRest = false;
     private String tenant = "000000-00000-00001";
     private String project = "1";
 
@@ -95,7 +90,7 @@ public class ImportControllerTest {
             .get("/{projectId}/import", project)
             .header("x-tenant", tenant)
             .contentType(MediaType.APPLICATION_JSON))
-            .andDo(MockMvcResultHandlers.print())
+            .andDo(doPrint())
             .andExpect(status().isOk())
             .andReturn();
         String transactionId = transactionResult.getResponse().getContentAsString();
@@ -110,7 +105,7 @@ public class ImportControllerTest {
             .file(mockMultipartFile)
             .header("x-tenant", tenant)
             .contentType(mediaType))
-            .andDo(MockMvcResultHandlers.print())
+            .andDo(doPrint())
             .andExpect(status().isOk())
             .andExpect(content().json(new JSONArray().put(files.get(0)).toString()));
 
@@ -118,7 +113,7 @@ public class ImportControllerTest {
             .post("/{projectId}/import/{transactionId}/mapping", project, transactionId)
             .header("x-tenant", tenant)
             .contentType(MediaType.APPLICATION_JSON))
-            .andDo(MockMvcResultHandlers.print())
+            .andDo(doPrint())
             .andExpect(status().isOk())
             .andExpect(MockMvcResultMatchers.jsonPath("$.sourceColumns").exists())
             .andExpect(MockMvcResultMatchers.jsonPath("$.sourceColumns.*", hasSize(38)))
@@ -135,7 +130,7 @@ public class ImportControllerTest {
             .header("x-tenant", tenant)
             .contentType(MediaType.APPLICATION_JSON)
             .content(new JSONObject().put("mapping", new JSONObject(mapping)).toString()))
-            .andDo(MockMvcResultHandlers.print())
+            .andDo(doPrint())
             .andExpect(status().isOk())
             .andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(100)));
 
@@ -144,7 +139,7 @@ public class ImportControllerTest {
             .header("x-tenant", tenant)
             .contentType(MediaType.APPLICATION_JSON)
             .content(new JSONObject().put("mapping", new JSONObject(mapping)).toString()))
-            .andDo(MockMvcResultHandlers.print())
+            .andDo(doPrint())
             .andExpect(status().isOk());
 
         waitUntilCompleted();
@@ -153,9 +148,18 @@ public class ImportControllerTest {
             .get("/{projectId}/import/stats", project)
             .header("x-tenant", tenant)
             .contentType(MediaType.APPLICATION_JSON))
-            .andDo(MockMvcResultHandlers.print())
+            .andDo(doPrint())
             .andExpect(status().isOk())
             .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("COMPLETED"));
+
+
+
+    }
+
+    private ResultHandler doPrint() {
+        if(printRest)
+            return MockMvcResultHandlers.print();
+        return result -> { };
     }
 
     private void waitUntilCompleted() {
