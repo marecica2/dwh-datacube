@@ -1,8 +1,7 @@
 package org.bmsource.dwh.masterdata.web;
 
-import org.bmsource.dwh.ImporterApplication;
 import org.bmsource.dwh.TestUtils;
-import org.junit.Ignore;
+import org.bmsource.dwh.masterdata.MasterDataConfiguration;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +17,12 @@ import java.net.URL;
 
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
-@ActiveProfiles({"integration-test"})
+@ActiveProfiles({"unit-test"})
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {ImporterApplication.class})
+@ContextConfiguration(classes = {MasterDataConfiguration.class})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class MasterDataControllerIT {
+public class MasterDataControllerTest {
     private MockMvc mockMvc;
 
     @Autowired

@@ -1,17 +1,16 @@
 package org.bmsource.dwh.masterdata;
 
 import org.bmsource.dwh.common.BaseFact;
-import org.bmsource.dwh.common.io.reader.ExcelRowMapper;
 import org.bmsource.dwh.common.io.reader.BatchHandler;
 import org.bmsource.dwh.common.io.reader.BatchReader;
 import org.bmsource.dwh.common.io.reader.ExcelBatchReader;
+import org.bmsource.dwh.common.io.reader.ExcelRowMapper;
 import org.springframework.scheduling.annotation.Async;
 
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class GenericExcelReader<T extends BaseFact> {

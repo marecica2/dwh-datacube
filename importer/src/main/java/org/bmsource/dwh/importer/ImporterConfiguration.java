@@ -6,11 +6,15 @@ import org.bmsource.dwh.common.job.ImportJobConfigurationBuilder;
 import org.bmsource.dwh.common.utils.StringUtils;
 import org.bmsource.dwh.model.Fact;
 import org.bmsource.dwh.model.RawFact;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @EnableImportJob
 @Configuration
+@EnableJpaRepositories
+@EntityScan
 public class ImporterConfiguration {
 
     @Bean
