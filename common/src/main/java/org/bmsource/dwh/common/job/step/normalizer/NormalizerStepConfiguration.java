@@ -1,6 +1,7 @@
 package org.bmsource.dwh.common.job.step.normalizer;
 
 import org.bmsource.dwh.common.BaseFact;
+import org.bmsource.dwh.common.job.ImportJobConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Step;
@@ -31,18 +32,15 @@ public class NormalizerStepConfiguration<RawFact extends BaseFact, Fact extends 
 
     private RawFact rawFact;
 
-    @Autowired
-    @Qualifier("rawFact")
-    public void setRawFact(RawFact rawFact) {
-        this.rawFact = rawFact;
-    }
-
     private Fact fact;
 
+    private ItemProcessor<RawFact, Fact> normalizerProcessor;
+
     @Autowired
-    @Qualifier("fact")
-    public void setFact(Fact fact) {
-        this.fact = fact;
+    public void setImportJobConfiguration(ImportJobConfiguration<RawFact, Fact> importJobConfiguration) {
+        this.rawFact = importJobConfiguration.getBaseEntity();
+        this.fact = importJobConfiguration.getMappedEntity();
+        this.normalizerProcessor = item -> importJobConfiguration.getMapper().apply(item);
     }
 
     private DataSource dataSource;
@@ -59,13 +57,6 @@ public class NormalizerStepConfiguration<RawFact extends BaseFact, Fact extends 
         this.stepBuilderFactory = stepBuilderFactory;
     }
 
-    private ItemProcessor<RawFact, Fact> normalizerProcessor;
-
-    @Autowired
-    @Qualifier("normalizerProcessor")
-    public void setNormalizerProcessor(ItemProcessor<RawFact, Fact> procesor) {
-        this.normalizerProcessor = procesor;
-    }
 
     public JdbcBatchItemWriter<Fact> jdbcWriter() {
         JdbcBatchItemWriter<Fact> jdbcWriter = new JdbcBatchItemWriterBuilder<Fact>()

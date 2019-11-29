@@ -9,6 +9,7 @@ import org.bmsource.dwh.common.io.reader.ExcelReader;
 import org.bmsource.dwh.common.job.JobService;
 import org.bmsource.dwh.importer.MappingPreset;
 import org.bmsource.dwh.importer.MappingPresetRepository;
+import org.bmsource.dwh.model.Fact;
 import org.bmsource.dwh.model.RawFact;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,10 +33,10 @@ public class ImportController {
     private FileManager fileManager = new TmpFileManager();
 
     @Autowired
-    JobService jobService;
+    private JobService jobService;
 
     @Autowired
-    MappingPresetRepository mappingPresetRepository;
+    private MappingPresetRepository mappingPresetRepository;
 
     @GetMapping
     public String initUpload() {
@@ -47,8 +48,8 @@ public class ImportController {
                                    @PathVariable("projectId") String projectId,
                                    @PathVariable("transactionId") String transactionId) throws IOException {
         List<String> files = new ArrayList<>();
-
         MultipartFile multipartFile = request.getFile("file");
+        assert multipartFile != null;
         String name = multipartFile.getOriginalFilename();
         try (InputStream inputStream = multipartFile.getInputStream();) {
             fileManager.addFile(transactionId, name, inputStream);
@@ -91,13 +92,13 @@ public class ImportController {
 
     @ResponseBody
     @PostMapping(value = "/{transactionId}/start", consumes = "application/json")
-    public ResponseEntity start(@RequestHeader("x-tenant") String tenant,
+    public ResponseEntity<HttpStatus> start(@RequestHeader("x-tenant") String tenant,
                                 @PathVariable("projectId") String projectId,
                                 @PathVariable("transactionId") String transactionId,
                                 @RequestBody UploadRequestBody uploadRequestBody) {
         List<String> files = fileManager.getFiles(transactionId);
         jobService.runImport(tenant, projectId, transactionId, files, uploadRequestBody.getMapping());
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/mapping-presets")

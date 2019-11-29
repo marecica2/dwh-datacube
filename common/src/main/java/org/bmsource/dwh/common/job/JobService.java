@@ -1,7 +1,6 @@
 package org.bmsource.dwh.common.job;
 
 import org.bmsource.dwh.common.appstate.AppStateService;
-import org.bmsource.dwh.common.appstate.EnableImportEvents;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.explore.JobExplorer;
@@ -11,19 +10,16 @@ import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteExcep
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
-@ComponentScan
-@EnableImportEvents
 public class JobService {
-
-    JobConfiguration jobConfiguration;
 
     JobLauncher jobLauncher;
 
@@ -34,11 +30,6 @@ public class JobService {
     AppStateService appStateService;
 
     JdbcJobRepository repository;
-
-    @Autowired
-    public void setJobConfiguration(JobConfiguration jobConfiguration) {
-        this.jobConfiguration = jobConfiguration;
-    }
 
     @Autowired
     public void setJobLauncher(JobLauncher jobLauncher) {

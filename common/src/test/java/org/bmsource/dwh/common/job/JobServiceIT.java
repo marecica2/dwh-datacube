@@ -1,13 +1,10 @@
 package org.bmsource.dwh.common.job;
 
 import org.bmsource.dwh.common.BaseFact;
-import org.bmsource.dwh.common.utils.StringUtils;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.ActiveProfiles;
@@ -24,7 +21,7 @@ import java.util.*;
 @Component
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {JobService.class})
+@ContextConfiguration(classes = {ImporterConfiguration.class})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class JobServiceIT {
     private String tenant = "000000-00000-00001";
@@ -47,29 +44,6 @@ public class JobServiceIT {
 
     @Autowired
     JdbcTemplate template;
-
-    @Bean("rawFact")
-    public RawFact rawFact() {
-        return new RawFact();
-    }
-
-    @Bean("fact")
-    public Fact fact() {
-        return new Fact();
-    }
-
-    @Bean("normalizerProcessor")
-    public ItemProcessor<RawFact, Fact> normalizerProcessor() {
-        return item -> {
-            Fact fact = new Fact();
-            fact.setBillableWeight(item.getBillableWeight());
-            fact.setBusinessUnit(item.getBusinessUnit());
-            fact.setCost(item.getCost());
-            fact.setServiceType(StringUtils.normalize(item.getServiceType()));
-            fact.setTransactionId(item.getTransactionId());
-            return fact;
-        };
-    }
 
     @Autowired
     JobService jobService;
@@ -108,9 +82,9 @@ public class JobServiceIT {
     @Test
     public void testImport() {
         jobService.runImport(tenant, project, transaction, files, mapping);
-        int importedRows = template.queryForObject("SELECT count(*) FROM raw_fact", Integer.class);
+        int importedRows = template.queryForObject("SELECT count(*) FROM test_raw_fact", Integer.class);
         Assertions.assertEquals(472, importedRows);
-        importedRows = template.queryForObject("SELECT count(*) FROM fact", Integer.class);
+        importedRows = template.queryForObject("SELECT count(*) FROM test_fact", Integer.class);
         Assertions.assertEquals(472, importedRows);
     }
 

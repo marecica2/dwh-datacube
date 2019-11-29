@@ -3,6 +3,7 @@ package org.bmsource.dwh.common.job.step.importer;
 import org.bmsource.dwh.common.BaseFact;
 import org.bmsource.dwh.common.appstate.AppStateService;
 import org.bmsource.dwh.common.io.DataRow;
+import org.bmsource.dwh.common.job.ImportJobConfiguration;
 import org.bmsource.dwh.common.job.JobConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,7 @@ import org.springframework.batch.core.partition.PartitionHandler;
 import org.springframework.batch.core.partition.support.TaskExecutorPartitionHandler;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.builder.SimpleStepBuilder;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
@@ -42,9 +44,8 @@ public class ImportStepConfiguration<RawFact extends BaseFact> {
     private RawFact rawFact;
 
     @Autowired
-    @Qualifier("rawFact")
-    public void setRawFact(RawFact rawFact) {
-        this.rawFact = rawFact;
+    public void setImportJobConfiguration(ImportJobConfiguration<RawFact, ?> importJobConfiguration) {
+        this.rawFact = importJobConfiguration.getBaseEntity();
     }
 
     private DataSource dataSource;

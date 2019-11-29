@@ -1,6 +1,7 @@
 package org.bmsource.dwh.common.job;
 
 import org.bmsource.dwh.common.appstate.AppStateService;
+import org.bmsource.dwh.common.appstate.EnableImportEvents;
 import org.bmsource.dwh.common.job.step.ZipErrorsTasklet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,7 @@ import org.springframework.batch.core.listener.JobExecutionListenerSupport;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.dao.Jackson2ExecutionContextStringSerializer;
 import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,6 +29,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.util.Arrays;
@@ -35,10 +38,11 @@ import java.util.List;
 import java.util.Map;
 
 @Configuration
+@EnableImportEvents
 @EnableBatchProcessing
 @EnableAutoConfiguration
 @ComponentScan
-public class JobConfiguration {
+public class JobConfiguration<RawFact, Fact> {
 
     private Logger logger = LoggerFactory.getLogger(JobConfiguration.class);
 
@@ -47,6 +51,23 @@ public class JobConfiguration {
     @Autowired
     public void setStepBuilderFactory(StepBuilderFactory stepBuilderFactory) {
         this.stepBuilderFactory = stepBuilderFactory;
+    }
+
+    private ImportJobConfiguration<RawFact, Fact> importJobConfiguration;
+
+    @Autowired
+    public void setImportJobConfiguration(ImportJobConfiguration<RawFact, Fact> importJobConfiguration) {
+        this.importJobConfiguration = importJobConfiguration;
+    }
+
+    @Bean("rawFact")
+    public RawFact rawFact() {
+        return importJobConfiguration.getBaseEntity();
+    }
+
+    @Bean("fact")
+    public Fact fact() {
+        return importJobConfiguration.getMappedEntity();
     }
 
     private DataSource dataSource;
