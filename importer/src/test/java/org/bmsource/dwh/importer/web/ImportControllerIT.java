@@ -43,7 +43,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @ContextConfiguration(classes = {ImporterApplication.class})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ImportControllerIT {
-    private boolean printRest = false;
+    private boolean printRest = true;
     private String tenant = "000000-00000-00001";
     private String project = "1";
 
@@ -176,6 +176,14 @@ public class ImportControllerIT {
         Assertions.assertEquals(424, factRepository.count());
         Assertions.assertEquals("Air - Mail and Small Parcel - next day Mid-day", fact.getStandardServiceType());
         Assertions.assertEquals(new BigDecimal("67.73"), fact.getCost());
+
+        mvc.perform(MockMvcRequestBuilders
+            .get("/facts?page={page}&size={size}", 0, 1)
+            .header("x-tenant", tenant)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andDo(doPrint())
+            .andExpect(status().isOk())
+            .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.facts").exists());
     }
 
     private ResultHandler doPrint() {
