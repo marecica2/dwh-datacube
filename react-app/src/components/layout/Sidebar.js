@@ -107,7 +107,7 @@ function Sidebar(props) {
             </ListItem>
             <ListItem
               button
-              key='Service type'
+              key='Data View'
               className={classes.nested}
               to='/category/service-type'
               activeStyle={{
@@ -116,7 +116,7 @@ function Sidebar(props) {
               component={AdapterLink}
             >
               <ListItemIcon><AssessmentIcon /></ListItemIcon>
-              <ListItemText primary='Service type' />
+              <ListItemText primary='View Data' />
             </ListItem>
           </List>
         </Collapse>

@@ -9,7 +9,7 @@ import Sidebar from './layout/Sidebar';
 import Home from './pages/Home';
 import Settings from './pages/Settings';
 import Supplier from './pages/categories/Supplier';
-import ServiceType from './pages/categories/ServiceType';
+import DataPreview from './pages/categories/DataPreview';
 import Import from './pages/Import';
 import { AppStateProvider } from './context/AppContext';
 
@@ -47,7 +47,7 @@ function App() {
           <main className={classes.content}>
             <Switch>
               <Route path="/category/supplier" component={Supplier}/>
-              <Route path="/category/service-type" component={ServiceType}/>
+              <Route path="/category/service-type" component={DataPreview}/>
               <Route path="/import" component={Import}/>
               <Route path="/settings" component={Settings}/>
               <Route path="/" strict component={Home}/>
