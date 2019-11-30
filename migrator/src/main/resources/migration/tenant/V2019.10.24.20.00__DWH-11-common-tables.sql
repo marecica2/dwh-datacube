@@ -11,6 +11,7 @@ DROP TABLE IF EXISTS service_type_taxonomy;
 CREATE TABLE service_type_taxonomy
 (
     id                          VARCHAR(20) PRIMARY KEY NOT NULL,
+    name                        VARCHAR(255),
     expedite                    BOOLEAN,
     level_down_letter_key       VARCHAR(50),
     level_down_parcel_key       VARCHAR(50),

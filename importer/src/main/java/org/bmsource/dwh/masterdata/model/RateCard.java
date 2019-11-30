@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 @Entity
 @Table(name = "standard_rate_card")
-public class RateCard extends BaseFact {
+public class RateCard {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -1,7 +1,7 @@
 package org.bmsource.dwh.masterdata.web;
 
-import org.bmsource.dwh.common.BaseFact;
-import org.bmsource.dwh.masterdata.*;
+import org.bmsource.dwh.masterdata.ExcelReaderHandler;
+import org.bmsource.dwh.masterdata.GenericExcelReader;
 import org.bmsource.dwh.masterdata.model.RateCard;
 import org.bmsource.dwh.masterdata.model.ServiceTypeMapping;
 import org.bmsource.dwh.masterdata.model.Taxonomy;
@@ -21,7 +21,6 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.io.InputStream;
 import java.util.List;
-import java.util.function.Consumer;
 
 @RestController
 public class MasterDataController {
@@ -153,15 +152,14 @@ public class MasterDataController {
         return importModel(request, classType, handler, result);
     }
 
-    private <T extends BaseFact> DeferredResult<ResponseEntity<?>> importModel(MultipartHttpServletRequest request,
+    private <T> DeferredResult<ResponseEntity<?>> importModel(MultipartHttpServletRequest request,
                                                                                Class<T> classType,
                                                                                ExcelReaderHandler<T> handler,
                                                                                DeferredResult<ResponseEntity<?>> result
     ) {
-        GenericExcelReader excelParser = new GenericExcelReader<T>(handler, classType);
+        GenericExcelReader<T> excelParser = new GenericExcelReader<>(handler, classType);
         try {
             MultipartFile multipartFile = request.getFile("file");
-            String name = multipartFile.getOriginalFilename();
             try (InputStream inputStream = multipartFile.getInputStream();) {
                 excelParser.parse(inputStream);
             }

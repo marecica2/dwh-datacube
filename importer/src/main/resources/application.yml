@@ -1,5 +1,7 @@
 server.port: 3001
 spring:
+  data:
+    redis.repositories.enabled: false
   datasource:
     url: jdbc:postgresql://localhost:30001/dwh-dev
     username: dwh-dev

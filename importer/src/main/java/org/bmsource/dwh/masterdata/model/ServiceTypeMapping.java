@@ -7,7 +7,7 @@ import java.math.BigInteger;
 
 @Entity
 @Table(name = "service_type_mapping")
-public class ServiceTypeMapping  extends BaseFact {
+public class ServiceTypeMapping {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

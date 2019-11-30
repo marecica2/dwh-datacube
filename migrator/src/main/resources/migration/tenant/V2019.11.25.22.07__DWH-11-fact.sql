@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS fact_raw;
 
 CREATE TABLE fact_raw
 (
-    id                   BIGSERIAL,
+    id                   BIGSERIAL PRIMARY KEY NOT NULL,
     transaction_id       VARCHAR(20),
     supplier_name        VARCHAR(100),
     business_unit        VARCHAR(50),
@@ -32,15 +32,14 @@ CREATE TABLE fact_raw
     accessorial_charge3  DECIMAL,
     discount             DECIMAL,
     distance             FLOAT,
-    processed            BOOLEAN,
-    constraint fact_raw_uniq unique (ID)
+    processed            BOOLEAN
 );
 
 DROP TABLE IF EXISTS fact;
 
 CREATE TABLE fact
 (
-    id                   BIGSERIAL,
+    id                   BIGSERIAL PRIMARY KEY NOT NULL,
     transaction_id       VARCHAR(20),
     supplier_name        VARCHAR(100),
     business_unit        VARCHAR(50),
@@ -72,6 +71,5 @@ CREATE TABLE fact
     accessorial_charge3  DECIMAL,
     discount             DECIMAL,
     distance             FLOAT,
-    excluded             BOOLEAN,
-    constraint fact_uniq unique (ID)
+    excluded             BOOLEAN
 );

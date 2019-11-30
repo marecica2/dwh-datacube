@@ -2,13 +2,18 @@ package org.bmsource.dwh.model;
 
 import org.bmsource.dwh.common.BaseFact;
 
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 
+@Entity
 @Table(name = "fact")
 public class Fact extends BaseFact {
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private BigDecimal id;
 
   String transactionId;
 
@@ -41,6 +46,8 @@ public class Fact extends BaseFact {
   @NotNull
   String serviceType;
 
+  String standardServiceType;
+
   @NotNull
   Double billableWeight;
 
@@ -70,6 +77,18 @@ public class Fact extends BaseFact {
   BigDecimal discount;
 
   Double distance;
+
+  public BigDecimal getId() {
+    return id;
+  }
+
+  public String getStandardServiceType() {
+    return standardServiceType;
+  }
+
+  public void setStandardServiceType(String standardServiceType) {
+    this.standardServiceType = standardServiceType;
+  }
 
   public String getTransactionId() {
     return transactionId;

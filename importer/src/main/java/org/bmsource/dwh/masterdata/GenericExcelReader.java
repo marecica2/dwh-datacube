@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class GenericExcelReader<T extends BaseFact> {
+public class GenericExcelReader<T> {
     private ExcelReaderHandler handler;
     private Class<T> classType;
 

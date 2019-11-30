@@ -8,7 +8,7 @@ import java.math.BigInteger;
 
 @Entity
 @Table(name = "service_type_taxonomy")
-public class Taxonomy extends BaseFact {
+public class Taxonomy {
 
     @Id
     private String id;
@@ -17,11 +17,13 @@ public class Taxonomy extends BaseFact {
 
     private String name;
 
+    @Column(name = "level_down_letter_key")
     private String serviceLevelDownType1;
 
+    @Column(name = "level_down_parcel_key")
     private String serviceLevelDownType2;
 
-    private String discountGroup;
+    private String standardServiceTypeGroup;
 
     public String getId() {
         return id;
@@ -63,11 +65,11 @@ public class Taxonomy extends BaseFact {
         this.serviceLevelDownType2 = serviceLevelDownType2;
     }
 
-    public String getDiscountGroup() {
-        return discountGroup;
+    public String getStandardServiceTypeGroup() {
+        return standardServiceTypeGroup;
     }
 
-    public void setDiscountGroup(String discountGroup) {
-        this.discountGroup = discountGroup;
+    public void setStandardServiceTypeGroup(String standardServiceTypeGroup) {
+        this.standardServiceTypeGroup = standardServiceTypeGroup;
     }
 }

@@ -2,6 +2,7 @@ package org.bmsource.dwh.common.job;
 
 import org.bmsource.dwh.common.appstate.AppStateService;
 import org.bmsource.dwh.common.appstate.EnableImportEvents;
+import org.bmsource.dwh.common.job.step.CleanUpTasklet;
 import org.bmsource.dwh.common.job.step.ZipErrorsTasklet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,6 +92,13 @@ public class JobConfiguration<RawFact, Fact> {
         this.zipErrorsTasklet = zipErrorsTasklet;
     }
 
+    private CleanUpTasklet cleanUpTasklet;
+
+    @Autowired
+    public void setCleanUpTasklet(CleanUpTasklet cleanUpTasklet) {
+        this.cleanUpTasklet = cleanUpTasklet;
+    }
+
     private Step excelStep;
 
     @Autowired
@@ -106,6 +114,13 @@ public class JobConfiguration<RawFact, Fact> {
             .build();
     }
 
+    @Bean
+    public Step beforeImportStep() {
+        return this.stepBuilderFactory.get("beforeStep")
+            .tasklet(cleanUpTasklet)
+            .build();
+    }
+
     private Step normalizerStep;
 
     @Autowired(required = false)
@@ -118,7 +133,8 @@ public class JobConfiguration<RawFact, Fact> {
     public Job importJob(@Autowired JobBuilderFactory jobBuilderFactory) {
         SimpleJobBuilder jobBuilder = jobBuilderFactory
             .get(JobConstants.jobName)
-            .start(excelStep)
+            .start(beforeImportStep())
+            .next(excelStep)
             .next(postImportStep());
 
         if (normalizerStep != null) {

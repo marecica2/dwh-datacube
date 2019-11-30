@@ -10,6 +10,8 @@ public class ImportJobConfiguration<RawFact, Fact> {
 
     private Function<RawFact, Fact> mapper;
 
+    private Function<ImportContext, Object> cleanUpHandler;
+
     public RawFact getBaseEntity() {
         return baseEntity;
     }
@@ -32,5 +34,13 @@ public class ImportJobConfiguration<RawFact, Fact> {
 
     public void setMapper(Function<RawFact, Fact> mapper) {
         this.mapper = mapper;
+    }
+
+    public void setCleanUpHandler(Function<ImportContext, Object> cleanUpHandler) {
+        this.cleanUpHandler = cleanUpHandler;
+    }
+
+    public Object performCleanUp(ImportContext ctx) {
+        return cleanUpHandler.apply(ctx);
     }
 }

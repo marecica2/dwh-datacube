@@ -4,6 +4,7 @@ import com.google.common.base.CaseFormat;
 
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -16,7 +17,7 @@ public class BaseFact {
     public String insertSQL() {
         String columns = String.join(
             ", ",
-            Arrays.stream(this.getClass().getDeclaredFields())
+            Arrays.stream(getFields())
                 .filter(field -> field.getAnnotation(Transient.class) == null)
                 .map(field -> CaseFormat.LOWER_CAMEL
                     .converterTo(CaseFormat.LOWER_UNDERSCORE)
@@ -26,7 +27,7 @@ public class BaseFact {
 
         String parameters = String.join(
             ", ",
-            Arrays.stream(this.getClass().getDeclaredFields())
+            Arrays.stream(getFields())
                 .filter(field -> field.getAnnotation(Transient.class) == null)
                 .map(field -> ":" + field.getName())
                 .collect(Collectors.toList())
@@ -38,6 +39,14 @@ public class BaseFact {
             columns,
             parameters
         );
+    }
+
+    private Field[] getFields() {
+        Field[] fields = this.getClass().getDeclaredFields();
+        return Arrays
+            .stream(fields)
+            .filter(f -> !f.getName().toLowerCase().equals("id"))
+            .toArray(Field[]::new);
     }
 
     private String getTableName() {

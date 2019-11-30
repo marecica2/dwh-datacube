@@ -1,11 +1,13 @@
 package org.bmsource.dwh.importer.web;
 
 import org.bmsource.dwh.ImporterApplication;
+import org.bmsource.dwh.TestHelper;
+import org.bmsource.dwh.TestUtils;
+import org.bmsource.dwh.model.Fact;
+import org.bmsource.dwh.repository.FactRepository;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +26,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -39,6 +42,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {ImporterApplication.class})
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ImportControllerIT {
     private boolean printRest = false;
     private String tenant = "000000-00000-00001";
@@ -49,14 +53,29 @@ public class ImportControllerIT {
     }};
 
     private Map<String, String> mapping = new LinkedHashMap<String, String>() {{
-        put("Service Type", "serviceType");
-        put("Business Unit", "businessUnit");
-        put("Supplier Name", "supplierName");
         put("S. No.", "transactionId");
+        put("Supplier Name", "supplierName");
+        put("Business Unit", "businessUnit");
         put("Origin-City", "originCity");
+        put("Origin-State", "originState");
+        put("Origin-Country", "originCountry");
+        put("Origin-Zip code", "originZip");
+        put("Destination-City", "destinationCity");
+        put("Destination-State", "destinationState");
+        put("Destination-Country", "destinationCountry");
+        put("Destination-Zip code", "destinationZip");
         put("Zone", "zone");
+        put("Date of Shipment (MM/DD/YYYY)", "shipmentDate");
+        put("Date of delivery (MM/DD/YYYY)", "deliveryDate");
+        put("Service Type", "serviceType");
         put("Cost (USD)", "cost");
         put("Billable Weight (lb)", "billableWeight");
+        put("Actual Weight (lb)", "actualWeight");
+        put("Length of package (inches)", "length");
+        put("Width of Package (inches)", "width");
+        put("Height of Package (inches)", "height");
+        put("Discount (%)", "discount");
+        put("Distance in Miles", "distance");
     }};
 
     private MockMvc mvc;
@@ -64,13 +83,27 @@ public class ImportControllerIT {
     @Autowired
     private WebApplicationContext wac;
 
+    @Autowired
+    JdbcTemplate template;
+
+    @Autowired
+    TestHelper testHelper;
+
+
+    @Autowired
+    FactRepository factRepository;
+
+    @BeforeAll
+    public void beforeAll() throws Exception {
+        testHelper.hasRateCards();
+        testHelper.hasTaxonomy();
+        testHelper.hasServiceTypeMapping();
+    }
+
     @BeforeEach
     public void setup() {
         mvc = webAppContextSetup(this.wac).build();
     }
-
-    @Autowired
-    JdbcTemplate template;
 
     @Test
     public void testImport() throws Exception {
@@ -107,7 +140,7 @@ public class ImportControllerIT {
             .andExpect(MockMvcResultMatchers.jsonPath("$.sourceColumns.*", hasSize(38)))
             .andExpect(MockMvcResultMatchers.jsonPath("$.sourceColumns['Supplier Name']").value("UPS"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.destinationColumns").exists())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.destinationColumns.*", hasSize(29)))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.destinationColumns.*", hasSize(30)))
             .andExpect(MockMvcResultMatchers.jsonPath("$.destinationColumns.transactionId").exists())
             .andExpect(MockMvcResultMatchers.jsonPath("$.destinationColumns.transactionId.type").value("String"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.destinationColumns.transactionId.label").value("Transaction " +
@@ -140,8 +173,10 @@ public class ImportControllerIT {
             .andExpect(status().isOk())
             .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("COMPLETED"));
 
-
-
+        Fact fact = factRepository.findByTransactionId("2").get();
+        Assertions.assertEquals(424, factRepository.count());
+        Assertions.assertEquals("Air - Mail and Small Parcel - next day Mid-day", fact.getStandardServiceType());
+        Assertions.assertEquals(new BigDecimal("67.73"), fact.getCost());
     }
 
     private ResultHandler doPrint() {

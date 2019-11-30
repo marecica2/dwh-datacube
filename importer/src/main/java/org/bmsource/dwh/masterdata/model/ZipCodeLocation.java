@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 import java.math.BigInteger;
 
 @Entity
-public class ZipCodeLocation extends BaseFact {
+public class ZipCodeLocation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

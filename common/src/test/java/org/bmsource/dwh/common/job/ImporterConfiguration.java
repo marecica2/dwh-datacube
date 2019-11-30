@@ -31,6 +31,10 @@ public class ImporterConfiguration {
                 fact.setTransactionId(item.getTransactionId());
                 return fact;
             })
+            .onCleanUp(ctx -> {
+                System.out.println("Performing cleanup");
+                return 0;
+            })
             .build();
     }
 }

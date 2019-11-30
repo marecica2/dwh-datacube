@@ -2,13 +2,18 @@ package org.bmsource.dwh.model;
 
 import org.bmsource.dwh.common.BaseFact;
 
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 
+@Entity
 @Table(name = "fact_raw")
 public class RawFact extends BaseFact {
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private BigDecimal id;
 
   String transactionId;
 
@@ -70,6 +75,10 @@ public class RawFact extends BaseFact {
   BigDecimal discount;
 
   Double distance;
+
+  public BigDecimal getId() {
+    return id;
+  }
 
   public String getTransactionId() {
     return transactionId;
