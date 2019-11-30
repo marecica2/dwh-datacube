@@ -2,9 +2,8 @@ package org.bmsource.dwh.importer.web;
 
 import org.bmsource.dwh.ImporterApplication;
 import org.bmsource.dwh.TestHelper;
-import org.bmsource.dwh.TestUtils;
-import org.bmsource.dwh.model.Fact;
-import org.bmsource.dwh.repository.FactRepository;
+import org.bmsource.dwh.domain.model.Fact;
+import org.bmsource.dwh.domain.repository.FactRepository;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.*;

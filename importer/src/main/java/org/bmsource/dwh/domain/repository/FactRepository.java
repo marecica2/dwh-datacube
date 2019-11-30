@@ -1,6 +1,6 @@
-package org.bmsource.dwh.repository;
+package org.bmsource.dwh.domain.repository;
 
-import org.bmsource.dwh.model.Fact;
+import org.bmsource.dwh.domain.model.Fact;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.math.BigInteger;
