@@ -1,6 +1,5 @@
 package org.bmsource.dwh.importer;
 
-import org.bmsource.dwh.common.job.EnableImportJob;
 import org.bmsource.dwh.common.job.ImportJobConfiguration;
 import org.bmsource.dwh.common.job.ImportJobConfigurationBuilder;
 import org.bmsource.dwh.common.utils.StringUtils;
@@ -21,7 +20,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 @Configuration
 @EntityScan
 @EnableJpaRepositories
-@EnableImportJob
 public class ImporterConfiguration {
 
     private static Logger logger = LoggerFactory.getLogger(ImportJobConfiguration.class);

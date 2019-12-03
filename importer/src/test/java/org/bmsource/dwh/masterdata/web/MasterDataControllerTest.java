@@ -36,7 +36,6 @@ public class MasterDataControllerTest {
         mockMvc = webAppContextSetup(this.wac).build();
     }
 
-    @Disabled
     @Test
     public void testTaxonomyUpload() throws Exception {
         URL file = this.getClass().getResource("/taxonomy.xlsx");

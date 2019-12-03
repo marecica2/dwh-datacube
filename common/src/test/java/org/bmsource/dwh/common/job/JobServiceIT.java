@@ -41,12 +41,12 @@ public class JobServiceIT {
         put("Cost (USD)", "cost");
         put("Billable Weight (lb)", "billableWeight");
     }};
+    @Autowired
+    JobService jobService;
 
     @Autowired
     JdbcTemplate template;
 
-    @Autowired
-    JobService jobService;
 
     @BeforeAll
     public void createTable() {

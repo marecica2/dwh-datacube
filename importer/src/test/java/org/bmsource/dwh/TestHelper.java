@@ -46,8 +46,11 @@ public class TestHelper {
         this.importExcel(FileUtils.openInputStream(file), rateCardRepository, RateCard.class);
     }
 
-    private <Type, Repository extends CrudRepository<Type, ?>> void importExcel(InputStream inputStream,
-                                                                                                 Repository repository, Class<Type> classType) {
+    private <Type, Repository extends CrudRepository<Type, ?>> void importExcel(
+        InputStream inputStream,
+        Repository repository,
+        Class<Type> classType
+    ) {
         ExcelReaderHandler<Type> handler = new ExcelReaderHandler<Type>() {
             @Override
             public void onStart() {
@@ -78,6 +81,4 @@ public class TestHelper {
             file = ResourceUtils.getFile("classpath:" + optFileName[0]);
         return file;
     }
-
-
 }
