@@ -57,6 +57,7 @@ CREATE TABLE fact
     delivery_date        TIMESTAMP,
     service_type         VARCHAR(255),
     standard_service_type VARCHAR(255),
+    service_type_group   VARCHAR(20),
     billable_weight      FLOAT NOT NULL,
     actual_weight        FLOAT,
     length               FLOAT,

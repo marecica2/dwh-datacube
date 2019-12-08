@@ -2,6 +2,7 @@ package org.bmsource.dwh.masterdata.web;
 
 import org.bmsource.dwh.masterdata.ExcelReaderHandler;
 import org.bmsource.dwh.masterdata.GenericExcelReader;
+import org.bmsource.dwh.masterdata.MasterDataNormalizer;
 import org.bmsource.dwh.masterdata.model.RateCard;
 import org.bmsource.dwh.masterdata.model.ServiceTypeMapping;
 import org.bmsource.dwh.masterdata.model.Taxonomy;
@@ -59,11 +60,16 @@ public class MasterDataController {
             }
 
             @Override
+            public ZipCodeLocation transform(ZipCodeLocation item) {
+                return item;
+            }
+
+            @Override
             public void onFinish(int rowCount) {
                 result.setResult(new ResponseEntity<Integer>(HttpStatus.CREATED));
             }
         };
-        return importModel(request, classType, handler, result);
+        return importExcel(request, classType, handler, result);
     }
 
     @PostMapping(value = "/service-types/import")
@@ -88,11 +94,16 @@ public class MasterDataController {
             }
 
             @Override
+            public ServiceTypeMapping transform(ServiceTypeMapping item) {
+                return MasterDataNormalizer.normalizeServiceTypeMapping.apply(item);
+            }
+
+            @Override
             public void onFinish(int rowCount) {
                 result.setResult(new ResponseEntity<Integer>(HttpStatus.CREATED));
             }
         };
-        return importModel(request, classType, handler, result);
+        return importExcel(request, classType, handler, result);
     }
 
     @PostMapping(value = "/taxonomy/import")
@@ -116,11 +127,16 @@ public class MasterDataController {
             }
 
             @Override
+            public Taxonomy transform(Taxonomy item) {
+                return MasterDataNormalizer.normalizeTaxonomy.apply(item);
+            }
+
+            @Override
             public void onFinish(int rowCount) {
                 result.setResult(new ResponseEntity<Integer>(HttpStatus.CREATED));
             }
         };
-        return importModel(request, classType, handler, result);
+        return importExcel(request, classType, handler, result);
     }
 
     @PostMapping(value = "/rate-cards/import")
@@ -145,17 +161,23 @@ public class MasterDataController {
             }
 
             @Override
+            public RateCard transform(RateCard item) {
+                return MasterDataNormalizer.normalizeRateCards.apply(item);
+            }
+
+            @Override
             public void onFinish(int rowCount) {
                 result.setResult(new ResponseEntity<Integer>(HttpStatus.CREATED));
             }
         };
-        return importModel(request, classType, handler, result);
+        return importExcel(request, classType, handler, result);
     }
 
-    private <T> DeferredResult<ResponseEntity<?>> importModel(MultipartHttpServletRequest request,
-                                                                               Class<T> classType,
-                                                                               ExcelReaderHandler<T> handler,
-                                                                               DeferredResult<ResponseEntity<?>> result
+    private <T> DeferredResult<ResponseEntity<?>> importExcel(
+        MultipartHttpServletRequest request,
+        Class<T> classType,
+        ExcelReaderHandler<T> handler,
+        DeferredResult<ResponseEntity<?>> result
     ) {
         GenericExcelReader<T> excelParser = new GenericExcelReader<>(handler, classType);
         try {

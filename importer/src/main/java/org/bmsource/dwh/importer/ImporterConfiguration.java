@@ -48,6 +48,7 @@ public class ImporterConfiguration {
                 fact.setSupplierName(StringUtils.normalize(item.getSupplierName()));
                 fact.setServiceType(StringUtils.normalize(item.getServiceType()));
                 fact.setStandardServiceType(masterDataService.getStandardServiceType(fact.getServiceType()));
+                fact.setServiceTypeGroup(masterDataService.getServiceGroup(fact.getServiceType()));
 
                 fact.setOriginCity(item.getOriginCity());
                 fact.setOriginState(item.getOriginState());
@@ -73,6 +74,8 @@ public class ImporterConfiguration {
                 fact.setAccessorialCharge1(item.getAccessorialCharge1());
                 fact.setAccessorialService2(item.getAccessorialService2());
                 fact.setAccessorialCharge2(item.getAccessorialCharge2());
+
+                fact.setDistance(item.getDistance());
                 return fact;
             })
             .onCleanUp(ctx -> {

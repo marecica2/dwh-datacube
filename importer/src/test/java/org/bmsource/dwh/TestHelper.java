@@ -1,8 +1,10 @@
 package org.bmsource.dwh;
 
 import org.apache.commons.io.FileUtils;
+import org.bmsource.dwh.common.utils.StringUtils;
 import org.bmsource.dwh.masterdata.ExcelReaderHandler;
 import org.bmsource.dwh.masterdata.GenericExcelReader;
+import org.bmsource.dwh.masterdata.MasterDataNormalizer;
 import org.bmsource.dwh.masterdata.model.RateCard;
 import org.bmsource.dwh.masterdata.model.ServiceTypeMapping;
 import org.bmsource.dwh.masterdata.model.Taxonomy;
@@ -18,6 +20,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 public class TestHelper {
@@ -33,23 +37,27 @@ public class TestHelper {
 
     public void hasTaxonomy(String... optFileName) throws Exception {
         File file = getResource("taxonomy.xlsx", optFileName);
-        this.importExcel(FileUtils.openInputStream(file), taxonomyRepository, Taxonomy.class);
+        importExcel(FileUtils.openInputStream(file), taxonomyRepository, Taxonomy.class,
+            MasterDataNormalizer.normalizeTaxonomy);
     }
 
     public void hasServiceTypeMapping(String... optFileName) throws Exception {
         File file = getResource("matrix.xlsx", optFileName);
-        this.importExcel(FileUtils.openInputStream(file), serviceTypeMappingRepository, ServiceTypeMapping.class);
+        importExcel(FileUtils.openInputStream(file), serviceTypeMappingRepository, ServiceTypeMapping.class,
+            MasterDataNormalizer.normalizeServiceTypeMapping);
     }
 
     public void hasRateCards(String... optFileName) throws Exception {
         File file = getResource("standard_rate_card_small.xlsx", optFileName);
-        this.importExcel(FileUtils.openInputStream(file), rateCardRepository, RateCard.class);
+        importExcel(FileUtils.openInputStream(file), rateCardRepository, RateCard.class,
+            MasterDataNormalizer.normalizeRateCards);
     }
 
     private <Type, Repository extends CrudRepository<Type, ?>> void importExcel(
         InputStream inputStream,
         Repository repository,
-        Class<Type> classType
+        Class<Type> classType,
+        Function<Type, Type> transform
     ) {
         ExcelReaderHandler<Type> handler = new ExcelReaderHandler<Type>() {
             @Override
@@ -60,10 +68,19 @@ public class TestHelper {
             @Override
             public void onRead(List<Type> items) {
                 try {
-                    repository.saveAll(items);
+                    List<Type> itemsTransformed = items
+                        .stream()
+                        .map(this::transform)
+                        .collect(Collectors.toList());
+                    repository.saveAll(itemsTransformed);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            }
+
+            @Override
+            public Type transform(Type item) {
+                return transform.apply(item);
             }
         };
 

@@ -48,6 +48,8 @@ public class Fact extends BaseFact {
 
   String standardServiceType;
 
+  String serviceTypeGroup;
+
   @NotNull
   Double billableWeight;
 
@@ -77,6 +79,18 @@ public class Fact extends BaseFact {
   BigDecimal discount;
 
   Double distance;
+
+  public void setId(BigDecimal id) {
+    this.id = id;
+  }
+
+  public String getServiceTypeGroup() {
+    return serviceTypeGroup;
+  }
+
+  public void setServiceTypeGroup(String serviceTypeGroup) {
+    this.serviceTypeGroup = serviceTypeGroup;
+  }
 
   public BigDecimal getId() {
     return id;

@@ -4,7 +4,9 @@ import org.apache.commons.text.WordUtils;
 
 public class StringUtils {
     public static String normalize(String str) {
-        String ascii = str.replaceAll("[^\\d\\w\\s]", "");
+        if(str == null)
+            return null;
+        String ascii = str.replaceAll("[^-\\.\\d\\w\\s]", "");
         ascii = ascii.trim().replaceAll(" +", " ");
         ascii = ascii.toLowerCase();
         return WordUtils.capitalize(ascii);
