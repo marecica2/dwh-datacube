@@ -1,5 +1,6 @@
 package org.bmsource.dwh.common.utils;
 
+import com.google.common.base.CaseFormat;
 import org.apache.commons.text.WordUtils;
 
 import java.util.List;
@@ -26,5 +27,13 @@ public class StringUtils {
             }
         }
         return null;
+    }
+
+    public static String snakeToCamel(String s) {
+        return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, s);
+    }
+
+    public static String camelToSnake(String s) {
+        return CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, s);
     }
 }
