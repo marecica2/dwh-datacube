@@ -175,6 +175,7 @@ public class ImportControllerIT {
         Fact fact = factRepository.findByTransactionId("2").get();
         Assertions.assertEquals(424, factRepository.count());
         Assertions.assertEquals("Air - Mail And Small Parcel - Next Day Mid-day", fact.getStandardServiceType());
+        Assertions.assertEquals("Air1", fact.getServiceTypeGroup());
         Assertions.assertEquals(new BigDecimal("67.73"), fact.getCost());
 
         mvc.perform(MockMvcRequestBuilders

@@ -8,8 +8,10 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
-@Table(name = "fact")
+@Table(name = Fact.TABLE_NAME)
 public class Fact extends BaseFact {
+
+  public static final String TABLE_NAME = "fact";
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
