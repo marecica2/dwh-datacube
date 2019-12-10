@@ -66,7 +66,6 @@ public class ChartControllerIT {
 
     @Test
     public void testChart() throws Exception {
-
         String[] measures = new String[] {"sumCost"};
         String[] dimensions = new String[] {"supplierName"};
         String[] sorts = new String[] {"ascSumCost"};

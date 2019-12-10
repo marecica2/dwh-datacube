@@ -19,6 +19,7 @@ public class BaseFact {
             ", ",
             Arrays.stream(getFields())
                 .filter(field -> field.getAnnotation(Transient.class) == null)
+                .filter(field -> !java.lang.reflect.Modifier.isStatic(field.getModifiers()))
                 .map(field -> CaseFormat.LOWER_CAMEL
                     .converterTo(CaseFormat.LOWER_UNDERSCORE)
                     .convert(field.getName()))
@@ -29,6 +30,7 @@ public class BaseFact {
             ", ",
             Arrays.stream(getFields())
                 .filter(field -> field.getAnnotation(Transient.class) == null)
+                .filter(field -> !java.lang.reflect.Modifier.isStatic(field.getModifiers()))
                 .map(field -> ":" + field.getName())
                 .collect(Collectors.toList())
         );

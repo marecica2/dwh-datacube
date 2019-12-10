@@ -1,6 +1,5 @@
 package org.bmsource.dwh.charts;
 
-import com.google.common.base.CaseFormat;
 import org.bmsource.dwh.common.utils.StringUtils;
 import org.jooq.*;
 import org.jooq.impl.DSL;
@@ -12,7 +11,6 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.apache.commons.lang3.StringUtils.capitalize;
 import static org.jooq.impl.DSL.*;
 
 public class QueryGenerator {
@@ -54,42 +52,43 @@ public class QueryGenerator {
     public String query(List<String> measures,
                         List<String> dimensions,
                         List<String> ordering,
-                        Map<String, ?> filters) throws SQLException {
-        Select<?> q = generate(measures, dimensions, ordering, filters);
-        DSLContext create = initCreate();
-        return create.renderNamedParams(q);
+                        Map<String, ?> filters) {
+        try (DSLContext create = initDSLContext()) {
+            Select<?> q = generate(measures, dimensions, ordering, filters);
+            return create.renderNamedParams(q);
+        }
     }
 
     private Select<?> generate(List<String> measuresParam,
                                List<String> dimensionsParam,
                                List<String> orderingParam,
-                               Map<String, ?> filtersParam) throws SQLException {
+                               Map<String, ?> filtersParam) {
         List<String> measures = snake(measuresParam);
         List<String> dimensions = snake(dimensionsParam);
         List<String> ordering = snake(orderingParam);
 
-        DSLContext create = initCreate();
+        try (DSLContext ctx = initDSLContext()) {
+            List<Field<?>> dimensionsFields = dimensions
+                .stream()
+                .map(DSL::field).collect(Collectors.toList());
 
-        List<Field<?>> dimensionsFields = dimensions
-            .stream()
-            .map(DSL::field).collect(Collectors.toList());
+            List<Field<?>> aggregateMeasureFields = getAggregateMeasureFields(measures);
+            List<Field<?>> simpleMeasureFields = getSimpleMeasureFields(measures);
+            List<OrderField<?>> orderFields = getOrderFields(ordering);
 
-        List<Field<?>> aggregateMeasureFields = getAggregateMeasureFields(measures);
-        List<Field<?>> simpleMeasureFields = getSimpleMeasureFields(measures);
-        List<OrderField<?>> orderFields = getOrderFields(ordering);
+            List<Field<?>> selectFields = new ArrayList<>();
+            selectFields.addAll(dimensionsFields);
+            selectFields.addAll(aggregateMeasureFields);
+            selectFields.addAll(simpleMeasureFields);
 
-        List<Field<?>> selectFields = new ArrayList<>();
-        selectFields.addAll(dimensionsFields);
-        selectFields.addAll(aggregateMeasureFields);
-        selectFields.addAll(simpleMeasureFields);
+            List<Condition> conditions = getFilters(filtersParam);
 
-        List<Condition> conditions = getFilters(filtersParam);
-
-        return create.select(selectFields)
-            .from(table(rootTable))
-            .where(conditions)
-            .groupBy(dimensionsFields)
-            .orderBy(orderFields);
+            return ctx.select(selectFields)
+                .from(table(rootTable))
+                .where(conditions)
+                .groupBy(dimensionsFields)
+                .orderBy(orderFields);
+        }
     }
 
     private List<Condition> getFilters(Map<String, ?> filters) {
@@ -170,8 +169,8 @@ public class QueryGenerator {
             .collect(Collectors.toList());
     }
 
-    private DSLContext initCreate() throws SQLException {
-        return using(dataSource.getConnection(), SQLDialect.POSTGRES);
+    private DSLContext initDSLContext() {
+        return using(dataSource, SQLDialect.POSTGRES);
     }
 
     private List<String> snake(List<String> list) {
