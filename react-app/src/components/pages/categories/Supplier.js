@@ -1,46 +1,6 @@
-import React, {Component} from 'react';
+import React, { useEffect, useState } from 'react';
 import BarChart from '../../common/charts/BarChart';
-
-const data = [{
-  'country': 'USA',
-  'visits': 2025,
-}, {
-  'country': 'China',
-  'visits': 1882,
-}, {
-  'country': 'Japan',
-  'visits': 1809,
-}, {
-  'country': 'Germany',
-  'visits': 1322,
-}, {
-  'country': 'UK',
-  'visits': 1122,
-}, {
-  'country': 'France',
-  'visits': 1114,
-}, {
-  'country': 'India',
-  'visits': 984,
-}, {
-  'country': 'Spain',
-  'visits': 711,
-}, {
-  'country': 'Netherlands',
-  'visits': 665,
-}, {
-  'country': 'Russia',
-  'visits': 580,
-}, {
-  'country': 'South Korea',
-  'visits': 443,
-}, {
-  'country': 'Canada',
-  'visits': 441,
-}, {
-  'country': 'Brazil',
-  'visits': 395,
-}];
+import chartApi from '../../../shared/api/chart.api';
 
 const data2 = [{
   'country': 'USA',
@@ -62,18 +22,26 @@ const data2 = [{
   'visits': 395,
 }];
 
-class Supplier extends Component {
-  async componentDidMount() {
-  }
+export default () => {
+  const [data, setData] = useState([]);
 
-  render() {
-    return (
-        <div>
-          <BarChart data={data} title="Spend per supplier"/>
-          <BarChart data={data2} title="Spend per supplier per Category"/>
-        </div>
-    );
-  }
+  useEffect(() => {
+    const api = async () => {
+      const result = await chartApi().getChart({
+        measures: ['sumCost'],
+        dimensions: ['supplierName'],
+        sorts: ['ascSumCost'],
+        supplierName: 'Ups,Fedex',
+      });
+      setData(result);
+    };
+    api();
+  }, [setData]);
+
+  return (
+    <div>
+      <BarChart data={data} x="supplierName" y="sumCost" title="Spend per supplier"/>
+      <BarChart data={data2} x="country" y="visits" title="Visits per Country"/>
+    </div>
+  );
 }
-
-export default Supplier;
