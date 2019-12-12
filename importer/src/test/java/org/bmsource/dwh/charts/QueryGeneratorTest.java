@@ -25,7 +25,7 @@ public class QueryGeneratorTest {
     @Test
     public void testQuery() throws Exception {
         String expectedSQL = "select " +
-            "supplier_name, sum(cost), avg(discounted_cost) " +
+            "supplier_name, sum(cost) as \"sum_cost\", avg(discounted_cost) as \"avg_discounted_cost\" " +
             "from fact " +
             "where (some_field = :someField " +
             "and some_other_field in (:someOtherField)) " +
@@ -53,8 +53,9 @@ public class QueryGeneratorTest {
         QueryGenerator queryGenerator = QueryGenerator.builder()
             .withDataSource(dataSource)
             .withRootTable("fact")
+            .usingSnakeCaseConversion()
             .build();
-        String sql = queryGenerator.query(measures, dimensions, sorts, filters);
+        String sql = queryGenerator.queryAggregate(measures, dimensions, sorts, filters);
         Assertions.assertEquals(expectedSQL, sql);
     }
 }

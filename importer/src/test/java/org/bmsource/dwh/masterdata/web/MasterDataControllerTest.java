@@ -1,5 +1,6 @@
 package org.bmsource.dwh.masterdata.web;
 
+import org.bmsource.dwh.IntegrationTestUtils;
 import org.bmsource.dwh.TestUtils;
 import org.bmsource.dwh.masterdata.MasterDataConfiguration;
 import org.junit.jupiter.api.*;
@@ -41,7 +42,7 @@ public class MasterDataControllerTest {
         URL file = this.getClass().getResource("/taxonomy.xlsx");
         String url = "/taxonomy/import";
         String fileName = "taxonomy.xlsx";
-        TestUtils.fileUpload(mockMvc, file, url, fileName);
+        IntegrationTestUtils.fileUpload(mockMvc, file, url, fileName);
         int importedRows = template.queryForObject("SELECT count(*) FROM service_type_taxonomy", Integer.class);
         Assertions.assertEquals(34, importedRows);
     }
@@ -51,7 +52,7 @@ public class MasterDataControllerTest {
         URL file = this.getClass().getResource("/matrix.xlsx");
         String url = "/service-types/import";
         String fileName = "matrix.xlsx";
-        TestUtils.fileUpload(mockMvc, file, url, fileName);
+        IntegrationTestUtils.fileUpload(mockMvc, file, url, fileName);
         int importedRows = template.queryForObject("SELECT count(*) FROM service_type_mapping", Integer.class);
         Assertions.assertEquals(56, importedRows);
     }
@@ -61,8 +62,8 @@ public class MasterDataControllerTest {
         URL file = this.getClass().getResource("/standard_rate_card_small.xlsx");
         String url = "/rate-cards/import";
         String fileName = "standard_rate_card_small.xlsx";
-        TestUtils.fileUpload(mockMvc, file, url, fileName);
+        IntegrationTestUtils.fileUpload(mockMvc, file, url, fileName);
         int importedRows = template.queryForObject("SELECT count(*) FROM standard_rate_card", Integer.class);
-        Assertions.assertEquals(23, importedRows);
+        Assertions.assertEquals(0, importedRows);
     }
 }

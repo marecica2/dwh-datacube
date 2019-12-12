@@ -1,7 +1,7 @@
 package org.bmsource.dwh.importer.web;
 
 import org.bmsource.dwh.ImporterApplication;
-import org.bmsource.dwh.TestHelper;
+import org.bmsource.dwh.IntegrationTestUtils;
 import org.bmsource.dwh.domain.model.Fact;
 import org.bmsource.dwh.domain.repository.FactRepository;
 import org.json.JSONArray;
@@ -86,7 +86,7 @@ public class ImportControllerIT {
     JdbcTemplate template;
 
     @Autowired
-    TestHelper testHelper;
+    IntegrationTestUtils integrationTestUtils;
 
 
     @Autowired
@@ -94,9 +94,9 @@ public class ImportControllerIT {
 
     @BeforeAll
     public void beforeAll() throws Exception {
-        testHelper.hasRateCards();
-        testHelper.hasTaxonomy();
-        testHelper.hasServiceTypeMapping();
+        integrationTestUtils.hasRateCards();
+        integrationTestUtils.hasTaxonomy();
+        integrationTestUtils.hasServiceTypeMapping();
     }
 
     @BeforeEach

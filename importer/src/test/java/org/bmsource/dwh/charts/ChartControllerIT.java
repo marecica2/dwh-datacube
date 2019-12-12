@@ -1,7 +1,7 @@
 package org.bmsource.dwh.charts;
 
 import org.bmsource.dwh.ImporterApplication;
-import org.bmsource.dwh.TestHelper;
+import org.bmsource.dwh.IntegrationTestUtils;
 import org.bmsource.dwh.domain.repository.FactRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,14 +13,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultHandler;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.context.WebApplicationContext;
-
-import java.util.*;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -46,7 +43,7 @@ public class ChartControllerIT {
     JdbcTemplate template;
 
     @Autowired
-    TestHelper testHelper;
+    IntegrationTestUtils integrationTestUtils;
 
 
     @Autowired
@@ -54,9 +51,9 @@ public class ChartControllerIT {
 
     @BeforeAll
     public void beforeAll() throws Exception {
-        testHelper.hasRateCards();
-        testHelper.hasTaxonomy();
-        testHelper.hasServiceTypeMapping();
+        integrationTestUtils.hasRateCards();
+        integrationTestUtils.hasTaxonomy();
+        integrationTestUtils.hasServiceTypeMapping();
     }
 
     @BeforeEach
@@ -84,6 +81,20 @@ public class ChartControllerIT {
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].sumCost").value(7417.21))
             .andExpect(MockMvcResultMatchers.jsonPath("$[1].supplierName").value("Ups"))
             .andExpect(MockMvcResultMatchers.jsonPath("$[1].sumCost").value(16995.90));
+    }
+
+    @Test
+    public void testDimensions() throws Exception {
+        String dimension = "supplierName";
+        mvc.perform(MockMvcRequestBuilders
+            .get("/{projectId}/charts/dimensions", project)
+            .header("x-tenant", tenant)
+            .param("dimension", dimension)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andDo(doPrint())
+            .andExpect(status().isOk())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.*", hasSize(4)))
+            .andExpect(MockMvcResultMatchers.jsonPath("$[0].supplierName").value("Fedex"));
     }
 
     private ResultHandler doPrint() {

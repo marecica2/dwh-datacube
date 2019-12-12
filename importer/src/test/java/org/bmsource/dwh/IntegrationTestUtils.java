@@ -1,7 +1,6 @@
 package org.bmsource.dwh;
 
 import org.apache.commons.io.FileUtils;
-import org.bmsource.dwh.common.utils.StringUtils;
 import org.bmsource.dwh.masterdata.ExcelReaderHandler;
 import org.bmsource.dwh.masterdata.GenericExcelReader;
 import org.bmsource.dwh.masterdata.MasterDataNormalizer;
@@ -13,18 +12,34 @@ import org.bmsource.dwh.masterdata.repository.ServiceTypeMappingRepository;
 import org.bmsource.dwh.masterdata.repository.TaxonomyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.util.ResourceUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 @Component
-public class TestHelper {
+public class IntegrationTestUtils {
 
     @Autowired
     TaxonomyRepository taxonomyRepository;
@@ -97,5 +112,28 @@ public class TestHelper {
         if (optFileName != null && optFileName.length > 0)
             file = ResourceUtils.getFile("classpath:" + optFileName[0]);
         return file;
+    }
+
+    public static void fileUpload(MockMvc mockMvc, URL file, String url, String fileName) throws Exception {
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("file", fileName,
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", Files.readAllBytes(Paths.get(file.toURI())));
+
+        Map<String, String> contentTypeParams = new HashMap<String, String>();
+        contentTypeParams.put("boundary", "------SomeBoundary");
+        MediaType mediaType = new MediaType("multipart", "form-data", contentTypeParams);
+
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+            .multipart(url)
+            .file(mockMultipartFile)
+            .contentType(mediaType);
+
+        MvcResult resultActions = mockMvc
+            .perform(builder)
+            .andDo(MockMvcResultHandlers.print())
+            .andExpect(request().asyncStarted())
+            .andReturn();
+
+        mockMvc.perform(asyncDispatch(resultActions))
+            .andExpect(status().is2xxSuccessful());
     }
 }

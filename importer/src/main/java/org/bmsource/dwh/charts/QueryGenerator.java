@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.jooq.impl.DSL.*;
@@ -40,32 +40,73 @@ public class QueryGenerator {
 
     private String rootTable;
 
+    private Function<String, String> caseConversion;
+
+    private Function<String, String> caseBackConversion;
+
     private QueryGenerator(Builder builder) {
         dataSource = builder.dataSource;
-        rootTable = builder.rootTable;
+        rootTable =  builder.caseConversion.apply(builder.rootTable);
+        caseConversion = builder.caseConversion;
+        caseBackConversion = builder.caseBackConversion;
     }
 
     public static IDataSource builder() {
         return new Builder();
     }
 
-    public String query(List<String> measures,
-                        List<String> dimensions,
-                        List<String> ordering,
-                        Map<String, ?> filters) {
+    private static String snakeCaseConversion(String s) {
+        return StringUtils.camelToSnake(s);
+    }
+
+    private static String snakeCaseToCamelCase(String s) {
+        return StringUtils.snakeToCamel(s);
+    }
+
+    private static String noCaseConversion(String s) {
+        return s;
+    }
+
+    public String queryDistinctValues(String dimensionParam) {
+        String dimension = caseConversion(dimensionParam);
         try (DSLContext create = initDSLContext()) {
-            Select<?> q = generate(measures, dimensions, ordering, filters);
+            Select<?> q = create
+                .selectDistinct(field(dimension))
+                .from(table(rootTable))
+                .orderBy(field(dimension))
+                .limit(1000);
+            return q.getSQL();
+        }
+    }
+
+    public String queryAggregate(List<String> measures,
+                                 List<String> dimensions,
+                                 List<String> ordering,
+                                 Map<String, ?> filters) {
+        try (DSLContext create = initDSLContext()) {
+            Select<?> q = generateAggregateQuery(measures, dimensions, ordering, filters);
             return create.renderNamedParams(q);
         }
     }
 
-    private Select<?> generate(List<String> measuresParam,
-                               List<String> dimensionsParam,
-                               List<String> orderingParam,
-                               Map<String, ?> filtersParam) {
-        List<String> measures = snake(measuresParam);
-        List<String> dimensions = snake(dimensionsParam);
-        List<String> ordering = snake(orderingParam);
+    public List<Map<String, Object>> convertCase(List<Map<String, Object>> result) {
+        return result
+            .stream()
+            .map(i -> i.entrySet()
+                .stream()
+                .collect(Collectors.toMap(
+                    e -> caseBackConversion.apply(e.getKey()),
+                    e -> e.getValue())))
+            .collect(Collectors.toList());
+    }
+
+    private Select<?> generateAggregateQuery(List<String> measuresParam,
+                                             List<String> dimensionsParam,
+                                             List<String> orderingParam,
+                                             Map<String, ?> filtersParam) {
+        List<String> measures = caseConversion(measuresParam);
+        List<String> dimensions = caseConversion(dimensionsParam);
+        List<String> ordering = caseConversion(orderingParam);
 
         try (DSLContext ctx = initDSLContext()) {
             List<Field<?>> dimensionsFields = dimensions
@@ -98,15 +139,19 @@ public class QueryGenerator {
             .map(e -> {
                 Condition c = null;
                 if (e.getValue() instanceof Collection) {
-                    c = field(snake(e.getKey()))
+                    c = fieldWithCase(e.getKey())
                         .in(field(param(e.getKey(), "")));
                 } else {
-                    c = field(snake(e.getKey()))
+                    c = fieldWithCase(e.getKey())
                         .equal(param(e.getKey(), e.getValue()));
                 }
                 return c;
             })
             .collect(Collectors.toList());
+    }
+
+    private Field<Object> fieldWithCase(String field) {
+        return field(caseConversion(field));
     }
 
     private List<Field<?>> getSimpleMeasureFields(List<String> measures) {
@@ -173,39 +218,45 @@ public class QueryGenerator {
         return using(dataSource, SQLDialect.POSTGRES);
     }
 
-    private List<String> snake(List<String> list) {
+    private String caseConversion(String s) {
+        return caseConversion.apply(s);
+    }
+
+    private List<String> caseConversion(List<String> list) {
         return list
             .stream()
-            .map(this::snake)
+            .map(this::caseConversion)
             .collect(Collectors.toList());
     }
-
-    private String snake(String s) {
-        return StringUtils.camelToSnake(s);
-    }
-
 
     interface IBuild {
         QueryGenerator build();
     }
 
     interface IRootTable {
-        IBuild withRootTable(String val);
+        ICaseConversion withRootTable(String val);
+    }
+
+    interface ICaseConversion {
+        IBuild usingSnakeCaseConversion();
+        IBuild usingNoCaseConversion();
     }
 
     interface IDataSource {
         IRootTable withDataSource(DataSource val);
     }
 
-    public static final class Builder implements IRootTable, IDataSource, IBuild {
+    public static final class Builder implements IRootTable, IDataSource, ICaseConversion, IBuild {
         private String rootTable;
         private DataSource dataSource;
+        private Function<String, String> caseConversion;
+        private Function<String, String> caseBackConversion;
 
         private Builder() {
         }
 
         @Override
-        public IBuild withRootTable(String val) {
+        public ICaseConversion withRootTable(String val) {
             rootTable = val;
             return this;
         }
@@ -213,6 +264,19 @@ public class QueryGenerator {
         @Override
         public IRootTable withDataSource(DataSource val) {
             dataSource = val;
+            return this;
+        }
+
+        @Override
+        public IBuild usingSnakeCaseConversion() {
+            caseConversion = QueryGenerator::snakeCaseConversion;
+            caseBackConversion = QueryGenerator::snakeCaseToCamelCase;
+            return this;
+        }
+
+        @Override
+        public IBuild usingNoCaseConversion() {
+            caseConversion = QueryGenerator::noCaseConversion;
             return this;
         }
 

@@ -19,26 +19,5 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class TestUtils {
-    public static void fileUpload(MockMvc mockMvc, URL file, String url, String fileName) throws Exception {
-        MockMultipartFile mockMultipartFile = new MockMultipartFile("file", fileName,
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", Files.readAllBytes(Paths.get(file.toURI())));
 
-        Map<String, String> contentTypeParams = new HashMap<String, String>();
-        contentTypeParams.put("boundary", "------SomeBoundary");
-        MediaType mediaType = new MediaType("multipart", "form-data", contentTypeParams);
-
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
-            .multipart(url)
-            .file(mockMultipartFile)
-            .contentType(mediaType);
-
-        MvcResult resultActions = mockMvc
-            .perform(builder)
-            .andDo(MockMvcResultHandlers.print())
-            .andExpect(request().asyncStarted())
-            .andReturn();
-
-        mockMvc.perform(asyncDispatch(resultActions))
-            .andExpect(status().is2xxSuccessful());
-    }
 }
