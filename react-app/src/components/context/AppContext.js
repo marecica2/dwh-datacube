@@ -35,6 +35,8 @@ const reducer = (state, { type, value }) => {
       const newProgress = { ...state.progresses, [value.fileName]: { ...value } };
       return { ...state, importStatus: { running: value.running }, progresses: { ...newProgress } };
     }
+    case 'filtersChange':
+      return { ...state, filters : {...state.filters, ...value}};
     default: {
       console.warn('AppContext No action registered for ', type);
       return state;

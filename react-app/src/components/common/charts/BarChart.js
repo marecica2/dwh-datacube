@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import am4Theme from '@amcharts/amcharts4/themes/animated';
 import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
@@ -8,10 +8,9 @@ am4core.useTheme(am4Theme);
 
 export default ({ title, data, x, y}) => {
   const chartRef = useRef(null);
-  let chart = null;
 
   useEffect(() => {
-    chart = am4core.create(chartRef.current, am4charts.XYChart);
+    const chart = am4core.create(chartRef.current, am4charts.XYChart);
     chart.data = data;
 
     // Create axes
@@ -38,7 +37,7 @@ export default ({ title, data, x, y}) => {
         chart.dispose();
       }
     }
-  }, [data]);
+  }, [data, x, y]);
 
   return (
     <div>

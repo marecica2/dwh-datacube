@@ -12,5 +12,14 @@ export default ({ ...config }) => {
       })();
       return resp;
     },
+
+    getDimensionValues: async ({ dimension }) => {
+      const { data: resp } = await httpRequest(`${baseUrl}/dimensions`, {
+        method: 'GET',
+        params: { dimension },
+        ...config,
+      })();
+      return resp;
+    },
   }
 };
