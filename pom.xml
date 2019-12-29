@@ -95,7 +95,7 @@
 <!--    </dependencies>-->
 <!--  </dependencyManagement>-->
 
-  <repositories>
+<!--  <repositories>-->
 <!--    <repository>-->
 <!--      <id>spring-milestones</id>-->
 <!--      <name>Spring Milestones</name>-->
@@ -104,9 +104,9 @@
 <!--        <enabled>false</enabled>-->
 <!--      </snapshots>-->
 <!--    </repository>-->
-    <repository>
-      <id>jitpack.io</id>
-      <url>https://jitpack.io</url>
-    </repository>
-  </repositories>
+<!--    <repository>-->
+<!--      <id>jitpack.io</id>-->
+<!--      <url>https://jitpack.io</url>-->
+<!--    </repository>-->
+<!--  </repositories>-->
 </project>
