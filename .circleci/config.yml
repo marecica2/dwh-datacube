@@ -19,6 +19,11 @@ jobs:
           paths:
             - ~/.m2
           key: dwh-{{ checksum "pom.xml" }}
+      - run:
+          name: Start container and verify it is working
+          command: |
+            set -x
+            docker-compose up -d
       - run: mvn install # run the actual tests
       - store_test_results: # uploads the test metadata from the `target/surefire-reports` directory so that it can show up in the CircleCI dashboard.
           # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
