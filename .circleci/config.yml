@@ -6,6 +6,10 @@ jobs:
       - image: circleci/openjdk:8-jdk-stretch # ...with this image as the primary container; this is where all `steps` will run
     steps:
       - checkout
+      - setup_remote_docker
+      - run:
+          name: Start container and verify it's working
+          command: docker-compose up --build
       - run:
           name: Generate cumulative pom.xml checksum
           command: |
@@ -19,17 +23,6 @@ jobs:
           paths:
             - ~/.m2
           key: dwh-{{ checksum "pom.xml" }}
-      - run:
-          name: Install Docker Compose
-          command: |
-            curl -L https://github.com/docker/compose/releases/download/1.19.0/docker-compose-`uname -s`-`uname -m` > ~/docker-compose
-            chmod +x ~/docker-compose
-            sudo mv ~/docker-compose /usr/local/bin/docker-compose
-      - run:
-          name: Start container and verify it is working
-          command: |
-            set -x
-            docker-compose up -d
       - run: mvn install # run the actual tests
       - store_test_results: # uploads the test metadata from the `target/surefire-reports` directory so that it can show up in the CircleCI dashboard.
           # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
