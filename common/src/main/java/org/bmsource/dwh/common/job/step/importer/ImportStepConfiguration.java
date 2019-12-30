@@ -27,7 +27,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import javax.annotation.Nonnull;
 import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
@@ -161,11 +160,11 @@ public class ImportStepConfiguration<RawFact extends BaseFact> {
         return new ChunkListener() {
 
             @Override
-            public void beforeChunk(@Nonnull ChunkContext context) {
+            public void beforeChunk(ChunkContext context) {
             }
 
             @Override
-            public void afterChunk(@Nonnull ChunkContext context) {
+            public void afterChunk(ChunkContext context) {
                 Map<String, Object> ec = context.getStepContext().getStepExecutionContext();
                 int rows = context.getStepContext().getStepExecution().getWriteCount();
                 int totalRows = (Integer) ec.get(JobConstants.totalRowsKey);
@@ -188,7 +187,7 @@ public class ImportStepConfiguration<RawFact extends BaseFact> {
             }
 
             @Override
-            public void afterChunkError(@Nonnull ChunkContext context) {
+            public void afterChunkError(ChunkContext context) {
             }
         };
     }

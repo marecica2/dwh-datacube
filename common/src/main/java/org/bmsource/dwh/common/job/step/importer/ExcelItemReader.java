@@ -9,7 +9,6 @@ import org.bmsource.dwh.common.filemanager.FileManager;
 import org.bmsource.dwh.common.io.DataRow;
 import org.bmsource.dwh.common.io.reader.ExcelBeanReader;
 import org.bmsource.dwh.common.io.reader.ExcelRowValidator;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -60,7 +59,7 @@ public class ExcelItemReader<Fact extends BaseFact> implements ItemStreamReader<
     private ExcelRowValidator<Fact> validator;
 
     @Override
-    public void open(@NotNull ExecutionContext executionContext) throws ItemStreamException {
+    public void open(ExecutionContext executionContext) throws ItemStreamException {
         try {
             InputStream inputStream = fileManager.getStream(transaction, fileName);
             logger.debug("Excel file {} opened for reading", this.fileName);
@@ -102,7 +101,7 @@ public class ExcelItemReader<Fact extends BaseFact> implements ItemStreamReader<
     }
 
     @Override
-    public void update(@NotNull ExecutionContext executionContext) throws ItemStreamException {
+    public void update(ExecutionContext executionContext) throws ItemStreamException {
     }
 
     @Override

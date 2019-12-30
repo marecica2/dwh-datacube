@@ -16,7 +16,6 @@ import java.util.*;
 @ActiveProfiles({"unit-test"})
 @DataJdbcTest
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {ChartsConfiguration.class})
 public class QueryGeneratorTest {
 
     @Autowired

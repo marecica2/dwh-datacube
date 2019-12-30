@@ -83,19 +83,19 @@
 
         <!--swagger -->
         <dependency>
-            <groupId>com.github.springfox.springfox</groupId>
+            <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
-            <version>master</version>
+            <version>2.9.2</version>
         </dependency>
         <dependency>
-            <groupId>com.github.springfox.springfox</groupId>
+            <groupId>io.springfox</groupId>
             <artifactId>springfox-data-rest</artifactId>
-            <version>master</version>
+            <version>2.9.2</version>
         </dependency>
         <dependency>
-            <groupId>com.github.springfox.springfox</groupId>
+            <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
-            <version>master</version>
+            <version>2.9.2</version>
         </dependency>
 
         <!-- db -->
@@ -152,16 +152,16 @@
             <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.github.testcontainers.testcontainers-java</groupId>
-            <artifactId>testcontainers</artifactId>
-            <version>1.9.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.testcontainers.testcontainers-java</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>1.9.1</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.github.testcontainers.testcontainers-java</groupId>-->
+<!--            <artifactId>testcontainers</artifactId>-->
+<!--            <version>1.9.1</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>com.github.testcontainers.testcontainers-java</groupId>-->
+<!--            <artifactId>postgresql</artifactId>-->
+<!--            <version>1.9.1</version>-->
+<!--        </dependency>-->
 
         <!--dev -->
         <dependency>

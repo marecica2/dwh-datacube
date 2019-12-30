@@ -1,6 +1,5 @@
 package org.bmsource.dwh.common.appstate.pushnotification;
 
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -55,7 +54,6 @@ public class NotificationServiceImpl implements NotificationService {
         return emitter;
     }
 
-    @NotNull
     private String createKey(String tenant, String projectId) {
         return tenant + ":" + projectId;
     }
