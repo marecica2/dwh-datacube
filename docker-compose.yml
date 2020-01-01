@@ -1,12 +1,12 @@
 version: '3.1'
 services:
-#  proxy:
-#    image: nginx:alpine
-#    container_name: proxy
-#    ports:
-#      - 8081:80
-#    volumes:
-#      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+  proxy:
+    image: nginx:alpine
+    container_name: proxy
+    ports:
+      - 8081:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
   db:
     image: postgres:10.3
     container_name: db
@@ -31,9 +31,9 @@ services:
       POSTGRES_DB: dwh-test
       POSTGRES_USER: dwh-test
       POSTGRES_PASSWORD: dwh-test
-#  redis:
-#    image: redis:4.0.5-alpine
-#    container_name: redis
-#    ports:
-#      - "6379:6379"
-#    command: ["redis-server", "--appendonly", "yes"]
+  redis:
+    image: redis:4.0.5-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes"]
