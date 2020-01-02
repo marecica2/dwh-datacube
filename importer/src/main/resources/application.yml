@@ -45,8 +45,7 @@ spring:
   profiles: integration-test
   datasource:
     url: jdbc:postgresql://localhost:30002/dwh-test
-    username: dwh-test
-    password: dwh-test
+    username: postgres
     hikari:
       minimum-idle: 5
       maximum-pool-size: 10
