@@ -15,7 +15,7 @@ if ! [[ -x "$(command -v docker-compose)" ]]; then
 fi
 
 DOCKER="docker"
-COMPOSE="docker-compose -f docker-compose.yml"
+COMPOSE="docker-compose -f docker-compose.yml -f docker-compose.local.yml"
 YARN_BIN="/usr/bin/yarn"
 
 function quit() {
