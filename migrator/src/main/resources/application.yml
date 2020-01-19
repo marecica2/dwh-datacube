@@ -16,5 +16,4 @@ spring:
   profiles: integration-test
   datasource:
     url: jdbc:postgresql://${PG_TEST_HOST}:${PG_TEST_PORT}/${PG_TEST_DATABASE}
-    username: dwh-test
-    password: dwh-test
+    username: postgres
