@@ -8,9 +8,8 @@ spring:
 spring:
   profiles: integration-test
   datasource:
-    url: jdbc:postgresql://db-test:5432/dwh-test
-    username: dwh-test
-    password: dwh-test
+    url: jdbc:postgresql://${PG_TEST_HOST}:${PG_TEST_PORT}/${PG_TEST_DATABASE}
+    username: postgres
     hikari:
       minimum-idle: 5
       maximum-pool-size: 10

@@ -18,9 +18,10 @@ before_install:
 
 script:
   - echo "hello"
+  - docker run -it --env-file .env.ci --network host dwh_common mvn install -Dspring.profiles.active=integration-test
 
-deploy:
-  provider: script
-  script: bash ./deploy.sh
-  on:
-    branch: master
+#deploy:
+#  provider: script
+#  script: bash ./deploy.sh
+#  on:
+#    branch: master
