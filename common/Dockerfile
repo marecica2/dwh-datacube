@@ -8,4 +8,4 @@ COPY common/pom.xml .
 RUN mvn dependency:go-offline
 
 COPY common/src ./src
-CMD ["mvn", "install"]
+CMD ["mvn", "install", "-B", "-Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn"]
