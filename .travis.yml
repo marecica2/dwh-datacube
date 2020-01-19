@@ -4,33 +4,17 @@ services:
 env:
   global:
     - SHA=$(git rev-parse HEAD)
-    - CLOUDSDK_CORE_DISABLE_PROMPTS=1 #deactivate prompts in gcloud
 before_install:
-  # to encrypt service-account credentials locally
-  # docker run -it -v $(pwd):/app ruby:2.3 sh
-  # gem install travis
-  # travis login --pro
-  # travis encrypt-file service-account.json -r marecica2/multi-docker --com
-  - docker build -t marecica2/common -f ./common/Dockerfile.dev ./common
+  - sudo service postgresql stop
+  - docker-compose -f docker-compose.yml up -d --remove-orphans --build
+  - docker ps
+  - docker run -it --env-file .env.ci dwh_migrator mvn exec:java -Dspring.profiles.active=integration-test
 
 script:
-  - docker run marecica2/react-test npm test -- --coverage
+  - echo "hello"
 
 deploy:
   provider: script
   script: bash ./deploy.sh
   on:
     branch: master
-
-#deploy:
-#  provider: elasticbeanstalk
-#  region: us-west-1
-#  app: multi-docker
-#  env: MultiDocker-env
-#  bucket_name: elasticbeanstalk-us-west-1-306476627547
-#  bucket_path: docker-multi
-#  on:
-#    branch: master
-#  access_key_id: $AWS_ACCESS_KEY
-#  secret_access_key:
-#    secure: $AWS_SECRET_KEY
