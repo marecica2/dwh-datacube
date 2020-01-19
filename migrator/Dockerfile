@@ -3,7 +3,7 @@ WORKDIR "/dwh"
 COPY .git ./.git
 
 WORKDIR "/dwh/build"
-
+RUN cat /etc/hosts
 COPY migrator/pom.xml .
 RUN mvn dependency:go-offline
 
