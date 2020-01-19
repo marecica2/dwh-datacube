@@ -9,4 +9,3 @@ RUN mvn dependency:go-offline
 
 COPY migrator/src ./src
 RUN mvn package -DskipTests
-CMD ["mvn", "exec:java"]
