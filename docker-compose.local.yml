@@ -1,17 +1,5 @@
-version: '3.1'
+version: '3.7'
 services:
-  db:
-    image: postgres:10.3
-    container_name: db
-    volumes:
-      - ./.db/pg.conf:/etc/postgresql/postgresql.conf
-      - ./.db/seeds:/.db/seeds
-    ports:
-      - 30001:5432
-    environment:
-      POSTGRES_DB: dwh-dev
-      POSTGRES_USER: dwh-dev
-      POSTGRES_PASSWORD: dwh-dev
   proxy:
     image: nginx:alpine
     container_name: proxy

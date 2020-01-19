@@ -4,10 +4,6 @@ set -euo pipefail
 shopt -s expand_aliases
 source compose.spec
 
-if [[ ! -f .env ]]; then
-  echo "You don't have .env file, let me try to create one..."
-  cp .env.sample .env
-fi
 
 if ! [[ -x "$(command -v docker-compose)" ]]; then
   echo "Please install Docker and then fire the script again"

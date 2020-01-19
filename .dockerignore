@@ -1,8 +1,6 @@
 
 /target/**
+**/target/**
 
-# Ignore unnecessary files inside allowed directories
-**/*~
-**/*.log
-**/*.gz
-**/t
+/node_modules/**
+**/node_modules/**

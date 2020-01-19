@@ -109,14 +109,14 @@ public class ExcelWriter<Fact> implements DataWriter<Fact> {
     private void initStyles() {
         Font defaultFont = workBook.createFont();
         defaultFont.setFontHeightInPoints((short) 16);
-        defaultFont.setFontName("Arial");
+        //defaultFont.setFontName("Arial");
         defaultFont.setColor(IndexedColors.BLACK.getIndex());
         defaultFont.setBold(false);
         defaultFont.setItalic(false);
 
         Font boldFont = workBook.createFont();
         boldFont.setFontHeightInPoints((short) 14);
-        boldFont.setFontName("Arial");
+        //boldFont.setFontName("Arial");
         boldFont.setColor(IndexedColors.BLACK.getIndex());
         boldFont.setBold(true);
         boldFont.setItalic(false);

@@ -8,7 +8,7 @@ spring:
 spring:
   profiles: integration-test
   datasource:
-    url: jdbc:postgresql://localhost:30002/dwh-test
+    url: jdbc:postgresql://db-test:5432/dwh-test
     username: dwh-test
     password: dwh-test
     hikari:
