@@ -8,7 +8,7 @@ before_install:
   - sudo service postgresql stop
   - docker -v
   - docker-compose -v
-  - cat etc/hosts
+  - cat /etc/hosts
   - docker-compose -f docker-compose.yml up -d --remove-orphans --build
   - docker ps
   - docker network ls
