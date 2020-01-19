@@ -41,5 +41,8 @@ services:
     depends_on:
       - db
       - db-test
+    links:
+      - db:db
+      - db-test:db-test
 volumes:
   mavenrepo:
