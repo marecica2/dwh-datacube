@@ -14,7 +14,7 @@ before_install:
   - docker ps
   - docker network ls
   - docker network inspect dwh_default
-  - docker run -it --env-file .env.ci dwh_migrator mvn exec:java -Dspring.profiles.active=integration-test
+  - docker run -it --env-file .env.ci --network host dwh_migrator mvn exec:java -Dspring.profiles.active=integration-test
 
 script:
   - echo "hello"
