@@ -6,7 +6,7 @@ env:
   global:
     - SHA=$(git rev-parse HEAD)
 before_install:
-  - psql -c 'create database dwh-test;' -U postgres
+  - psql -c 'create database dwhtest;' -U postgres
   - docker -v
   - docker-compose -v
   - cat /etc/hosts
