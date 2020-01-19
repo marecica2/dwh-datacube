@@ -6,8 +6,12 @@ env:
     - SHA=$(git rev-parse HEAD)
 before_install:
   - sudo service postgresql stop
+  - docker -v
+  - docker-compose -v
   - docker-compose -f docker-compose.yml up -d --remove-orphans --build
   - docker ps
+  - docker network ls
+  - docker network inspect dwh_default
   - docker run -it --env-file .env.ci dwh_migrator mvn exec:java -Dspring.profiles.active=integration-test
 
 script:
