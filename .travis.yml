@@ -5,7 +5,9 @@ env:
   global:
     - SHA=$(git rev-parse HEAD)
 before_install:
-  - docker-compose -f docker-compose.yml --remove-orphans --build
+  - sudo service postgresql stop
+  - docker-compose -f docker-compose.yml up -d --remove-orphans --build
+  - docker ps
   - docker run -it --env-file .env.ci dwh_migrator mvn exec:java -Dspring.profiles.active=integration-test
 
 script:
