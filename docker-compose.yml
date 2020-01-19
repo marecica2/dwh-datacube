@@ -37,11 +37,5 @@ services:
       - type: volume
         source: mavenrepo
         target: /root/.m2
-    depends_on:
-      - db
-      - db-test
-    links:
-      - db:db
-      - db-test:db-test
 volumes:
   mavenrepo:
