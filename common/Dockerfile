@@ -1,4 +1,4 @@
-FROM maven:3.6.1-jdk-8-slim as target
+FROM maven:3.6.1-jdk-8 as target
 WORKDIR "/dwh"
 COPY .git ./.git
 
