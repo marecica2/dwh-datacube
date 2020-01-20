@@ -1,11 +1,10 @@
-FROM maven:3.6.0-jdk-8-slim
+FROM maven:3.6.1-jdk-8-slim
 WORKDIR "/dwh"
 COPY .git ./.git
 
 WORKDIR "/dwh/build"
-RUN cat /etc/hosts
 COPY migrator/pom.xml .
-RUN mvn dependency:go-offline
+RUN mvn -ntp dependency:go-offline
 
 COPY migrator/src ./src
-RUN mvn package -DskipTests -Dorg.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+RUN mvn -ntp package -DskipTests
