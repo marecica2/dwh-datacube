@@ -5,8 +5,8 @@ COPY pom.xml .
 
 WORKDIR "/dwh/build"
 
-COPY common/pom.xml .
+COPY importer/pom.xml .
 RUN mvn -ntp dependency:go-offline
 
-COPY common/src ./src
+COPY importer/src ./src
 CMD ["mvn", "-ntp ", "install"]

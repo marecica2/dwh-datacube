@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:postgresql://${PG_HOST}:${PG_PORT}/${PG_DATABASE}
-    username: dwh-dev
-    password: dwh-dev
+    username: ${PG_USER}
+    password: ${PG_PASSWORD}
   jpa:
     properties:
       hibernate:
@@ -11,9 +11,12 @@ spring:
   flyway:
     baseline-version: 1
     enabled: false
+
 ---
+
 spring:
   profiles: integration-test
   datasource:
     url: jdbc:postgresql://${PG_TEST_HOST}:${PG_TEST_PORT}/${PG_TEST_DATABASE}
-    username: postgres
+    username: ${PG_TEST_USER}
+    password: ${PG_TEST_PASSWORD}

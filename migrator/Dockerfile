@@ -1,6 +1,7 @@
 FROM maven:3.6.1-jdk-8
 WORKDIR "/dwh"
 COPY .git ./.git
+COPY pom.xml .
 
 WORKDIR "/dwh/build"
 COPY migrator/pom.xml .

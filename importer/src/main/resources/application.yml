@@ -3,9 +3,9 @@ spring:
   data:
     redis.repositories.enabled: false
   datasource:
-    url: jdbc:postgresql://localhost:30001/dwh-dev
-    username: dwh-dev
-    password: dwh-dev
+    url: jdbc:postgresql://${PG_HOST}:${PG_PORT}/${PG_DATABASE}
+    username: ${PG_USER}
+    password: ${PG_PASSWORD}
     hikari:
       minimum-idle: 5
       maximum-pool-size: 12
@@ -44,8 +44,9 @@ spring:
 spring:
   profiles: integration-test
   datasource:
-    url: jdbc:postgresql://localhost:30002/dwh-test
-    username: postgres
+    url: jdbc:postgresql://${PG_TEST_HOST}:${PG_TEST_PORT}/${PG_TEST_DATABASE}
+    username: ${PG_TEST_USER}
+    password: ${PG_TEST_PASSWORD}
     hikari:
       minimum-idle: 5
       maximum-pool-size: 10

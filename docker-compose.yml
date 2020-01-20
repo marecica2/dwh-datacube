@@ -1,34 +1,5 @@
 version: '3.7'
 services:
-#  db:
-#    image: postgres:10.3
-#    container_name: db
-#    volumes:
-#      - ./.db/pg.conf:/etc/postgresql/postgresql.conf
-#      - ./.db/seeds:/.db/seeds
-#    ports:
-#      - 30001:5432
-#    environment:
-#      POSTGRES_DB: dwh-dev
-#      POSTGRES_USER: dwh-dev
-#      POSTGRES_PASSWORD: dwh-dev
-#      DB_PORT: 5433
-#  db-test:
-#    image: postgres:10.3
-#    container_name: db-test
-#    ports:
-#    - 30002:5433
-#    environment:
-#      POSTGRES_DB: dwh-test
-#      POSTGRES_USER: dwh-test
-#      POSTGRES_PASSWORD: dwh-test
-#      DB_PORT: 5433
-#  redis:
-#    image: redis:4.0.5-alpine
-#    container_name: redis
-#    ports:
-#      - "6379:6379"
-#    command: ["redis-server", "--appendonly", "yes"]
   migrator:
     build:
       dockerfile: migrator/Dockerfile
@@ -47,5 +18,15 @@ services:
         target: /root/.m2
     depends_on:
       - migrator
+  importer:
+    build:
+      dockerfile: importer/Dockerfile
+      context: .
+    volumes:
+      - type: volume
+        source: mavenrepo
+        target: /root/.m2
+    depends_on:
+      - common
 volumes:
   mavenrepo:

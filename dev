@@ -11,8 +11,11 @@ if ! [[ -x "$(command -v docker-compose)" ]]; then
 fi
 
 DOCKER="docker"
-COMPOSE="docker-compose -f docker-compose.yml -f docker-compose.local.yml"
+COMPOSE="docker-compose -f docker-compose.local.yml"
 YARN_BIN="/usr/bin/yarn"
+
+
+export $(cat .env.local | xargs)
 
 function quit() {
   echo >&2 "$@"
@@ -57,8 +60,7 @@ function appStart() {
 
 function appStop() {
   info "== Shutting down currently running Stack ... =="
-  ${COMPOSE} stop
-  # ps aux | grep '[n]ode' | (grep -i $(pwd) || true) | awk '{print $2}' | xargs kill -15
+  env $(cat .env.local) docker-compose -f docker-compose.local.yml stop
 }
 
 function stackStart() {
@@ -66,8 +68,7 @@ function stackStart() {
 
   info "== Starting Stack ... =="
   info "== Starting infrastructure services =="
-  upService ${DOCKER_SERVICES}
-  sleep 4
+  env $(cat .env.local) docker-compose -f docker-compose.local.yml  up -d
 
   info "== Checking running services =="
   ${COMPOSE} ps

@@ -1,6 +1,8 @@
 sudo: required
+language: minimal
 services:
   - postgresql
+  - redis-server
   - docker
 env:
   global:
@@ -17,8 +19,8 @@ before_install:
   - docker run -it --env-file .env.ci --network host dwh_migrator mvn exec:java -Dspring.profiles.active=integration-test
 
 script:
-  - echo "hello"
   - docker run -it --env-file .env.ci --network host dwh_common mvn install -Dspring.profiles.active=integration-test
+  - docker run -it --env-file .env.ci --network host dwh_importer mvn install -Dspring.profiles.active=integration-test
 
 #deploy:
 #  provider: script

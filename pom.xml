@@ -4,12 +4,13 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.bmsource</groupId>
+  <groupId>org.bmsource.dwh</groupId>
   <artifactId>dwh</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>dwh</name>
   <description>Data warehouse</description>
+
   <modules>
     <module>common</module>
     <module>importer</module>
@@ -31,81 +32,4 @@
     <junit-jupiter.version>5.3.2</junit-jupiter.version>
     <spring.profiles.active>dev</spring.profiles.active>
   </properties>
-
-  <profiles>
-    <profile>
-      <id>dev</id>
-      <activation>
-        <property>
-          <name>spring.profiles.active</name>
-          <value>dev</value>
-        </property>
-      </activation>
-    </profile>
-    <profile>
-      <id>test</id>
-      <activation>
-        <property>
-          <name>spring.profiles.active</name>
-          <value>unit-test</value>
-        </property>
-      </activation>
-    </profile>
-  </profiles>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <argLine>-Dspring.profiles.active=${spring.profiles.active}</argLine>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-failsafe-plugin</artifactId>
-        <version>2.22.0</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>integration-test</goal>
-              <goal>verify</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.flywaydb</groupId>
-        <artifactId>flyway-maven-plugin</artifactId>
-        <version>5.1.4</version>
-      </plugin>
-    </plugins>
-  </build>
-
-<!--  <dependencyManagement>-->
-<!--    <dependencies>-->
-<!--      <dependency>-->
-<!--        <groupId>org.springframework.cloud</groupId>-->
-<!--        <artifactId>spring-cloud-dependencies</artifactId>-->
-<!--        <version>${spring-cloud.version}</version>-->
-<!--        <type>pom</type>-->
-<!--        <scope>import</scope>-->
-<!--      </dependency>-->
-<!--    </dependencies>-->
-<!--  </dependencyManagement>-->
-
-<!--  <repositories>-->
-<!--    <repository>-->
-<!--      <id>spring-milestones</id>-->
-<!--      <name>Spring Milestones</name>-->
-<!--      <url>https://repo.spring.io/milestone</url>-->
-<!--      <snapshots>-->
-<!--        <enabled>false</enabled>-->
-<!--      </snapshots>-->
-<!--    </repository>-->
-<!--    <repository>-->
-<!--      <id>jitpack.io</id>-->
-<!--      <url>https://jitpack.io</url>-->
-<!--    </repository>-->
-<!--  </repositories>-->
 </project>
