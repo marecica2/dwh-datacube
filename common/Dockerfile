@@ -9,4 +9,4 @@ COPY common/pom.xml .
 RUN mvn -ntp dependency:go-offline
 
 COPY common/src ./src
-CMD ["mvn", "-ntp ", "install"]
+RUN mvn -ntp install

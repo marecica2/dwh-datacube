@@ -9,8 +9,8 @@ env:
     - SHA=$(git rev-parse HEAD)
 before_install:
   - export $(cat .env.ci | xargs)
-    printenv
-  - psql -c 'create database ${PG_TEST_DATABASE};' -U postgres
+  - env
+  - psql -c 'create database dwhtest;' -U postgres
   - docker-compose -f docker-compose.yml up -d --remove-orphans --build
   - docker ps
   - docker network ls
