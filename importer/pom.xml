@@ -16,6 +16,8 @@
       <groupId>org.bmsource.dwh</groupId>
       <artifactId>common</artifactId>
       <version>${project.version}</version>
+      <scope>compile</scope>
+      <optional>true</optional>
     </dependency>
 
     <dependency>
