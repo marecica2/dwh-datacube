@@ -8,10 +8,9 @@ env:
   global:
     - SHA=$(git rev-parse HEAD)
 before_install:
-  - psql -c 'create database dwhtest;' -U postgres
-  - docker -v
-  - docker-compose -v
-  - cat /etc/hosts
+  - export $(cat .env.ci | xargs)
+    printenv
+  - psql -c 'create database ${PG_TEST_DATABASE};' -U postgres
   - docker-compose -f docker-compose.yml up -d --remove-orphans --build
   - docker ps
   - docker network ls
@@ -20,7 +19,7 @@ before_install:
 
 script:
   - docker run -it --env-file .env.ci --network host dwh_common mvn install -Dspring.profiles.active=integration-test
-  - docker run -it --env-file .env.ci --network host dwh_importer mvn install -Dspring.profiles.active=integration-test
+  #- docker run -it --env-file .env.ci --network host dwh_importer mvn install -Dspring.profiles.active=integration-test
 
 #deploy:
 #  provider: script

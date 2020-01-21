@@ -16,6 +16,7 @@ YARN_BIN="/usr/bin/yarn"
 
 
 export $(cat .env.local | xargs)
+printenv
 
 function quit() {
   echo >&2 "$@"
