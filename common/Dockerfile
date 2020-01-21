@@ -10,4 +10,4 @@ RUN mvn -ntp dependency:go-offline
 
 COPY common/src ./src
 RUN mvn -ntp package -DskipTests
-RUN ["mvn", "-ntp ", "install"]
+CMD ["mvn", "-ntp ", "install"]
