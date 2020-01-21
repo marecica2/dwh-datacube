@@ -5,6 +5,8 @@ COPY pom.xml .
 
 WORKDIR "/dwh/build"
 
+RUN tree -d /root/.m2/org/bmsource/
+
 COPY importer/pom.xml .
 RUN mvn -ntp dependency:go-offline
 
