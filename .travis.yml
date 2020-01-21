@@ -7,18 +7,16 @@ services:
 env:
   global:
     - SHA=$(git rev-parse HEAD)
-before_install:
+install:
   - export $(cat .env.ci | xargs)
   - env
   - psql -c 'create database dwhtest;' -U postgres
   - mvn -ntp install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
   - mvn -ntp exec:java -pl migrator -Dspring.profiles.active=integration-test
-
 script:
   - mvn test
-
-#deploy:
-#  provider: script
-#  script: bash ./deploy.sh
-#  on:
-#    branch: master
+deploy:
+  provider: script
+  script: bash ./deploy.sh
+  on:
+    branch: master
