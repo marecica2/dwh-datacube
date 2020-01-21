@@ -1,5 +1,5 @@
 sudo: required
-language: generic
+language: java
 services:
   - postgresql
   - redis-server
@@ -11,15 +11,10 @@ before_install:
   - export $(cat .env.ci | xargs)
   - env
   - psql -c 'create database dwhtest;' -U postgres
-  - docker-compose -f docker-compose.yml up -d --remove-orphans --build
-  - docker ps
-  - docker network ls
-  - docker network inspect dwh_default
-  - docker run -it --env-file .env.ci --network host dwh_migrator mvn exec:java -Dspring.profiles.active=integration-test
+  - mvn exec:java -pl migrator -Dspring.profiles.active=integration-test
 
 script:
-  - docker run -it --env-file .env.ci --network host dwh_common mvn install -Dspring.profiles.active=integration-test
-  #- docker run -it --env-file .env.ci --network host dwh_importer mvn install -Dspring.profiles.active=integration-test
+  - mvn test
 
 #deploy:
 #  provider: script
