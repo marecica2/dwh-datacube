@@ -7,6 +7,9 @@ services:
 env:
   global:
     - SHA=$(git rev-parse HEAD)
+cache:
+  directories:
+    - "$HOME/.cache"
 install:
   - export $(cat .env.ci | xargs)
   - env
@@ -17,6 +20,14 @@ script:
   - mvn test
 deploy:
   provider: script
-  script: bash ./deploy.sh
-  on:
-    branch: master
+  script: "cp .mvn/settings.xml $HOME/.m2/settings.xml && mvn deploy"
+  skip_cleanup: true
+#  on:
+#    tags: true
+
+#deploy:
+#  provider: script
+#  script: bash ./deploy.sh
+#  on:
+#    branch: master
+
