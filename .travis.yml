@@ -20,7 +20,7 @@ script:
   - mvn test
 deploy:
   provider: script
-  script: "cp .mvn/settings.xml $HOME/.m2/settings.xml && mvn deploy"
+  script: "cp ./.mvn/settings.xml $HOME/.m2/settings.xml && mvn deploy"
   skip_cleanup: true
   on:
     branch: develop
