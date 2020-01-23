@@ -4,29 +4,15 @@ services:
     build:
       dockerfile: migrator/Dockerfile
       context: .
-    volumes:
-      - type: volume
-        source: mavenrepo
-        target: /root/.m2
   common:
     build:
       dockerfile: common/Dockerfile
       context: .
-    volumes:
-      - type: volume
-        source: mavenrepo
-        target: /root/.m2
     depends_on:
       - migrator
   importer:
     build:
       dockerfile: importer/Dockerfile
       context: .
-    volumes:
-      - type: volume
-        source: mavenrepo
-        target: /root/.m2
     depends_on:
       - common
-volumes:
-  mavenrepo:
