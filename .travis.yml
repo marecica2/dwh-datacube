@@ -19,7 +19,7 @@ install:
   - mvn -ntp install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
   - mvn -ntp exec:java -pl migrator -Dspring.profiles.active=integration-test
 script:
-  - mvn test
+  - mvn -version
 deploy:
   provider: script
   script: bash ./deploy.sh
