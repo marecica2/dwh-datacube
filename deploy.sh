@@ -1,5 +1,5 @@
 cp settings.xml $HOME/.m2/settings.xml
-mvn -ntp deploy
+mvn -ntp deploy -DskipTests
 
 docker build -t marecica2/dwh-migrator -t marecica2/dwh-migrator:$SHA -f ./migrator/Dockerfile ./migrator
 #docker build -t marecica2/dwh-importer -t marecica2/dwh-migrator:$SHA -f ./importer/Dockerfile ./importer
