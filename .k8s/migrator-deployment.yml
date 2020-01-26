@@ -12,6 +12,7 @@ spec:
       labels:
         component: migrator
     spec:
+      restartPolicy: never
       initContainers:
         - name: pg-ready
           image: postgres:10.3
