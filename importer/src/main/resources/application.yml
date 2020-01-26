@@ -24,8 +24,8 @@ spring:
     multipart:
       enabled: false
   redis:
-    host: localhost
-    port: 6379
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
 
 ---
 
@@ -48,5 +48,5 @@ spring:
     username: ${PG_TEST_USER}
     password: ${PG_TEST_PASSWORD}
     hikari:
-      minimum-idle: 5
+      minimum-idle: 2
       maximum-pool-size: 10

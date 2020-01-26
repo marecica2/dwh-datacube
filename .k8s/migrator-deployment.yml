@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: migrator-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: migrator
+  template:
+    metadata:
+      labels:
+        component: migrator
+    spec:
+      initContainers:
+        - name: pg-ready
+          image: postgres:10.3
+          command: ['sh', '-c',  'until pg_isready -h postgres-cluster-ip-service -p 5432;  do echo waiting for database; sleep 2; done;']
+      containers:
+        - name: migrator
+          image: marecica2/dwh-migrator
+          env:
+            - name: PG_HOST
+              value: postgres-cluster-ip-service
+            - name: PG_PORT
+              value: '5432'
+            - name: PG_DATABASE
+              value: postgres
+            - name: PG_USER
+              value: postgres
+            - name: PG_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pgpassword
+                  key: PG_PASSWORD

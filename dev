@@ -97,6 +97,24 @@ function migrationsTest() {
   success "== Done =="
 }
 
+function kubeStart() {
+  export SHA=$(git rev-parse HEAD)
+
+#  mvn clean install -DskipTests
+#
+#  docker build -t marecica2/dwh-react-app -t marecica2/dwh-react-app:$SHA -f ./react-app/Dockerfile ./react-app
+#  docker build -t marecica2/dwh-migrator -t marecica2/dwh-migrator:$SHA -f ./migrator/Dockerfile ./migrator
+#  docker build -t marecica2/dwh-importer -t marecica2/dwh-importer:$SHA -f ./importer/Dockerfile ./importer
+
+  kubectl apply -f .k8s
+
+  kubectl set image deployments/dwh-react-app-deployment server=marecica2/dwh-react-app
+  kubectl set image deployments/migrator-deployment server=marecica2/dwh-migrator
+  kubectl set image deployments/importer-deployment server=marecica2/dwh-importer
+
+  success "== Done =="
+}
+
 
 if [[ $# -gt 0 ]]; then
 
@@ -109,6 +127,9 @@ if [[ $# -gt 0 ]]; then
 
   elif [[ "$1" == "stack-stop" ]]; then
     appStop
+
+  elif [[ "$1" == "k8s-start" ]]; then
+    kubeStart
 
   elif [[ "$1" == "stack-clear" ]]; then
     echo "Cleaning docker containers..."
