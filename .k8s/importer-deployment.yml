@@ -12,7 +12,7 @@ spec:
       labels:
         component: importer
     spec:
-      restartPolicy: never
+      restartPolicy: Never
       initContainers:
         - name: pg-ready
           image: postgres:10.3
