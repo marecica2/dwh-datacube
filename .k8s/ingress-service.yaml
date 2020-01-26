@@ -9,11 +9,11 @@ spec:
   rules:
     - http:
         paths:
+          - path: /api/?(.*)
+            backend:
+              serviceName: importer-cluster-ip-service
+              servicePort: 3001
           - path: /?(.*)
             backend:
               serviceName: react-app-ip-service
               servicePort: 3000
-          - path: /api/?(.*)
-            backend:
-              serviceName: importer-ip-service
-              servicePort: 3001
