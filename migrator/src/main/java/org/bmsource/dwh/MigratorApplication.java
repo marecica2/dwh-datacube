@@ -19,6 +19,7 @@ public class MigratorApplication implements CommandLineRunner {
         .getLogger(MigratorApplication.class);
 
     public static void main(String[] args) {
+        logger.info("Hello");
         logger.info("Migrating schemas");
         SpringApplication.run(MigratorApplication.class, args);
         logger.info("Migration completed");

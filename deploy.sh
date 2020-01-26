@@ -19,5 +19,5 @@ docker push marecica2/dwh-react-app:$SHA
 kubectl apply -f .k8s
 
 kubectl set image deployments/react-app-deployment client=marecica2/dwh-react-app:$SHA
-kubectl set image deployments/migrator-job migrator=marecica2/dwh-migrator:$SHA
+kubectl set image deployments/migrator-deployment migrator=marecica2/dwh-migrator:$SHA
 kubectl set image deployments/importer-deployment importer=marecica2/dwh-importer:$SHA
