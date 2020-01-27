@@ -16,7 +16,7 @@ install:
   - psql -c 'drop database if exists dwhtest;' -U postgres
   - psql -c 'create database dwhtest;' -U postgres
   - mvn -ntp clean install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-  - java -Dspring.profiles.active=integration-test -jar /migrator/application.jar
+  - java -Dspring.profiles.active=integration-test -jar /migrator/target/application.jar
 script:
   - mvn -version
 deploy:
