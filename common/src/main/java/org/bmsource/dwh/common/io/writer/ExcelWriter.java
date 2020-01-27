@@ -83,6 +83,8 @@ public class ExcelWriter<Fact> implements DataWriter<Fact> {
 
     @Override
     public void close() throws IOException {
+        System.out.println("AAAA");
+        System.out.println(sheet);
         sheet.trackAllColumnsForAutoSizing();
         for (int i = 0; i < columns; i++) {
             sheet.autoSizeColumn(i);
