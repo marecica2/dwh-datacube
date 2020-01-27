@@ -73,7 +73,7 @@ function SettingsPage() {
             { name: 'expedite', title: 'Expedite' },
             { name: 'serviceLevelDownType1', title: 'Service Level Down Type 1' },
             { name: 'serviceLevelDownType2', title: 'Service Level Down Type 2' },
-            { name: 'discountGroup', title: 'Service Type Group' },
+            { name: 'standardServiceTypeGroup', title: 'Service Type Group' },
           ]}
           crudApi={taxonomyApi}
           editable={false}
