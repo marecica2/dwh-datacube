@@ -15,10 +15,14 @@ install:
   - export $(cat .env.ci | xargs)
   - psql -c 'drop database if exists dwhtest;' -U postgres
   - psql -c 'create database dwhtest;' -U postgres
-  - mvn -ntp clean install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-  - java -Dspring.profiles.active=integration-test -jar /migrator/target/application.jar
+  - mvn -ntp clean package -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+  - pwd
+  - ls -la
+  - java -Dspring.profiles.active=integration-test -jar ./migrator/target/application.jar
+  - echo "aaa"
 script:
-  - mvn -version
+  - echo "bbb"
+  - mvn -ntp test
 deploy:
   provider: script
   script: bash ./deploy.sh
