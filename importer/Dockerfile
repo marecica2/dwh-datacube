@@ -1,4 +1,4 @@
-FROM openjdk:8-jre-slim
+FROM openjdk:8-jre
 ENV profile=default
 COPY target/dependency-jars /run/dependency-jars
 ADD target/application.jar /run/application.jar

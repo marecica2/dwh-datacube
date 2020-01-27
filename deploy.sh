@@ -1,5 +1,5 @@
 # #cp settings.xml $HOME/.m2/settings.xml
-mvn -ntp clean install -DskipTests
+mvn -ntp install -DskipTests
 
 export SHA=$(git rev-parse HEAD)
 
