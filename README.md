@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/marecica2/dwh.svg?branch=develop)](https://travis-ci.com/marecica2/dwh)
+# DWH - Data warehouse [![Build Status](https://travis-ci.com/marecica2/dwh.svg?branch=develop)](https://travis-ci.com/marecica2/dwh)
 
 Showcase app for following stack dealing with multi-tenancy, 
 datawarehouse solution with microservice architecture
@@ -10,7 +10,7 @@ datawarehouse solution with microservice architecture
 - Kubernetes
 - Travis 
 
-# Local development
+### Local development
 ```bash
 # start infrastructure (Redis, Postgres)
 ./dev stack-start 
