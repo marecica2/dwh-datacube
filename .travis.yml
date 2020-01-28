@@ -23,12 +23,12 @@ install:
 script:
   - echo "bbb"
   - mvn -ntp test
-deploy:
-  provider: script
-  script: bash ./deploy.sh
-  skip_cleanup: true
-  on:
-    branch: develop
+#deploy:
+#  provider: script
+#  script: bash ./deploy.sh
+#  skip_cleanup: true
+#  on:
+#    branch: develop
 #    tags: true
 
 #deploy:
