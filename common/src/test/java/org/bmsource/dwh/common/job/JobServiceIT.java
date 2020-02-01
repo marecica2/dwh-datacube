@@ -75,8 +75,6 @@ public class JobServiceIT {
 
     @AfterAll
     public void dropTables() {
-        template.execute("DROP TABLE IF EXISTS test_raw_fact;");
-        template.execute("DROP TABLE IF EXISTS test_fact;");
     }
 
     @Test
