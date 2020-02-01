@@ -46,7 +46,7 @@ public class MasterDataController {
         ExcelReaderHandler<ZipCodeLocation> handler = new ExcelReaderHandler<ZipCodeLocation>() {
             @Override
             public void onStart() {
-                zipCodeRepository.deleteAll();
+                zipCodeRepository.delete();
             }
 
             @Override
@@ -80,7 +80,7 @@ public class MasterDataController {
         ExcelReaderHandler<ServiceTypeMapping> handler = new ExcelReaderHandler<ServiceTypeMapping>() {
             @Override
             public void onStart() {
-                serviceTypeMappingRepository.deleteAll();
+                serviceTypeMappingRepository.delete();
             }
 
             @Override
@@ -113,7 +113,7 @@ public class MasterDataController {
         ExcelReaderHandler<Taxonomy> handler = new ExcelReaderHandler<Taxonomy>() {
             @Override
             public void onStart() {
-                taxonomyRepository.deleteAll();
+                taxonomyRepository.delete();
             }
 
             @Override
@@ -147,7 +147,7 @@ public class MasterDataController {
         ExcelReaderHandler<RateCard> handler = new ExcelReaderHandler<RateCard>() {
             @Override
             public void onStart() {
-                rateCardRepository.deleteAll();
+                rateCardRepository.delete();
             }
 
             @Override
