@@ -33,7 +33,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     TaxonomyRepository taxonomyRepository;
 
     @PostConstruct
-    void init() {
+    public void init() {
         Iterable<ServiceTypeMapping> serviceTypes = serviceTypeMappingRepository.findAll();
         Iterable<Taxonomy> taxonomy = taxonomyRepository.findAll();
 

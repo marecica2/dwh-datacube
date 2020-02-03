@@ -82,6 +82,7 @@ public class ImporterConfiguration {
                 logger.info("Cleaning previous imported state");
                 factRepository.deleteAll();
                 rawFactRepository.deleteAll();
+                masterDataService.init();
                 return 1;
             })
             .build();

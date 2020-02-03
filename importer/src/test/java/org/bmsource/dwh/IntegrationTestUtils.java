@@ -31,6 +31,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -53,31 +54,32 @@ public class IntegrationTestUtils {
     public void hasTaxonomy(String... optFileName) throws Exception {
         File file = getResource("taxonomy.xlsx", optFileName);
         importExcel(FileUtils.openInputStream(file), taxonomyRepository, Taxonomy.class,
-            MasterDataNormalizer.normalizeTaxonomy);
+            MasterDataNormalizer.normalizeTaxonomy, taxonomyRepository::delete);
     }
 
     public void hasServiceTypeMapping(String... optFileName) throws Exception {
         File file = getResource("matrix.xlsx", optFileName);
         importExcel(FileUtils.openInputStream(file), serviceTypeMappingRepository, ServiceTypeMapping.class,
-            MasterDataNormalizer.normalizeServiceTypeMapping);
+            MasterDataNormalizer.normalizeServiceTypeMapping, serviceTypeMappingRepository::delete);
     }
 
     public void hasRateCards(String... optFileName) throws Exception {
         File file = getResource("standard_rate_card_small.xlsx", optFileName);
         importExcel(FileUtils.openInputStream(file), rateCardRepository, RateCard.class,
-            MasterDataNormalizer.normalizeRateCards);
+            MasterDataNormalizer.normalizeRateCards, rateCardRepository::delete);
     }
 
     private <Type, Repository extends CrudRepository<Type, ?>> void importExcel(
         InputStream inputStream,
         Repository repository,
         Class<Type> classType,
-        Function<Type, Type> transform
+        Function<Type, Type> transform,
+        Runnable deleteFn
     ) {
         ExcelReaderHandler<Type> handler = new ExcelReaderHandler<Type>() {
             @Override
             public void onStart() {
-                repository.deleteAll();
+                deleteFn.run();
             }
 
             @Override
