@@ -1,5 +1,6 @@
 package org.bmsource.dwh.common.job;
 
+import org.bmsource.dwh.common.appstate.AppStateConfiguration;
 import org.bmsource.dwh.common.appstate.AppStateService;
 import org.bmsource.dwh.common.appstate.EnableImportEvents;
 import org.bmsource.dwh.common.job.step.CleanUpTasklet;
@@ -24,10 +25,7 @@ import org.springframework.batch.support.transaction.ResourcelessTransactionMana
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.*;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 
 import javax.sql.DataSource;
@@ -41,6 +39,7 @@ import java.util.Map;
 @EnableBatchProcessing
 @EnableAutoConfiguration
 @ComponentScan
+@Import(AppStateConfiguration.class)
 public class JobConfiguration<RawFact, Fact> {
 
     private Logger logger = LoggerFactory.getLogger(JobConfiguration.class);

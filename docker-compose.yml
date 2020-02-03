@@ -4,7 +4,6 @@ services:
     image: postgres:10.3
     container_name: db
     volumes:
-      - ./.db/pg.conf:/etc/postgresql/postgresql.conf
       - ./.db/seeds:/.db/seeds
     ports:
       - ${PG_PORT}:5432
@@ -12,6 +11,14 @@ services:
       POSTGRES_DB: $PG_DATABASE
       POSTGRES_USER: $PG_USER
       POSTGRES_PASSWORD: $PG_PASSWORD
+    command:
+      - "postgres"
+      - "-c"
+      - "max_connections=100"
+      - "-c"
+      - "shared_buffers=256MB"
+      - "-c"
+      - "log_statement=all"
   db-test:
     image: postgres:10.3
     container_name: db-test

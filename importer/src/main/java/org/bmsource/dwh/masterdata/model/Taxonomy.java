@@ -1,14 +1,15 @@
 package org.bmsource.dwh.masterdata.model;
 
-import org.bmsource.dwh.common.BaseFact;
+import org.springframework.data.domain.Persistable;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.math.BigInteger;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "service_type_taxonomy")
-public class Taxonomy {
+public class Taxonomy implements Persistable<String> {
 
     @Id
     private String id;
@@ -27,6 +28,11 @@ public class Taxonomy {
 
     public String getId() {
         return id;
+    }
+
+    @Override
+    public boolean isNew() {
+        return true;
     }
 
     public void setId(String id) {

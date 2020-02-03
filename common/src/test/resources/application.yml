@@ -9,6 +9,11 @@ spring:
     hikari:
       minimum-idle: 5
       maximum-pool-size: 10
+  jpa:
+    properties:
+      hibernate:
+        physical_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+        jdbc.lob.non_contextual_creation: true
   batch:
     job:
       enabled: false

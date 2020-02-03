@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class JdbcJobRepository {
 
@@ -20,6 +22,9 @@ public class JdbcJobRepository {
             "  and bji.job_name = '"+ JobConstants.jobName +"' "+"\n" +
             "order by job_execution_id desc\n" +
             "limit 1";
-        return template.queryForObject(sql, Long.class, tenant + ":" + project);
+        List<Long> res = template.queryForList(sql, Long.class, tenant + ":" + project);
+        if(res.isEmpty())
+            return null;
+        return res.get(0);
     }
 }
