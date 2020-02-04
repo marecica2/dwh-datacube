@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ChartControllerIT {
 
-    private boolean printRest = true;
+    private boolean printRest = false;
     private String tenant = "000000-00000-00001";
     private String project = "1";
 
