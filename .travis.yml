@@ -30,8 +30,7 @@ jobs:
       script:
         - mvn -ntp install
         - bash <(curl -s https://codecov.io/bash) -F java
-    - stage: test-frontend
-      language: node_js
+    - language: node_js
       node_js:
         - 12
       before_script:
