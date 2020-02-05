@@ -44,7 +44,7 @@ jobs:
       script:
         - yarn test:coverage
       after_success:
-        bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f react-app/coverage/coverage-final.json -c -F react-app
+        bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f react-app/coverage/clover.xml -c -F react-app
     - stage: deployment
       before_deploy:
         - echo deploy
