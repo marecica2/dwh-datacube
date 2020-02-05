@@ -23,7 +23,7 @@ export default function Loader({ size = 70, variant = 'simple', height = 200 }) 
   );
   const wrapper = (
     <div>
-      <Box display="flex" justifyContent="center" alignItems="center" style={{ minHeight: `${height}px` }} >
+      <Box className="wrapper" display="flex" justifyContent="center" alignItems="center" style={{ minHeight: `${height}px` }} >
         {spinner}
       </Box>
     </div>
