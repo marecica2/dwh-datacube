@@ -45,5 +45,7 @@ jobs:
       after_success:
         bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f coverage/coverage-final.json -c -F react-app
     - stage: deployment
+      language: java
+      os: linux
       before_deploy:
         - echo hello
