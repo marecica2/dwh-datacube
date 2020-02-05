@@ -1,0 +1,20 @@
+coverage:
+  status:
+    project:
+      target: 90%
+      threshold: 5%
+    java:
+      flags: java
+      target: 70%
+    projectB:
+      target: 70%
+      flags: react-app
+flags:
+  java:
+    paths:
+      - common/src/main
+      - importer/src/main
+      - migrator/src/main
+  react-app:
+    paths:
+      - react-app/src
