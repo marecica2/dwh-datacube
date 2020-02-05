@@ -45,8 +45,7 @@ matrix:
         - java -Dspring.profiles.active=integration-test -jar ./migrator/target/application.jar
       script:
         - mvn install
-        - bash <(curl -s https://codecov.io/bash)
-        - bash <(curl -s https://codecov.io/bash) -cF javascript
+        - bash <(curl -s https://codecov.io/bash) -cF java
       #deploy:
       #  provider: script
       #  script: bash ./deploy.sh
