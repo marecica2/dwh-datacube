@@ -1,37 +1,20 @@
-sudo: required
-matrix:
+language: java
+os: linux
+env:
+  global:
+    - SHA=$(git rev-parse HEAD)
+    # deactivate prompts in gcloud
+    - CLOUDSDK_CORE_DISABLE_PROMPTS=1
+jobs:
   include:
     - language: java
       services:
         - postgresql
-        - redis-server
+        - redis
         - docker
-      env:
-        global:
-          - SHA=$(git rev-parse HEAD)
-          # deactivate prompts in gcloud
-          - CLOUDSDK_CORE_DISABLE_PROMPTS=1
       cache:
         directories:
           - "$HOME/.cache"
-      #before_install:
-      #  - openssl help
-      #  # decode encrypted service account key
-      #  - openssl aes-256-cbc -K $encrypted_0c35eebf403c_key -iv $encrypted_0c35eebf403c_iv -in service-account.json.enc -out service-account.json -d
-      #  # download gcloud
-      #  - curl https://sdk.cloud.google.com | bash > /dev/null;
-      #  # setup gcloud
-      #  - source $HOME/google-cloud-sdk/path.bash.inc
-      #  # install kubectl to travis
-      #  - gcloud components update kubectl
-      #  # login
-      #  - gcloud auth activate-service-account --key-file service-account.json
-      #  # set project
-      #  - gcloud config set project dwh-project-266108
-      #  # set region
-      #  - gcloud config set compute/zone europe-west2-a
-      #  # set cluster
-      #  - gcloud container clusters get-credentials dwh-cluster-1
       install:
         # load ci env variables
         - export $(cat .env.ci | xargs)
@@ -44,16 +27,8 @@ matrix:
         - java -Dspring.profiles.active=integration-test -jar ./migrator/target/application.jar
       script:
         - mvn -ntp install
-        - bash <(curl -s https://codecov.io/bash) -cF java
-      #deploy:
-      #  provider: script
-      #  script: bash ./deploy.sh
-      #  skip_cleanup: true
-      #  on:
-      #    branch: develop
+        - bash <(curl -s https://codecov.io/bash)
     - language: node_js
-      node_js:
-        - "node"
       before_script:
         - cd react-app
         - yarn install
@@ -63,4 +38,27 @@ matrix:
       script:
         - yarn test:coverage
       after_success:
-        bash <(curl -s https://codecov.io/bash) -cF react-app
+        bash <(curl -s https://codecov.io/bash)
+before_deploy:
+  - openssl help
+  # decode encrypted service account key
+  - openssl aes-256-cbc -K $encrypted_0c35eebf403c_key -iv $encrypted_0c35eebf403c_iv -in service-account.json.enc -out service-account.json -d
+  # download gcloud
+  - curl https://sdk.cloud.google.com | bash > /dev/null;
+  # setup gcloud
+  - source $HOME/google-cloud-sdk/path.bash.inc
+  # install kubectl to travis
+  - gcloud components update kubectl
+  # login
+  - gcloud auth activate-service-account --key-file service-account.json
+  # set project
+  - gcloud config set project dwh-project-266108
+  # set region
+  - gcloud config set compute/zone europe-west2-a
+  # set cluster
+  - gcloud container clusters get-credentials dwh-cluster-1
+deploy:
+  provider: script
+  script: bash ./deploy.sh
+  on:
+    branch: develop
