@@ -56,11 +56,11 @@ matrix:
         - "node"
       before_script:
         - cd react-app
-        - npm run install
+        - yarn install
       cache:
         directories:
           - "node_modules"
       script:
-        - npm run test:coverage
+        - yarn test:coverage
       after_success:
         bash <(curl -s https://codecov.io/bash) -cF react-app
