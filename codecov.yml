@@ -14,7 +14,6 @@ flags:
     paths:
       - common/src/main
       - importer/src/main
-      - migrator/src/main
   react-app:
     paths:
       - react-app/src

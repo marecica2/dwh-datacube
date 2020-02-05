@@ -29,7 +29,8 @@ jobs:
         - java -Dspring.profiles.active=integration-test -jar ./migrator/target/application.jar
       script:
         - mvn -ntp install
-        - bash <(curl -s https://codecov.io/bash) -F java
+        - bash <(curl -s https://codecov.io/bash) -f common/target/site/jacoco/jacoco.xml -F java
+        - bash <(curl -s https://codecov.io/bash) -f importer/target/site/jacoco/jacoco.xml -F java
     - language: node_js
       node_js:
         - 12
