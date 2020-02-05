@@ -43,8 +43,8 @@ jobs:
       script:
         - yarn test:coverage
       after_success:
-        cd ..
-        bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f react-app/coverage/coverage-final.json -c -F react-app
+        - cd ..
+        - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f react-app/coverage/coverage-final.json -c -F react-app
     - stage: deployment
       language: shell
       os: linux
