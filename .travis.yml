@@ -8,7 +8,7 @@ env:
 
 jobs:
   include:
-    - stage: test-backend
+    - stage: test
       language: java
       services:
         - postgresql
@@ -43,7 +43,7 @@ jobs:
       script:
         - yarn test:coverage
       after_success:
-        bash <(curl -s https://codecov.io/bash) -F react-app
+        bash <(curl -s https://codecov.io/bash) -f react-app/coverage/coverage-final.json -F react-app
     - stage: deployment
       before_deploy:
         - echo deploy
