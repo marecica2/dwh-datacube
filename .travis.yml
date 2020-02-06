@@ -29,8 +29,8 @@ jobs:
       script:
         - mvn -ntp install
       after_success:
-        - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f common/target/site/jacoco/jacoco.xml -c -F java
-        - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f importer/target/site/jacoco/jacoco.xml -c -F java
+        - bash <(curl -s https://codecov.io/bash) -f common/target/site/jacoco/jacoco.xml -c -F java
+        - bash <(curl -s https://codecov.io/bash) -f importer/target/site/jacoco/jacoco.xml -c -F java
     - language: node_js
       node_js:
         - 12
@@ -44,14 +44,14 @@ jobs:
         - yarn test:coverage
       after_success:
         - cd ..
-        - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f react-app/coverage/coverage-final.json -c -F react-app
+        - pwd
+        - ls -la
+        - bash <(curl -s https://codecov.io/bash) -f react-app/coverage/coverage-final.json -c -F react-app
     - stage: deployment
       language: shell
       os: linux
       before_deploy:
         - echo hello
-      deploy:
-        - echo hello2
 #        - openssl help
 #        # decode encrypted service account key
 #        - openssl aes-256-cbc -K $encrypted_0c35eebf403c_key -iv $encrypted_0c35eebf403c_iv -in service-account.json.enc -out service-account.json -d
