@@ -5,14 +5,14 @@ coverage:
       java:
         flags: java
         target: 70%
-      react-app:
-        flags: react-app
+      reactapp:
+        flags: reactapp
         target: 70%
 flags:
   java:
     paths:
-      - common/src/main/
-      - importer/src/main/
-  react-app:
+      - common/src
+      - importer/src
+  reactapp:
     paths:
-      - react-app/src/
+      - react-app/src

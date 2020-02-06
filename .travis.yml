@@ -29,8 +29,8 @@ jobs:
       script:
         - mvn -ntp install
       after_success:
-        - bash <(curl -s https://codecov.io/bash) -f common/target/site/jacoco/jacoco.xml -c -F java
-        - bash <(curl -s https://codecov.io/bash) -f importer/target/site/jacoco/jacoco.xml -c -F java
+        - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f common/target/site/jacoco/jacoco.xml -c -F java
+        - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f importer/target/site/jacoco/jacoco.xml -c -F java
     - language: node_js
       node_js:
         - 12
@@ -44,9 +44,7 @@ jobs:
         - yarn test:coverage
       after_success:
         - cd ..
-        - pwd
-        - ls -la
-        - bash <(curl -s https://codecov.io/bash) -f react-app/coverage/coverage-final.json -c -F react-app
+        - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f react-app/coverage/coverage-final.json -c -F reactapp
     - stage: deployment
       language: shell
       os: linux
