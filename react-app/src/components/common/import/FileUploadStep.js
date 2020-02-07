@@ -5,7 +5,9 @@ export const stepName = 'File Upload';
 
 function FileUploadStep(props) {
   return (
-    <FileUpload {...props} />
+    <div id="fileUploadStep">
+      <FileUpload {...props} />
+    </div>
   );
 }
 

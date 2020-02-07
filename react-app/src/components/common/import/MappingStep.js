@@ -204,7 +204,7 @@ function MappingStep({
   };
 
   return (
-    <div className={classes.root}>
+    <div className={classes.root} id="mappingStep">
       {loaded ? (
         <>
           <div className={classes.tableWrapper}>

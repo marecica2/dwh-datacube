@@ -66,7 +66,7 @@ function PreviewStep({ transaction, mappingConfig, mapping, preview, setPreview 
           {Object.entries(row.entity).map(([key, cell], idx) => {
             const error = row.errors[key] != null ? row.errors[key].join(',') : null;
             if (key === 'valid')
-              return <TableCell key={`${preview.indexOf(row)}_${idx}`}>{cell ? <OkIcon style={{color: green}} /> : <ErrorIcon color="secondary"/>}</TableCell>;
+              return <TableCell key={`${preview.indexOf(row)}_${idx}`}>{cell ? <OkIcon style={{color: green}} alt="okIcon" /> : <ErrorIcon color="secondary" alt="errorIcon"/>}</TableCell>;
 
             return (
               <TableCell
@@ -83,7 +83,7 @@ function PreviewStep({ transaction, mappingConfig, mapping, preview, setPreview 
   };
 
   return (
-    <div>
+    <div id="previewStep">
       <div className={classes.tableWrapper}>
         {loaded ? (
           <Table stickyHeader>

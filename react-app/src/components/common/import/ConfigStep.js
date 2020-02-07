@@ -1,5 +1,5 @@
 import React from 'react';
-import {makeStyles} from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import {
   Checkbox,
   Radio,
@@ -30,7 +30,7 @@ const ConfigStep = ({ config, setConfig }) => {
   };
 
   return (
-    <div>
+    <div id="configStep">
       <RadioGroup component="fieldset" className={classes.formControl}>
         <FormLabel component="legend">Error processing</FormLabel>
         <RadioGroup
@@ -39,28 +39,32 @@ const ConfigStep = ({ config, setConfig }) => {
           value={config.skipStrategy}
           onChange={handleInputChange}
         >
-          <FormControlLabel value="row" control={<Radio />} label="Skip row" />
+          <FormControlLabel
+            value="row"
+            control={<Radio/>}
+            label="Skip row"
+          />
           <FormControlLabel
             value="cell"
-            control={<Radio />}
+            control={<Radio/>}
             label="Skip cell"
           />
         </RadioGroup>
       </RadioGroup>
       <div>
-      <FormGroup component="fieldset" className={classes.formControl}>
-        <FormControlLabel
-          control={(
-            <Checkbox
-              checked={config.deleteStrategy}
-              onChange={handleInputChange}
-              name="deleteStrategy"
-              color="primary"
-            />
-              )}
-          label="Delete existing data"
-        />
-      </FormGroup>
+        <FormGroup component="fieldset" className={classes.formControl}>
+          <FormControlLabel
+            control={(
+              <Checkbox
+                checked={config.deleteStrategy}
+                onChange={handleInputChange}
+                name="deleteStrategy"
+                color="primary"
+              />
+            )}
+            label="Delete existing data"
+          />
+        </FormGroup>
       </div>
     </div>
   );

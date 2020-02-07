@@ -24,7 +24,7 @@ const mapping = {
   'sourceColumns': {
     'S. No.': '1',
     'Supplier Name': 'UPS',
-    'Business Unit': 'BU1',
+    'Organization': 'BU1',
   },
   'destinationColumns': {
     'id': { 'type': 'BigDecimal', 'label': 'Id' },
@@ -34,7 +34,7 @@ const mapping = {
   },
   'mapping': {
     'Supplier Name': 'supplierName',
-    'Business Unit': 'businessUnit',
+    'Organization': 'businessUnit',
   },
 };
 
@@ -46,17 +46,37 @@ const mappingPreset = [{
   },
 }];
 
+const preview = [
+  {
+    'entity': {
+      'id': 1,
+      'transactionId': 1234,
+      'supplierName': 'UPS',
+      'cost': null,
+    },
+    'valid': false,
+    'errors': {
+      'cost': [
+        'must not be null',
+      ],
+    },
+  },
+];
+
 
 describe('Import workflow', () => {
 
   const uploadFiles = [createFile(uploadFileName, 1111, 'application/csv')];
+  const data = createDtWithFiles(uploadFiles);
   let ui;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     importApiMock.initImport.mockResolvedValueOnce(transactionId);
     importApiMock.uploadFiles.mockImplementationOnce(() => [uploadFileName]);
     importApiMock.getMapping.mockImplementationOnce(() => mapping);
     importApiMock.getMappingPresets.mockImplementationOnce(() => mappingPreset);
+    importApiMock.getPreview.mockImplementationOnce(() => preview);
+
 
     await act(async () => {
       ui = render(<AppStateProvider><Import/></AppStateProvider>);
@@ -64,23 +84,123 @@ describe('Import workflow', () => {
     sources['/api/00000-00000-00001/1/status'].emitOpen();
   });
 
-  test('File upload step', async () => {
-    const data = createDtWithFiles(uploadFiles);
-    const { container, debug, getByText, rerender } = ui;
-    const dropzone = container.querySelector('#dropzone');
+  test('Display correct step on startup', async () => {
+    const { container } = ui;
+    expect(container.querySelector('#fileUploadStep'));
+    expect(container.querySelector('#mappingStep')).toBeNull();
+    expect(container.querySelector('#previewStep')).toBeNull();
+  });
 
+
+  test('Fileupload step', async () => {
+    const { container, getByText } = ui;
+    const dropzone = container.querySelector('#dropzone');
     await act(async () => {
       fireDrop(dropzone, data);
     });
-
     expect(getByText('file1.csv'));
+  });
 
+  test('Mapping step', async () => {
+    const { container, getByText } = ui;
+    const dropzone = container.querySelector('#dropzone');
+    await act(async () => {
+      fireDrop(dropzone, data);
+    });
+    await act(async () => {
+      fireEvent.click(getByText('Next'));
+    });
+    expect(container.querySelector('#mappingStep')).not.toBeNull();
+    expect(getByText('Column name'));
+    expect(getByText('Preview'));
+    expect(getByText('Mapped column'));
+    expect(getByText('Organization'));
+    expect(getByText('BU1'));
+    expect(getByText('Business Unit'));
+
+    const mockMappingPreset = jest.fn();
+    importApiMock.createMappingPreset.mockImplementationOnce(mockMappingPreset);
+
+    await act(async () => {
+      fireEvent.click(getByText('Business Unit'));
+    });
+
+    expect(getByText('Required fields'));
+    expect(getByText('Optional fields'));
+    expect(getByText('Transaction Id'));
+
+    await act(async () => {
+      fireEvent.click(getByText('Transaction Id'));
+    });
+
+    await act(async () => {
+      fireEvent.click(getByText('Save this preset'));
+    });
+
+    expect(mockMappingPreset).toHaveBeenCalledWith(
+      {
+        mapping: {
+          'Organization': 'transactionId',
+          'Supplier Name': 'supplierName',
+        },
+        name: 'file1.csv',
+      },
+    );
+  });
+
+  test('Preview step', async () => {
+    const { container, getByText } = ui;
+    const dropzone = container.querySelector('#dropzone');
+    await act(async () => {
+      fireDrop(dropzone, data);
+    });
+    await act(async () => {
+      fireEvent.click(getByText('Next'));
+    });
     await act(async () => {
       fireEvent.click(getByText('Next'));
     });
 
-    rerender(<AppStateProvider><Import/></AppStateProvider>);
-    debug();
+    expect(container.querySelector('#previewStep'));
+    expect(getByText('1234'));
+    expect(getByText('UPS'));
+    expect(getByText('must not be null'));
+  });
+
+  test('Config step', async () => {
+    const { container, getByText, getByLabelText } = ui;
+    const dropzone = container.querySelector('#dropzone');
+    await act(async () => {
+      fireDrop(dropzone, data);
+    });
+    await act(async () => {
+      fireEvent.click(getByText('Next'));
+    });
+    await act(async () => {
+      fireEvent.click(getByText('Next'));
+    });
+    await act(async () => {
+      fireEvent.click(getByText('Next'));
+    });
+
+    expect(container.querySelector('#configStep'));
+    const mockImport = jest.fn();
+    importApiMock.doImport.mockImplementationOnce(mockImport);
+    await act(async () => {
+      fireEvent.click(getByLabelText('Skip row'));
+    });
+
+    await act(async () => {
+      fireEvent.click(getByText('Finish'));
+    });
+
+    expect(mockImport).toHaveBeenCalledWith(
+      '12345',
+      { 'Organization': 'businessUnit', 'Supplier Name': 'supplierName' },
+      { 'skipStrategy': 'row' },
+    );
+
+    expect(container.querySelector('#fileUploadStep'));
   });
 
 });
