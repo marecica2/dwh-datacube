@@ -5,7 +5,10 @@ module.exports = {
   verbose: true,
   notify: false,
   collectCoverage: true,
-  setupFiles: [`${configRootDir}/setup.js`],
+  setupFiles: [
+    `${configRootDir}/eventSourceMock.js`,
+    `${configRootDir}/setup.js`,
+  ],
   roots: ['<rootDir>/src'],
   snapshotSerializers: ['enzyme-to-json/serializer'],
   testEnvironment: 'jsdom',

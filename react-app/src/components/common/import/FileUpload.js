@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import {Typography, CircularProgress, Grid, TableBody, Table, TableRow, TableCell} from '@material-ui/core';
 import CheckIcon from '@material-ui/icons/Check';
 import lightGreen from '@material-ui/core/colors/lightGreen';
-import { DropzoneArea } from 'material-ui-dropzone'
+import Dropzone from 'react-dropzone'
 
-const types = ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'text/csv'];
+// const types = ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'text/csv'];
 
 const useStyles = makeStyles(() => ({
   successIcon: {
@@ -15,11 +15,27 @@ const useStyles = makeStyles(() => ({
   uploadStatus: {
     fontWeight: 500,
   },
+  uploader: {
+    textAlign: 'center',
+    fontSize: '1.3em',
+    background: '#f0f0f0',
+    lineHeight: '300px',
+    cursor: 'pointer',
+  },
 }));
 
 function FileUpload({ api, transaction, files, setFiles, setUploadInProgress, setMappingConfig, setPreview }) {
   const classes = useStyles();
   const [progresses, setProgresses] = React.useState({});
+
+  const onDrop = useCallback((newFiles) => {
+    const addedFiles = newFiles
+      .filter(file => !Object.keys(files).includes(file.name));
+    setFiles({
+      ...files,
+      ...addedFiles.reduce((acc, file) => ({ ...acc, [file.name]: file}), {}),
+    });
+  }, [files, setFiles]);
 
   useEffect(() => {
     async function fetchData() {
@@ -66,15 +82,6 @@ function FileUpload({ api, transaction, files, setFiles, setUploadInProgress, se
       fetchData();
   }, [api, transaction, files, setFiles, setUploadInProgress, setMappingConfig, setPreview, progresses]);
 
-  const handleChange = (newFiles) => {
-    const addedFiles = newFiles
-        .filter(file => !Object.keys(files).includes(file.name));
-    setFiles({
-      ...files,
-      ...addedFiles.reduce((acc, file) => ({ ...acc, [file.name]: file}), {}),
-    });
-  };
-
   const renderFileProgress = () => {
     return Object.values(files).map((file) => {
       const progress = progresses[file.name] || 0;
@@ -99,18 +106,16 @@ function FileUpload({ api, transaction, files, setFiles, setUploadInProgress, se
   return (
     <Grid container spacing={2}>
       <Grid item xs={Object.keys(files).length === 0 ? 12 : 6}>
-        <DropzoneArea
-          filesLimit={10}
-          dropzoneClass="dropzone"
-          dropzoneText="Click or drop files here"
-          acceptedFiles={types}
-          showPreviewsInDropzone={false}
-          showFileNamesInPreview={true}
-          showFileNames={true}
-          onChange={handleChange}
-          showAlerts={false}
-          maxFileSize={100000000}
-        />
+        <Dropzone onDrop={onDrop}>
+          {({getRootProps, getInputProps}) => (
+            <section>
+              <div {...getRootProps()} id="dropzone" className={classes.uploader}>
+                <input {...getInputProps()} />
+                <p>Drag drop some files here, or click to select files</p>
+              </div>
+            </section>
+            )}
+        </Dropzone>
       </Grid>
       <Grid item xs={6}>
         <Table>

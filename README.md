@@ -3,8 +3,7 @@
 
 Showcase app for following stack dealing with multi-tenancy, 
 datawarehouse solution with microservice architecture with CI pipeline and automated deployemnt to kubernetes cluster
-- Spring boot (Data, Rest, Repositories)
-- Spring Batch
+- Spring boot (Batch, Data, Rest, Repositories, Test)
 - Postgres
 - Redis
 - ReactJS

@@ -47,7 +47,10 @@ const useStyles = makeStyles(theme => ({
 
 export const stepName = 'Column mapping';
 
-function MappingStep({ transaction, mappingConfig, setMappingConfig, mapping, setMapping, files, setPreview, assignedColumns, setAssignedColumns }) {
+function MappingStep({
+                       transaction, mappingConfig, setMappingConfig, mapping, setMapping, files, setPreview,
+                       assignedColumns, setAssignedColumns,
+                     }) {
   const classes = useStyles();
   const [loaded, setLoaded] = React.useState(false);
   const [mappingPresets, setMappingPresets] = React.useState([]);
@@ -83,13 +86,15 @@ function MappingStep({ transaction, mappingConfig, setMappingConfig, mapping, se
     }
 
     fetchData();
-  }, [transaction, mappingConfig, autoSuggestMapping, setMappingConfig, files, setLoaded, selectColumn, setAssignedColumns]);
+  }, [transaction, mappingConfig, autoSuggestMapping,
+    setMappingConfig, files, setLoaded, selectColumn, setAssignedColumns]);
 
   useEffect(() => {
     async function api() {
       const result = await ImportApi.getMappingPresets();
       setMappingPresets(result);
     }
+
     api();
   }, [setMappingPresets]);
 
@@ -105,6 +110,7 @@ function MappingStep({ transaction, mappingConfig, setMappingConfig, mapping, se
       const result = await ImportApi.getMappingPresets();
       setMappingPresets(result);
     }
+
     api();
   }, [mapping, mappingPresetName, setMappingPresets]);
 
@@ -164,7 +170,9 @@ function MappingStep({ transaction, mappingConfig, setMappingConfig, mapping, se
                 className={classes.textField}
                 label="Preset name"
                 value={mappingPresetName}
-                onChange={(e) => { setMappingPresetName(e.target.value) }}
+                onChange={(e) => {
+                  setMappingPresetName(e.target.value)
+                }}
               />
             </FormControl>
             <FormControl className={classes.formControl}>
@@ -216,7 +224,7 @@ function MappingStep({ transaction, mappingConfig, setMappingConfig, mapping, se
           {renderPresetMapping()}
         </>
       ) : (
-        <Loader variant="wrapped" />
+        <Loader variant="wrapped"/>
       )}
     </div>
   );

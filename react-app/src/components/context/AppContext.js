@@ -52,10 +52,10 @@ function AppStateProvider(props) {
 
   useEffect(() => {
     async function api() {
-      if (eventSource && eventSource.readyState !== EventSource.CLOSED) {
+      if (eventSource && eventSource.readyState !== window.EventSource.CLOSED) {
         eventSource.close();
       }
-      const es = new EventSource(AppStateApi.getAppStateUrl(state.tenant.id, state.project.id));
+      const es = new window.EventSource(AppStateApi.getAppStateUrl(state.tenant.id, state.project.id));
       es.onmessage = (event) => {
         if (event.data !== 'heartbeat') {
           const data = JSON.parse(event.data);
