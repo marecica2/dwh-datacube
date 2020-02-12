@@ -11,17 +11,21 @@ import org.bmsource.dwh.masterdata.repository.RateCardRepository;
 import org.bmsource.dwh.masterdata.repository.ServiceTypeMappingRepository;
 import org.bmsource.dwh.masterdata.repository.TaxonomyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ResourceUtils;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -31,7 +35,6 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -40,6 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Component
+@Transactional
 public class IntegrationTestUtils {
 
     @Autowired
@@ -69,7 +73,7 @@ public class IntegrationTestUtils {
             MasterDataNormalizer.normalizeRateCards, rateCardRepository::delete);
     }
 
-    private <Type, Repository extends CrudRepository<Type, ?>> void importExcel(
+    private <Type, Repository extends JpaRepository<Type, ?>> void importExcel(
         InputStream inputStream,
         Repository repository,
         Class<Type> classType,
@@ -90,6 +94,7 @@ public class IntegrationTestUtils {
                         .map(this::transform)
                         .collect(Collectors.toList());
                     repository.saveAll(itemsTransformed);
+                    repository.flush();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

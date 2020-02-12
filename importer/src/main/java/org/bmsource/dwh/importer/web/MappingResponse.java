@@ -5,17 +5,12 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.lang.reflect.Field;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.similarity.LevenshteinDistance;
+import org.bmsource.dwh.common.utils.BeanUtils;
 
 @JsonAutoDetect(getterVisibility = Visibility.NONE)
 public class MappingResponse {
@@ -63,7 +58,7 @@ public class MappingResponse {
 
     @Override
     public Build setFactModel(Class factModel) {
-      for (Field field : factModel.getDeclaredFields()) {
+      Arrays.stream(BeanUtils.getProperties(factModel)).forEach(field -> {
         Map<String, Object> fieldMetadata = new LinkedHashMap<>();
         fieldMetadata.put("type", field.getType().getSimpleName());
         fieldMetadata.put("label", camelCaseToSentence(field.getName()));
@@ -72,7 +67,7 @@ public class MappingResponse {
           fieldMetadata.put("required", true);
         }
         factFields.put(field.getName(), fieldMetadata);
-      }
+      });
       return this;
     }
 

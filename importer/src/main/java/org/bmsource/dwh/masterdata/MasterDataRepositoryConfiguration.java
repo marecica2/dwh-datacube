@@ -10,8 +10,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
 
-@EnableJpaRepositories
-@EntityScan
 @Configuration
 public class MasterDataRepositoryConfiguration implements RepositoryRestConfigurer {
 

@@ -10,7 +10,6 @@ import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 
 @Configuration
-@ComponentScan
 @EnableCaching
 public class ChartsConfiguration {
 

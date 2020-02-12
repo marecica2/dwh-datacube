@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.*;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
 import java.util.Arrays;
@@ -45,6 +46,13 @@ public class JobConfiguration<RawFact, Fact> {
     private Logger logger = LoggerFactory.getLogger(JobConfiguration.class);
 
     private StepBuilderFactory stepBuilderFactory;
+
+    PlatformTransactionManager transactionManager;
+
+    @Autowired
+    public void setTransactionManager(PlatformTransactionManager transactionManager) {
+        this.transactionManager = transactionManager;
+    }
 
     @Autowired
     public void setStepBuilderFactory(StepBuilderFactory stepBuilderFactory) {
@@ -199,7 +207,7 @@ public class JobConfiguration<RawFact, Fact> {
         JobRepositoryFactoryBean factory = new JobRepositoryFactoryBean();
         factory.setDataSource(dataSource);
         factory.setDatabaseType("POSTGRES");
-        factory.setTransactionManager(new ResourcelessTransactionManager());
+        factory.setTransactionManager(transactionManager);
         factory.setSerializer(new Jackson2ExecutionContextStringSerializer());
         factory.setTablePrefix("batch_");
         JobRepository jobRepository = null;

@@ -6,7 +6,11 @@ import org.bmsource.dwh.domain.model.Fact;
 import org.bmsource.dwh.domain.repository.FactRepository;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.jupiter.api.*;
+import org.junit.Before;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,6 +19,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -24,7 +29,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.transaction.Transactional;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URISyntaxException;
@@ -34,6 +38,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
@@ -43,9 +48,8 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {ImporterApplication.class})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Transactional
 public class ImportControllerIT {
-    private boolean printRest = false;
+    private boolean printRest = true;
     private String tenant = "000000-00000-00001";
     private String project = "1";
 
@@ -90,23 +94,23 @@ public class ImportControllerIT {
     @Autowired
     IntegrationTestUtils integrationTestUtils;
 
-
     @Autowired
     FactRepository factRepository;
 
     @BeforeAll
-    public void beforeAll() throws Exception {
+    public void setup() {
+        mvc = webAppContextSetup(this.wac).build();
+    }
+
+    @Before
+    public void before() throws Exception {
         integrationTestUtils.hasRateCards();
         integrationTestUtils.hasTaxonomy();
         integrationTestUtils.hasServiceTypeMapping();
     }
 
-    @BeforeEach
-    public void setup() {
-        mvc = webAppContextSetup(this.wac).build();
-    }
-
     @Test
+    @Sql(scripts = "/batch_clean_up.sql", executionPhase = AFTER_TEST_METHOD)
     public void testImport() throws Exception {
         MvcResult transactionResult = mvc.perform(MockMvcRequestBuilders
             .get("/{projectId}/import", project)
@@ -141,7 +145,7 @@ public class ImportControllerIT {
             .andExpect(MockMvcResultMatchers.jsonPath("$.sourceColumns.*", hasSize(38)))
             .andExpect(MockMvcResultMatchers.jsonPath("$.sourceColumns['Supplier Name']").value("UPS"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.destinationColumns").exists())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.destinationColumns.*", hasSize(31)))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.destinationColumns.*", hasSize(30)))
             .andExpect(MockMvcResultMatchers.jsonPath("$.destinationColumns.transactionId").exists())
             .andExpect(MockMvcResultMatchers.jsonPath("$.destinationColumns.transactionId.type").value("String"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.destinationColumns.transactionId.label").value("Transaction " +
@@ -176,8 +180,6 @@ public class ImportControllerIT {
 
         Fact fact = factRepository.findByTransactionId("2").get();
         Assertions.assertEquals(424, factRepository.count());
-        Assertions.assertEquals("Air - Mail And Small Parcel - Next Day Mid-day", fact.getStandardServiceType());
-        Assertions.assertEquals("Air1", fact.getServiceTypeGroup());
         Assertions.assertEquals(new BigDecimal("67.73"), fact.getCost());
 
         mvc.perform(MockMvcRequestBuilders
@@ -190,9 +192,10 @@ public class ImportControllerIT {
     }
 
     private ResultHandler doPrint() {
-        if(printRest)
+        if (printRest)
             return MockMvcResultHandlers.print();
-        return result -> { };
+        return result -> {
+        };
     }
 
     private void waitUntilCompleted() {

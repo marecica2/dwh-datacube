@@ -1,11 +1,15 @@
 package org.bmsource.dwh.common;
 
 import com.google.common.base.CaseFormat;
+import org.bmsource.dwh.common.utils.BeanUtils;
 
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class BaseFact {
@@ -44,11 +48,12 @@ public class BaseFact {
     }
 
     private Field[] getFields() {
-        Field[] fields = this.getClass().getDeclaredFields();
-        return Arrays
-            .stream(fields)
+        Field[] properties = BeanUtils.getProperties(this.getClass());
+        List<Field> fields = Arrays
+            .stream(properties)
             .filter(f -> !f.getName().toLowerCase().equals("id"))
-            .toArray(Field[]::new);
+            .collect(Collectors.toList());
+        return fields.toArray(new Field[fields.size()]);
     }
 
     private String getTableName() {

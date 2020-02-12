@@ -1,23 +1,49 @@
 image: docker:latest
-services:
-  - maven:3.6.3-jdk-8
-  - postgres
-  - redis
-  -
-variables:
-  MAVEN_CLI_OPTS: "-s .m2/settings.xml --batch-mode"
-  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+stages:
+  - build
+  - deploy
 
-cache:
-  paths:
-    - .m2/repository/
-
-build:
+java-build:
   stage: build
+  variables:
+    SHA: $(git rev-parse HEAD)
+    POSTGRES_DB: postgres
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: postgres
+  image: maven:3.6.3-jdk-8
+  services:
+    - postgres
+    - redis
   script:
-    - mvn $MAVEN_CLI_OPTS compile
+    - export $(cat .env.ci.gitlab | xargs)
+    - mvn -ntp clean package -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+    - java -Dspring.profiles.active=integration-test -jar ./migrator/target/application.jar
+    - mvn -ntp install -DskipTests=true
+  artifacts:
+    paths:
+      - common/target/
+      - importer/target/
+      - migrator/target/
 
-test:
-  stage: test
+react-build:
+  stage: build
+  variables:
+    SHA: $(git rev-parse HEAD)
+  image: node
+  cache:
+    paths:
+      - react-app/node_modules/
   script:
-    - mvn $MAVEN_CLI_OPTS test
+    - cd react-app
+    - yarn install
+    - yarn test:coverage
+    - cd ..
+  artifacts:
+    paths:
+      - build/
+
+deployment:
+  stage: deploy
+  script:
+    - pwd
+    - ls -la

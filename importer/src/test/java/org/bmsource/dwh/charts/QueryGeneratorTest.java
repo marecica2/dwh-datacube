@@ -3,26 +3,18 @@ package org.bmsource.dwh.charts;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.sql.DataSource;
 import java.util.*;
 
 
 @ActiveProfiles({"unit-test"})
-@DataJdbcTest
 @ExtendWith(SpringExtension.class)
 public class QueryGeneratorTest {
 
-    @Autowired
-    DataSource dataSource;
-
     @Test
-    public void testQuery() throws Exception {
+    public void testQuery() {
         String expectedSQL = "select " +
             "supplier_name, sum(cost) as \"sum_cost\", avg(discounted_cost) as \"avg_discounted_cost\" " +
             "from fact " +
@@ -50,7 +42,7 @@ public class QueryGeneratorTest {
         }};
 
         QueryGenerator queryGenerator = QueryGenerator.builder()
-            .withDataSource(dataSource)
+            .withDataSource(null)
             .withRootTable("fact")
             .usingSnakeCaseConversion()
             .build();

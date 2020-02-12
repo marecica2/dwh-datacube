@@ -28,6 +28,14 @@ services:
       POSTGRES_DB: $PG_TEST_DATABASE
       POSTGRES_USER: $PG_TEST_USER
       POSTGRES_PASSWORD: $PG_TEST_PASSWORD
+    command:
+      - "postgres"
+      - "-c"
+      - "max_connections=100"
+      - "-c"
+      - "shared_buffers=256MB"
+      - "-c"
+      - "log_statement=all"
   redis:
     image: redis:4.0.5-alpine
     container_name: redis

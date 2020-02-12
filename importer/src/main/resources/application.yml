@@ -15,6 +15,8 @@ spring:
         physical_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
         jdbc.lob.non_contextual_creation: true
         temp.use_jdbc_metadata_defaults: false
+        org:
+          flushMode: ALWAYS
         jdbc:
           batch_size: 1000
     database-platform: org.bmsource.dwh.common.db.CustomPostgreSQLDialect
@@ -49,7 +51,7 @@ spring:
 spring:
   profiles: integration-test
   datasource:
-    url: jdbc:postgresql://${PG_TEST_HOST}:${PG_TEST_PORT}/${PG_TEST_DATABASE}
+    url: jdbc:postgresql://${PG_TEST_HOST}:${PG_TEST_PORT}/${PG_TEST_DATABASE}?reWriteBatchedInserts=true
     username: ${PG_TEST_USER}
     password: ${PG_TEST_PASSWORD}
     hikari:

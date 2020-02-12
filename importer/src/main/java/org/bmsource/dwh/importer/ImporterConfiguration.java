@@ -3,23 +3,19 @@ package org.bmsource.dwh.importer;
 import org.bmsource.dwh.common.job.ImportJobConfiguration;
 import org.bmsource.dwh.common.job.ImportJobConfigurationBuilder;
 import org.bmsource.dwh.common.utils.StringUtils;
-import org.bmsource.dwh.masterdata.MasterDataService;
 import org.bmsource.dwh.domain.model.Fact;
 import org.bmsource.dwh.domain.model.RawFact;
 import org.bmsource.dwh.domain.repository.FactRawRepository;
 import org.bmsource.dwh.domain.repository.FactRepository;
+import org.bmsource.dwh.masterdata.MasterDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 @Configuration
-@EntityScan
-@EnableJpaRepositories
 public class ImporterConfiguration {
 
     private static Logger logger = LoggerFactory.getLogger(ImportJobConfiguration.class);

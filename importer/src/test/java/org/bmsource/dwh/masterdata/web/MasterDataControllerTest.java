@@ -1,5 +1,6 @@
 package org.bmsource.dwh.masterdata.web;
 
+import org.bmsource.dwh.ImporterApplication;
 import org.bmsource.dwh.IntegrationTestUtils;
 import org.bmsource.dwh.TestUtils;
 import org.bmsource.dwh.masterdata.MasterDataConfiguration;
@@ -21,7 +22,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @ActiveProfiles({"unit-test"})
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {MasterDataConfiguration.class})
+@ContextConfiguration(classes = {ImporterApplication.class})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class MasterDataControllerTest {
     private MockMvc mockMvc;
