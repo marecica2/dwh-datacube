@@ -37,7 +37,6 @@ react-build:
     - cd react-app
     - yarn install
     - yarn test:coverage
-    - cd ..
   artifacts:
     paths:
       - build/
@@ -46,4 +45,5 @@ deployment:
   stage: deploy
   script:
     - pwd
+    - cd importer/target
     - ls -la
