@@ -1,7 +1,8 @@
 package org.bmsource.dwh.common.appstate;
 
+import org.bmsource.dwh.common.multitenancy.Tenant;
+import org.bmsource.dwh.common.multitenancy.TenantRepository;
 import org.bmsource.dwh.common.portal.ProjectRepository;
-import org.bmsource.dwh.common.portal.TenantRepository;
 import org.bmsource.dwh.common.redis.RedisConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,9 +42,9 @@ public class AppStateConfiguration {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
         for (String topic : channels) {
-            for (String tenant : tenantRepository.getTenants()) {
-                for (String project : projectRepository.getProjects(tenant)) {
-                    String topicKey = appStateService.buildTopicKey(tenant, project, topic);
+            for (Tenant tenant : tenantRepository.findAll()) {
+                for (String project : projectRepository.getProjects(tenant.getSchemaName())) {
+                    String topicKey = appStateService.buildTopicKey(tenant.getSchemaName(), project, topic);
                     logger.info("Registering topic channel {}", topicKey);
                     container.addMessageListener(messageListener, new PatternTopic(topicKey));
                 }

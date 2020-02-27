@@ -1,4 +1,4 @@
-package org.bmsource.dwh.schemas.database;
+package org.bmsource.dwh.common.multitenancy;
 
 import org.hibernate.engine.jdbc.connections.spi.MultiTenantConnectionProvider;
 import org.slf4j.Logger;
@@ -15,8 +15,6 @@ public class TenantConnectionProvider implements MultiTenantConnectionProvider {
 	private static final long serialVersionUID = 1348353870772468815L;
 
 	private static Logger logger = LoggerFactory.getLogger(TenantConnectionProvider.class);
-
-	private String DEFAULT_TENANT = FlywayConfig.DEFAULT_SCHEMA;
 
 	private DataSource datasource;
 
@@ -48,7 +46,7 @@ public class TenantConnectionProvider implements MultiTenantConnectionProvider {
 	public void releaseConnection(String tenantIdentifier, Connection connection)
 			throws SQLException {
 		logger.debug("Release connection for tenant {}", tenantIdentifier);
-		connection.setSchema(DEFAULT_TENANT);
+		connection.setSchema(Constants.DEFAULT_TENANT);
 		releaseAnyConnection(connection);
 	}
 

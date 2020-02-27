@@ -29,3 +29,5 @@
 .mvn
 *.log
 service-account.json
+
+*.pem

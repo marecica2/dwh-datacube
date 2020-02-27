@@ -1,4 +1,7 @@
-server.port: 3001
+server:
+  port: 3001
+  servlet:
+    context-path: /api
 spring:
   data:
     redis.repositories.enabled: false
@@ -15,13 +18,10 @@ spring:
         physical_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
         jdbc.lob.non_contextual_creation: true
         temp.use_jdbc_metadata_defaults: false
-        org:
-          flushMode: ALWAYS
-        jdbc:
-          batch_size: 1000
+        jdbc.batch_size: 1000
+        ddl-auto: none
+        dialect: org.bmsource.dwh.common.db.CustomPostgreSQLDialect
     database-platform: org.bmsource.dwh.common.db.CustomPostgreSQLDialect
-    hibernate:
-      ddl-auto: none
   flyway:
     baseline-version: 1
   servlet:

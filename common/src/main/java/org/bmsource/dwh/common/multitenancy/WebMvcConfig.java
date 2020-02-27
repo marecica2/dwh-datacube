@@ -1,12 +1,13 @@
-package org.bmsource.dwh.schemas.database;
+package org.bmsource.dwh.common.multitenancy;
 
-import org.bmsource.dwh.schemas.controllers.TenantInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
+@ComponentScan
 public class WebMvcConfig implements WebMvcConfigurer {
 
     @Autowired
@@ -16,6 +17,4 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(tenantInterceptor);
     }
-
-
 }

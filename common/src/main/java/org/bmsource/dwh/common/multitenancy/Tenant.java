@@ -1,13 +1,12 @@
-package org.bmsource.dwh.schemas.database.entities;
+package org.bmsource.dwh.common.multitenancy;
 
-import org.bmsource.dwh.schemas.database.FlywayConfig;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.util.Date;
 
-@Entity
-@Table(name="tenants", schema = FlywayConfig.DEFAULT_SCHEMA)
 public class Tenant {
 
     @Id

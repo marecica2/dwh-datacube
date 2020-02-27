@@ -1,7 +1,5 @@
-package org.bmsource.dwh.schemas.controllers;
+package org.bmsource.dwh.common.multitenancy;
 
-import org.bmsource.dwh.schemas.database.TenantContext;
-import org.bmsource.dwh.schemas.database.repositories.TenantRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 public class TenantInterceptor extends HandlerInterceptorAdapter {
 
     Logger logger = LoggerFactory.getLogger(getClass());
+
     {
         logger.debug("Creating TenantInterceptor interceptor");
     }
@@ -24,21 +23,20 @@ public class TenantInterceptor extends HandlerInterceptorAdapter {
     TenantRepository repository;
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String tenantUuid = request.getHeader("tenant-uuid");
-        String tenantSchema = tenantUuid!=null? repository.findById(tenantUuid)
-                .orElseThrow(()->new RuntimeException("Tenant not found"))
-                .getSchemaName() : null;
-        logger.info("Set TenantContext: {}",tenantSchema);
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        String tenantUuid = request.getHeader(Constants.TENANT_HEADER);
+        String tenantSchema = tenantUuid != null ? repository.findById(tenantUuid)
+            .orElseThrow(() -> new RuntimeException("Tenant not found"))
+            .getSchemaName() : null;
+        logger.info("Set TenantContext: {}", tenantSchema);
         TenantContext.setTenantSchema(tenantSchema);
         return true;
     }
 
     @Override
     public void postHandle(
-            HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView)
-            throws Exception {
-        logger.info("Clear TenantContext: {}",TenantContext.getTenantSchema());
+        HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {
+        logger.info("Clear TenantContext: {}", TenantContext.getTenantSchema());
         TenantContext.setTenantSchema(null);
     }
 
