@@ -17,7 +17,7 @@ public class QueryGeneratorTest {
     public void testQuery() {
         String expectedSQL = "select " +
             "supplier_name, sum(cost) as \"sum_cost\", avg(discounted_cost) as \"avg_discounted_cost\" " +
-            "from fact " +
+            "from \"null\".fact " +
             "where (some_field = :someField " +
             "and some_other_field in (:someOtherField)) " +
             "group by supplier_name " +

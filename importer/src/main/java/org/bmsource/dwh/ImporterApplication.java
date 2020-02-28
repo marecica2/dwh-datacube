@@ -9,14 +9,14 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-@EnableMultitenancy(ImporterApplication.class)
-@EnableAspectJAutoProxy
 @SpringBootApplication(exclude = {
     RedisRepositoriesAutoConfiguration.class
 })
+@EnableAspectJAutoProxy
 @EnableAsync
 @EnableTransactionManagement
 @EnableJpaRepositories
+@EnableMultitenancy(ImporterApplication.class)
 public class ImporterApplication {
     public static void main(String[] args) {
         SpringApplication.run(ImporterApplication.class, args);

@@ -1,6 +1,9 @@
 package org.bmsource.dwh;
 
 import org.apache.commons.io.FileUtils;
+import org.bmsource.dwh.common.multitenancy.Constants;
+import org.bmsource.dwh.common.multitenancy.Multitenancy;
+import org.bmsource.dwh.common.utils.TestUtils;
 import org.bmsource.dwh.masterdata.ExcelReaderHandler;
 import org.bmsource.dwh.masterdata.GenericExcelReader;
 import org.bmsource.dwh.masterdata.MasterDataNormalizer;
@@ -132,6 +135,7 @@ public class IntegrationTestUtils {
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
             .multipart(url)
             .file(mockMultipartFile)
+            .header(Constants.TENANT_HEADER, TestUtils.TENANT1)
             .contentType(mediaType);
 
         MvcResult resultActions = mockMvc

@@ -29,7 +29,6 @@ public class TenantConnectionProvider implements MultiTenantConnectionProvider {
 
 	@Override
 	public void releaseAnyConnection(Connection connection) throws SQLException {
-
 		connection.close();
 	}
 

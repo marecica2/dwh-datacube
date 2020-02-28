@@ -2,9 +2,11 @@ package org.bmsource.dwh.masterdata.web;
 
 import org.bmsource.dwh.ImporterApplication;
 import org.bmsource.dwh.IntegrationTestUtils;
-import org.bmsource.dwh.TestUtils;
-import org.bmsource.dwh.masterdata.MasterDataConfiguration;
-import org.junit.jupiter.api.*;
+import org.bmsource.dwh.common.utils.TestUtils;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,8 +21,8 @@ import java.net.URL;
 
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
-@ActiveProfiles({"unit-test"})
 @SpringBootTest
+@ActiveProfiles({"integration-test"})
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {ImporterApplication.class})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -44,7 +46,8 @@ public class MasterDataControllerTest {
         String url = "/taxonomy/import";
         String fileName = "taxonomy.xlsx";
         IntegrationTestUtils.fileUpload(mockMvc, file, url, fileName);
-        int importedRows = template.queryForObject("SELECT count(*) FROM service_type_taxonomy", Integer.class);
+        int importedRows = template.queryForObject("SELECT count(*) FROM \"" + TestUtils.TENANT1 + "\".taxonomy",
+            Integer.class);
         Assertions.assertEquals(34, importedRows);
     }
 
@@ -54,7 +57,8 @@ public class MasterDataControllerTest {
         String url = "/service-types/import";
         String fileName = "matrix.xlsx";
         IntegrationTestUtils.fileUpload(mockMvc, file, url, fileName);
-        int importedRows = template.queryForObject("SELECT count(*) FROM service_type_mapping", Integer.class);
+        int importedRows = template.queryForObject("SELECT count(*) FROM \"" + TestUtils.TENANT1 + "\"" +
+            ".service_type_mapping", Integer.class);
         Assertions.assertEquals(56, importedRows);
     }
 
@@ -64,7 +68,8 @@ public class MasterDataControllerTest {
         String url = "/rate-cards/import";
         String fileName = "standard_rate_card_small.xlsx";
         IntegrationTestUtils.fileUpload(mockMvc, file, url, fileName);
-        int importedRows = template.queryForObject("SELECT count(*) FROM standard_rate_card", Integer.class);
+        int importedRows = template.queryForObject("SELECT count(*) FROM \"" + TestUtils.TENANT1 + "\"" +
+            ".standard_rate_card", Integer.class);
         Assertions.assertEquals(0, importedRows);
     }
 }

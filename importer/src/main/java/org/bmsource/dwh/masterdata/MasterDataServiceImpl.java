@@ -1,5 +1,6 @@
 package org.bmsource.dwh.masterdata;
 
+import org.bmsource.dwh.common.multitenancy.TenantContext;
 import org.bmsource.dwh.masterdata.model.ServiceTypeMapping;
 import org.bmsource.dwh.masterdata.model.Taxonomy;
 import org.bmsource.dwh.masterdata.repository.ServiceTypeMappingRepository;
@@ -7,8 +8,8 @@ import org.bmsource.dwh.masterdata.repository.TaxonomyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.annotation.RequestScope;
 
 import javax.annotation.PostConstruct;
 import java.util.Map;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Component
-@Scope("prototype")
+@RequestScope
 public class MasterDataServiceImpl implements MasterDataService {
 
     private static Logger logger = LoggerFactory.getLogger(MasterDataServiceImpl.class);
@@ -36,7 +37,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     public void init() {
         Iterable<ServiceTypeMapping> serviceTypes = serviceTypeMappingRepository.findAll();
         Iterable<Taxonomy> taxonomy = taxonomyRepository.findAll();
-
+        System.out.println(TenantContext.getTenantSchema());
         serviceTypesBySupplierServiceType = groupBy(serviceTypes,
             item -> item.getSupplierServiceType());
 

@@ -1,5 +1,6 @@
 package org.bmsource.dwh.charts;
 
+import org.bmsource.dwh.common.multitenancy.TenantContext;
 import org.bmsource.dwh.common.utils.StringUtils;
 import org.jooq.*;
 import org.jooq.impl.DSL;
@@ -46,7 +47,7 @@ public class QueryGenerator {
 
     private QueryGenerator(Builder builder) {
         dataSource = builder.dataSource;
-        rootTable =  builder.caseConversion.apply(builder.rootTable);
+        rootTable = tableName(builder.caseConversion.apply(builder.rootTable));
         caseConversion = builder.caseConversion;
         caseBackConversion = builder.caseBackConversion;
     }
@@ -215,6 +216,14 @@ public class QueryGenerator {
             .collect(Collectors.toList());
     }
 
+    private String tableName(String rootTable) {
+        return escape(TenantContext.getTenantSchema()) + "." + rootTable;
+    }
+
+    private String escape(String value) {
+        return "\"" + value + "\"";
+    }
+
     private DSLContext initDSLContext() {
         return using(dataSource, SQLDialect.POSTGRES);
     }
@@ -240,6 +249,7 @@ public class QueryGenerator {
 
     interface ICaseConversion {
         IBuild usingSnakeCaseConversion();
+
         IBuild usingNoCaseConversion();
     }
 

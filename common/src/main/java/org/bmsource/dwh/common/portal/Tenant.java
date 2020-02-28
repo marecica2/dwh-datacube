@@ -1,4 +1,4 @@
-package org.bmsource.dwh.common.multitenancy;
+package org.bmsource.dwh.common.portal;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -25,6 +25,11 @@ public class Tenant {
 
     @Column(name = "updated_at")
     private Date updatedAt;
+
+    public Tenant(String schemaName, String tenantName) {
+        this.schemaName = schemaName;
+        this.tenantName = tenantName;
+    }
 
     public String getUuid() {
         return uuid;

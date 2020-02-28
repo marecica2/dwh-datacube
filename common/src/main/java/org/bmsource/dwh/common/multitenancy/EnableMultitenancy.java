@@ -9,7 +9,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@Import(WebMvcConfig.class)
+@Import(Multitenancy.class)
 public @interface EnableMultitenancy {
     Class value();
 }

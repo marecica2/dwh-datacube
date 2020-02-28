@@ -23,6 +23,10 @@ spring:
 spring:
   profiles: integration-test
   datasource:
-    url: jdbc:postgresql://${PG_TEST_HOST}:${PG_TEST_PORT}/${PG_TEST_DATABASE}
-    username: ${PG_TEST_USER}
-    password: ${PG_TEST_PASSWORD}
+    url: jdbc:h2:mem:test;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=false
+    driver-class-name: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQL95Dialect
+    hibernate:
+      ddl-auto: create-drop
+      default_schema: test

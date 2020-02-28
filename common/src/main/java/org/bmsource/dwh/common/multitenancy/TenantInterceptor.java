@@ -1,5 +1,6 @@
 package org.bmsource.dwh.common.multitenancy;
 
+import org.bmsource.dwh.common.portal.TenantRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class TenantInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         String tenantUuid = request.getHeader(Constants.TENANT_HEADER);
         String tenantSchema = tenantUuid != null ? repository.findById(tenantUuid)
-            .orElseThrow(() -> new RuntimeException("Tenant not found"))
+            .orElseThrow(() -> new TenantNotFoundException("Tenant not found"))
             .getSchemaName() : null;
         logger.info("Set TenantContext: {}", tenantSchema);
         TenantContext.setTenantSchema(tenantSchema);

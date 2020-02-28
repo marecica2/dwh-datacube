@@ -1,6 +1,8 @@
 package org.bmsource.dwh.common.job;
 
 import org.bmsource.dwh.common.BaseFact;
+import org.bmsource.dwh.common.multitenancy.EnableMultitenancy;
+import org.bmsource.dwh.common.utils.TestUtils;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,14 +19,13 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.*;
 
-@ActiveProfiles("integration-test")
-@Component
 @SpringBootTest
+@ActiveProfiles("integration-test")
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {ImporterConfiguration.class})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ContextConfiguration(classes = {ImporterConfiguration.class})
 public class JobServiceIT {
-    private String tenant = "000000-00000-00001";
+    private String tenant = TestUtils.TENANT1;
     private String project = "1";
     private String transaction = UUID.randomUUID().toString();
     private List<String> files = new ArrayList<String>() {{
@@ -46,7 +47,6 @@ public class JobServiceIT {
 
     @Autowired
     JdbcTemplate template;
-
 
     @BeforeAll
     public void createTable() {

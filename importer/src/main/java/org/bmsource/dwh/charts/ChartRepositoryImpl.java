@@ -1,5 +1,6 @@
 package org.bmsource.dwh.charts;
 
+import org.bmsource.dwh.common.multitenancy.TenantContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
