@@ -1,5 +1,6 @@
 package org.bmsource.dwh.charts;
 
+import org.bmsource.dwh.common.multitenancy.TenantContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,12 +13,14 @@ import java.util.*;
 @ActiveProfiles({"unit-test"})
 @ExtendWith(SpringExtension.class)
 public class QueryGeneratorTest {
+    private static String tenant = "000000-00000-00001";
 
     @Test
     public void testQuery() {
+        TenantContext.setTenantSchema(tenant);
         String expectedSQL = "select " +
             "supplier_name, sum(cost) as \"sum_cost\", avg(discounted_cost) as \"avg_discounted_cost\" " +
-            "from \"null\".fact " +
+            "from \"" + tenant + "\".fact " +
             "where (some_field = :someField " +
             "and some_other_field in (:someOtherField)) " +
             "group by supplier_name " +

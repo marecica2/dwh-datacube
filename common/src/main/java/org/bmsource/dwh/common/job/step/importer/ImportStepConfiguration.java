@@ -5,6 +5,7 @@ import org.bmsource.dwh.common.appstate.AppStateService;
 import org.bmsource.dwh.common.io.DataRow;
 import org.bmsource.dwh.common.job.ImportJobConfiguration;
 import org.bmsource.dwh.common.job.JobConstants;
+import org.bmsource.dwh.common.multitenancy.impl.concurrent.ContextAwarePoolExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.ChunkListener;
@@ -16,12 +17,10 @@ import org.springframework.batch.core.partition.PartitionHandler;
 import org.springframework.batch.core.partition.support.TaskExecutorPartitionHandler;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.builder.SimpleStepBuilder;
-import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskExecutor;
@@ -101,6 +100,13 @@ public class ImportStepConfiguration<RawFact extends BaseFact> {
     @Autowired
     public void setCompositeItemWriter(CompositeImportItemWriter<RawFact> compositeItemWriter) {
         this.compositeItemWriter = compositeItemWriter;
+    }
+
+    private ThreadPoolTaskExecutor executor;
+
+    @Autowired
+    public void setExecutor(ThreadPoolTaskExecutor executor) {
+        this.executor = executor;
     }
 
     @Bean
@@ -193,13 +199,13 @@ public class ImportStepConfiguration<RawFact extends BaseFact> {
     }
 
     public TaskExecutor taskExecutor() {
-        ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-        taskExecutor.setThreadNamePrefix("Partition_");
-        taskExecutor.setMaxPoolSize(MAX_CONCURRENT_FILES);
-        taskExecutor.setCorePoolSize(MAX_CONCURRENT_FILES / 2);
-        taskExecutor.setQueueCapacity(MAX_CONCURRENT_FILES / 2);
-        taskExecutor.afterPropertiesSet();
-        return taskExecutor;
+        ThreadPoolTaskExecutor executor = new ContextAwarePoolExecutor();
+        executor.setThreadNamePrefix("Partition_");
+        executor.setMaxPoolSize(MAX_CONCURRENT_FILES);
+        executor.setCorePoolSize(MAX_CONCURRENT_FILES / 2);
+        executor.setQueueCapacity(MAX_CONCURRENT_FILES / 2);
+        executor.afterPropertiesSet();
+        return executor;
     }
 
     private String writeSql() {

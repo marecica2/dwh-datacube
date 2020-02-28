@@ -1,11 +1,15 @@
 package org.bmsource.dwh.importer.web;
 
+import org.apache.commons.io.FileUtils;
 import org.bmsource.dwh.ImporterApplication;
 import org.bmsource.dwh.IntegrationTestUtils;
+import org.bmsource.dwh.common.multitenancy.TenantContext;
+import org.bmsource.dwh.common.utils.TestUtils;
 import org.bmsource.dwh.domain.model.Fact;
 import org.bmsource.dwh.domain.repository.FactRepository;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,7 +20,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -24,8 +27,10 @@ import org.springframework.test.web.servlet.ResultHandler;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URISyntaxException;
@@ -35,7 +40,6 @@ import java.nio.file.Paths;
 import java.util.*;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
@@ -46,9 +50,12 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @ContextConfiguration(classes = {ImporterApplication.class})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ImportControllerIT {
-    private boolean printRest = true;
-    private String tenant = "000000-00000-00001";
-    private String project = "1";
+    private static boolean printRest = false;
+    private static String tenant = "000000-00000-00001";
+    private static String project = "1";
+    static {
+        TenantContext.setTenantSchema(tenant);
+    }
 
     private List<String> files = new ArrayList<String>() {{
         add("/spends.xlsx");
@@ -99,6 +106,12 @@ public class ImportControllerIT {
         mvc = webAppContextSetup(this.wac).build();
     }
 
+    @AfterAll
+    public void after() throws Exception {
+        File sql = ResourceUtils.getFile("classpath:batch_clean_up.sql");
+        template.execute(FileUtils.readFileToString(sql));
+    }
+
     @Before
     public void before() throws Exception {
         integrationTestUtils.hasRateCards();
@@ -106,8 +119,8 @@ public class ImportControllerIT {
         integrationTestUtils.hasServiceTypeMapping();
     }
 
+
     @Test
-    @Sql(scripts = "/batch_clean_up.sql", executionPhase = AFTER_TEST_METHOD)
     public void testImport() throws Exception {
         MvcResult transactionResult = mvc.perform(MockMvcRequestBuilders
             .get("/{projectId}/import", project)
@@ -175,6 +188,7 @@ public class ImportControllerIT {
             .andExpect(status().isOk())
             .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("COMPLETED"));
 
+        TenantContext.setTenantSchema(TestUtils.TENANT1);
         Fact fact = factRepository.findByTransactionId("2").get();
         Assertions.assertEquals(424, factRepository.count());
         Assertions.assertEquals(new BigDecimal("67.73"), fact.getCost());

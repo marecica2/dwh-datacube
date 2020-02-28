@@ -1,3 +1,4 @@
+set search_path to "000000-00000-00001";
 truncate table batch_job_execution_params restart identity cascade;
 truncate table batch_step_execution_context restart identity cascade;
 truncate table batch_step_execution restart identity cascade;

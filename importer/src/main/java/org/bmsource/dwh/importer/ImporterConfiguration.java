@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 @Configuration
@@ -21,6 +22,7 @@ public class ImporterConfiguration {
     private static Logger logger = LoggerFactory.getLogger(ImportJobConfiguration.class);
 
     @Autowired
+    @Lazy
     MasterDataService masterDataService;
 
     @Autowired

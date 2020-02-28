@@ -21,12 +21,11 @@ import org.springframework.batch.core.listener.JobExecutionListenerSupport;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.dao.Jackson2ExecutionContextStringSerializer;
 import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
-import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.*;
-import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
@@ -110,6 +109,13 @@ public class JobConfiguration<RawFact, Fact> {
     @Qualifier("excelStep")
     public void setExcelStep(Step excelStep) {
         this.excelStep = excelStep;
+    }
+
+    private ThreadPoolTaskExecutor executor;
+
+    @Autowired
+    public void setExecutor(ThreadPoolTaskExecutor executor) {
+        this.executor = executor;
     }
 
     @Bean
@@ -196,7 +202,7 @@ public class JobConfiguration<RawFact, Fact> {
     public JobLauncher simpleJobLauncher() throws Exception {
         SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
         jobLauncher.setJobRepository(myJobRepository());
-        jobLauncher.setTaskExecutor(new SimpleAsyncTaskExecutor());
+        jobLauncher.setTaskExecutor(executor);
         jobLauncher.afterPropertiesSet();
         return jobLauncher;
     }

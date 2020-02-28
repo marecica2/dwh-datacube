@@ -1,5 +1,8 @@
-package org.bmsource.dwh.common.multitenancy;
+package org.bmsource.dwh.common.multitenancy.impl;
 
+import org.bmsource.dwh.common.multitenancy.Constants;
+import org.bmsource.dwh.common.multitenancy.TenantContext;
+import org.bmsource.dwh.common.multitenancy.TenantNotFoundException;
 import org.bmsource.dwh.common.portal.TenantRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,10 +15,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Component
-public class TenantInterceptor extends HandlerInterceptorAdapter {
+public class TenantContextInterceptor extends HandlerInterceptorAdapter {
 
     Logger logger = LoggerFactory.getLogger(getClass());
-
     {
         logger.debug("Creating TenantInterceptor interceptor");
     }
@@ -29,7 +31,7 @@ public class TenantInterceptor extends HandlerInterceptorAdapter {
         String tenantSchema = tenantUuid != null ? repository.findById(tenantUuid)
             .orElseThrow(() -> new TenantNotFoundException("Tenant not found"))
             .getSchemaName() : null;
-        logger.info("Set TenantContext: {}", tenantSchema);
+        logger.debug("Set TenantContext: {}", tenantSchema);
         TenantContext.setTenantSchema(tenantSchema);
         return true;
     }
@@ -37,7 +39,7 @@ public class TenantInterceptor extends HandlerInterceptorAdapter {
     @Override
     public void postHandle(
         HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {
-        logger.info("Clear TenantContext: {}", TenantContext.getTenantSchema());
+        logger.debug("Clear TenantContext: {}", TenantContext.getTenantSchema());
         TenantContext.setTenantSchema(null);
     }
 

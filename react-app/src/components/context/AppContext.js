@@ -4,7 +4,7 @@ import AppStateApi from '../../shared/api/appState.api';
 const INITIAL_APP_STATE = {
   user: localStorage.user,
   project: localStorage.project ? JSON.parse(localStorage.project) : { id: '1', name: 'Sample proj 1' },
-  tenant: localStorage.tenant ? JSON.parse(localStorage.tenant) : { id: '00000-00000-00001', name: 'demo' },
+  tenant: localStorage.tenant ? JSON.parse(localStorage.tenant) : { id: '000000-00000-00001', name: 'demo' },
   importStatus: {
     running: false,
   },

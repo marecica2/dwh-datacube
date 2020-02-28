@@ -1,5 +1,6 @@
-package org.bmsource.dwh.common.multitenancy;
+package org.bmsource.dwh.common.multitenancy.impl;
 
+import org.bmsource.dwh.common.multitenancy.TenantNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.rest.webmvc.support.ExceptionMessage;

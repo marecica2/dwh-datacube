@@ -39,7 +39,7 @@ public class MasterDataController {
     @Autowired
     ServiceTypeMappingRepository serviceTypeMappingRepository;
 
-    @PostMapping(value = "/zip-code-locations/import")
+    @PostMapping(value = "zip-code-locations/import")
     public DeferredResult<ResponseEntity<?>> importZipCodes(MultipartHttpServletRequest request) {
         Class<ZipCodeLocation> classType = ZipCodeLocation.class;
         DeferredResult<ResponseEntity<?>> result = new DeferredResult<>();
@@ -73,7 +73,7 @@ public class MasterDataController {
         return importExcel(request, classType, handler, result);
     }
 
-    @PostMapping(value = "/service-types/import")
+    @PostMapping(value = "service-types/import")
     public DeferredResult<ResponseEntity<?>> importServiceTypes(MultipartHttpServletRequest request) {
         Class<ServiceTypeMapping> classType = ServiceTypeMapping.class;
         DeferredResult<ResponseEntity<?>> result = new DeferredResult<>();
@@ -107,7 +107,7 @@ public class MasterDataController {
         return importExcel(request, classType, handler, result);
     }
 
-    @PostMapping(value = "/taxonomy/import")
+    @PostMapping(value = "taxonomy/import")
     public DeferredResult<ResponseEntity<?>> importTaxonomy(MultipartHttpServletRequest request) {
         Class<Taxonomy> classType = Taxonomy.class;
         DeferredResult<ResponseEntity<?>> result = new DeferredResult<>();
@@ -140,7 +140,7 @@ public class MasterDataController {
         return importExcel(request, classType, handler, result);
     }
 
-    @PostMapping(value = "/rate-cards/import")
+    @PostMapping(value = "rate-cards/import")
     public DeferredResult<ResponseEntity<?>> importRateCards(MultipartHttpServletRequest request) {
         Class<RateCard> classType = RateCard.class;
         DeferredResult<ResponseEntity<?>> result = new DeferredResult<>();

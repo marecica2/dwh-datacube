@@ -20,7 +20,8 @@ const httpRequest = (url, options = {}) => {
   if (tenantRequest) {
     const projectId = JSON.parse(localStorage.project).id;
     defaultHeaders['x-tenant'] = JSON.parse(localStorage.tenant).id;
-    requestUrl = `${portalApiPath}/${projectId}${url}`;
+    requestUrl = `${portalApiPath}${url}`;
+    defaultParams.projectId = projectId
   }
 
   return ({ headers = {}, params = {}, data, ...other } = {}) => {

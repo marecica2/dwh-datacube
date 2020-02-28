@@ -8,6 +8,8 @@ import org.bmsource.dwh.masterdata.repository.TaxonomyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
@@ -18,7 +20,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Component
-@RequestScope
+@Scope("prototype")
 public class MasterDataServiceImpl implements MasterDataService {
 
     private static Logger logger = LoggerFactory.getLogger(MasterDataServiceImpl.class);
@@ -35,6 +37,7 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     @PostConstruct
     public void init() {
+        System.out.println("AAAAA " + TenantContext.getTenantSchema());
         Iterable<ServiceTypeMapping> serviceTypes = serviceTypeMappingRepository.findAll();
         Iterable<Taxonomy> taxonomy = taxonomyRepository.findAll();
         System.out.println(TenantContext.getTenantSchema());

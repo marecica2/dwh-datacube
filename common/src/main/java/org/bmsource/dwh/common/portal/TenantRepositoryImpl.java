@@ -1,11 +1,9 @@
 package org.bmsource.dwh.common.portal;
 
-import org.aspectj.weaver.ast.Test;
 import org.bmsource.dwh.common.utils.TestUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
