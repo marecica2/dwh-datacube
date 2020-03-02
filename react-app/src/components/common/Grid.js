@@ -15,6 +15,7 @@ import {
   PagingPanel,
   TableEditRow,
   TableEditColumn,
+  TableColumnResizing,
 } from '@devexpress/dx-react-grid-material-ui';
 import FileUpload from './FileUpload';
 import Loader from './Loader';
@@ -32,6 +33,10 @@ export default ({ columnsConfig, crudApi, editable = false, uploader = false, do
   const [previousRequest, setPreviousRequest] = useState();
   const [loading, setLoading] = useState(false);
   const [pageSizes] = useState([10, 20, 50]);
+  const [defaultColumnWidths] = useState(columnsConfig.map(cfg => ({
+    columnName: cfg.name,
+    width: cfg.width ? cfg.width : 'auto',
+  })));
 
   const awaitable = (fn) => {
     return (args) => {
@@ -66,7 +71,7 @@ export default ({ columnsConfig, crudApi, editable = false, uploader = false, do
   }, [crudApi, fetch]);
 
   const rowChange = useCallback(async ({ added, changed, deleted }) => {
-    if(loading)
+    if (loading)
       return;
 
     if (added) {
@@ -97,13 +102,13 @@ export default ({ columnsConfig, crudApi, editable = false, uploader = false, do
   return (
     <Paper className="loadable-container">
       <div className={loading ? 'loadable-content' : ''}>
-        <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '10px'}}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '10px' }}>
           {uploader && (
-            <FileUpload uploadApi={crudApi.fileUpload} after={afterUpload} />
+            <FileUpload uploadApi={crudApi.fileUpload} after={afterUpload}/>
           )}
           {downloader && (
             <IconButton>
-              <DownloadIcon />
+              <DownloadIcon/>
             </IconButton>
           )}
         </div>
@@ -125,8 +130,12 @@ export default ({ columnsConfig, crudApi, editable = false, uploader = false, do
             totalCount={totalCount}
           />
           <Table/>
+          <TableColumnResizing
+            defaultColumnWidths={defaultColumnWidths}
+            resizingMode='nextColumn'
+          />
           <TableHeaderRow/>
-          { editable && (
+          {editable && (
             <>
               <TableEditRow/>
               <TableEditColumn
