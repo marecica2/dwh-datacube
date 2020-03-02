@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.websocket.server.PathParam;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("{projectId}/import")
+@RequestMapping("import")
 public class ImportController {
 
     private FileManager fileManager = new TmpFileManager();
@@ -44,7 +45,7 @@ public class ImportController {
 
     @PostMapping("/{transactionId}")
     public List<String> fileUpload(MultipartHttpServletRequest request,
-                                   @PathVariable("projectId") String projectId,
+                                   @PathParam("projectId") String projectId,
                                    @PathVariable("transactionId") String transactionId) throws IOException {
         List<String> files = new ArrayList<>();
         MultipartFile multipartFile = request.getFile("file");
@@ -58,8 +59,9 @@ public class ImportController {
     }
 
     @PostMapping(value = "/{transactionId}/mapping", consumes = "application/json")
-    public MappingResponse columnMapping(@PathVariable("projectId") String projectId,
-                                         @PathVariable("transactionId") String transactionId) throws Exception {
+    public MappingResponse columnMapping(@PathVariable("transactionId") String transactionId,
+                                         @PathParam("projectId") String projectId
+    ) throws Exception {
         List<String> files = fileManager.getFiles(transactionId);
         try (InputStream stream = fileManager.getStream(transactionId, files.get(0))) {
             MappingResult columnMapping = getColumnMapping(stream);
@@ -69,8 +71,8 @@ public class ImportController {
     }
 
     @PostMapping(value = "/{transactionId}/preview", consumes = "application/json")
-    public List<PreviewResponse> preview(@PathVariable("projectId") String projectId,
-                                         @PathVariable("transactionId") String transactionId,
+    public List<PreviewResponse> preview(@PathVariable("transactionId") String transactionId,
+                                         @PathParam("projectId") String projectId,
                                          @RequestBody PreviewRequestBody mappingParam) throws Exception {
 
         List<String> files = fileManager.getFiles(transactionId);
@@ -92,8 +94,8 @@ public class ImportController {
     @ResponseBody
     @PostMapping(value = "/{transactionId}/start", consumes = "application/json")
     public ResponseEntity<HttpStatus> start(@RequestHeader("x-tenant") String tenant,
-                                @PathVariable("projectId") String projectId,
                                 @PathVariable("transactionId") String transactionId,
+                                @PathParam("projectId") String projectId,
                                 @RequestBody UploadRequestBody uploadRequestBody) {
         List<String> files = fileManager.getFiles(transactionId);
         jobService.runImport(tenant, projectId, transactionId, files, uploadRequestBody.getMapping());
@@ -102,13 +104,13 @@ public class ImportController {
 
     @GetMapping("/mapping-presets")
     public Iterable<MappingPreset> mappingPresets(@RequestHeader("x-tenant") String tenant,
-                                                  @PathVariable("projectId") String projectId) {
+                                                  @PathParam("projectId") String projectId) {
         return mappingPresetRepository.findAll();
     }
 
     @PostMapping("/mapping-presets")
     public MappingPreset saveMappingPreset(@RequestHeader("x-tenant") String tenant,
-                                           @PathVariable("projectId") String projectId,
+                                           @PathParam("projectId") String projectId,
                                            @RequestBody MappingPreset mappingPreset
     ) {
         return mappingPresetRepository.save(mappingPreset);
@@ -116,13 +118,13 @@ public class ImportController {
 
     @GetMapping("/stats")
     public Map<String, Object> statistics(@RequestHeader("x-tenant") String tenant,
-                                          @PathVariable("projectId") String projectId) {
+                                          @PathParam("projectId") String projectId) {
         return jobService.getStatistics(tenant, projectId);
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/errors.zip", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public void getErrorStream(@RequestHeader("x-tenant") String tenant,
-                               @PathVariable("projectId") String projectId,
+                               @PathParam("projectId") String projectId,
                                HttpServletResponse response) throws IOException {
         response.setHeader("Content-Disposition", "attachment; filename=" + "errors.zip");
         try (InputStream is = fileManager.getStream(tenant, projectId, "errors.zip")) {

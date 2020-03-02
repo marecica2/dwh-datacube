@@ -1,33 +1,30 @@
 package org.bmsource.dwh.masterdata;
 
-import org.bmsource.dwh.common.multitenancy.TenantContext;
+import org.bmsource.dwh.common.utils.StringUtils;
 import org.bmsource.dwh.masterdata.model.ServiceTypeMapping;
 import org.bmsource.dwh.masterdata.model.Taxonomy;
 import org.bmsource.dwh.masterdata.repository.ServiceTypeMappingRepository;
 import org.bmsource.dwh.masterdata.repository.TaxonomyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.annotation.RequestScope;
 
-import javax.annotation.PostConstruct;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Component
-@Scope("prototype")
+@JobScope
 public class MasterDataServiceImpl implements MasterDataService {
 
     private static Logger logger = LoggerFactory.getLogger(MasterDataServiceImpl.class);
 
-    private Map<String, ServiceTypeMapping> serviceTypesBySupplierServiceType;
+    public Map<String, ServiceTypeMapping> serviceTypesBySupplierServiceType;
 
-    private Map<String, Taxonomy> taxonomy;
+    public Map<String, Taxonomy> taxonomy;
 
     @Autowired
     ServiceTypeMappingRepository serviceTypeMappingRepository;
@@ -35,18 +32,13 @@ public class MasterDataServiceImpl implements MasterDataService {
     @Autowired
     TaxonomyRepository taxonomyRepository;
 
-    @PostConstruct
     public void init() {
-        System.out.println("AAAAA " + TenantContext.getTenantSchema());
         Iterable<ServiceTypeMapping> serviceTypes = serviceTypeMappingRepository.findAll();
         Iterable<Taxonomy> taxonomy = taxonomyRepository.findAll();
-        System.out.println(TenantContext.getTenantSchema());
         serviceTypesBySupplierServiceType = groupBy(serviceTypes,
-            item -> item.getSupplierServiceType());
-
+            item -> StringUtils.normalize(item.getSupplierServiceType()));
         this.taxonomy = groupBy(taxonomy,
-            item -> item.getName());
-
+            item -> StringUtils.normalize(item.getName()));
         logger.info("Masterdata service initialized");
     }
 

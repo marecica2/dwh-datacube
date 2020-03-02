@@ -1,12 +1,12 @@
 package org.bmsource.dwh.charts;
 
-public class ThreadLocalStorage {
+public class TenantRequestContext {
 
     private static ThreadLocal<String> tenant = new ThreadLocal<>();
     private static ThreadLocal<String> project = new ThreadLocal<>();
 
     public static void setTenant(String tenant) {
-        ThreadLocalStorage.tenant.set(tenant);
+        TenantRequestContext.tenant.set(tenant);
     }
 
     public static String getTenant() {
@@ -18,6 +18,6 @@ public class ThreadLocalStorage {
     }
 
     public static void setProject(String project) {
-        ThreadLocalStorage.project.set(project);
+        TenantRequestContext.project.set(project);
     }
 }

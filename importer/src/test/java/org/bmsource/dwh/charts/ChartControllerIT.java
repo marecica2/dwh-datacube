@@ -88,8 +88,6 @@ public class ChartControllerIT {
         flushRedis();
     }
 
-
-
     @Test
     @Sql(scripts = "/spends.sql", executionPhase = BEFORE_TEST_METHOD)
     public void testChart() throws Exception {
@@ -98,8 +96,9 @@ public class ChartControllerIT {
         String[] dimensions = new String[] {"supplierName"};
         String[] sorts = new String[] {"ascSumCost"};
         mvc.perform(MockMvcRequestBuilders
-            .get("/{projectId}/charts", project)
+            .get("/charts")
             .header("x-tenant", tenant)
+            .param("projectId", project)
             .param("measures", measures)
             .param("dimensions", dimensions)
             .param("sorts", sorts)
@@ -120,8 +119,9 @@ public class ChartControllerIT {
         TenantContext.setTenantSchema(tenant);
         String dimension = "supplierName";
         mvc.perform(MockMvcRequestBuilders
-            .get("/{projectId}/charts/dimensions", project)
+            .get("/charts/dimensions")
             .header("x-tenant", tenant)
+            .param("projectId", project)
             .param("dimension", dimension)
             .contentType(MediaType.APPLICATION_JSON))
             .andDo(doPrint())

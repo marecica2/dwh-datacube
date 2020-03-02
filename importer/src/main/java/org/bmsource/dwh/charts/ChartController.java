@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/{projectId}/charts")
+@RequestMapping("/charts")
 public class ChartController {
 
     @Autowired
@@ -20,7 +20,7 @@ public class ChartController {
 
     @GetMapping
     public List<Map<String, Object>> getChart(@RequestHeader("x-tenant") String tenant,
-                                               @PathVariable("projectId") String projectId,
+                                               @RequestParam("projectId") String projectId,
                                                @RequestParam("dimensions") String[] dimensions,
                                                @RequestParam("measures") String[] measures,
                                                @RequestParam("sorts") String[] sorts,
@@ -40,7 +40,7 @@ public class ChartController {
 
     @GetMapping("/dimensions")
     public ResponseEntity<List<Map<String, Object>>> getDimensionValues(@RequestHeader("x-tenant") String tenant,
-                                                                        @PathVariable("projectId") String projectId,
+                                                                        @RequestParam("projectId") String projectId,
                                                                         @RequestParam("dimension") String dimension) {
         List<Map<String, Object>> result = repository.queryDistinctValues(dimension);
         return new ResponseEntity<>(result, HttpStatus.OK);

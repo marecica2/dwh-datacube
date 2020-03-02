@@ -8,6 +8,7 @@ import org.bmsource.dwh.domain.model.RawFact;
 import org.bmsource.dwh.domain.repository.FactRawRepository;
 import org.bmsource.dwh.domain.repository.FactRepository;
 import org.bmsource.dwh.masterdata.MasterDataService;
+import org.bmsource.dwh.masterdata.MasterDataServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class ImporterConfiguration {
 
     @Autowired
     @Lazy
-    MasterDataService masterDataService;
+    MasterDataServiceImpl masterDataService;
 
     @Autowired
     JdbcTemplate template;
@@ -78,8 +79,8 @@ public class ImporterConfiguration {
             })
             .onCleanUp(ctx -> {
                 logger.info("Cleaning previous imported state");
-                factRepository.deleteAll();
-                rawFactRepository.deleteAll();
+                factRepository.deleteAllInBatch();
+                rawFactRepository.deleteAllInBatch();
                 masterDataService.init();
                 return 1;
             })

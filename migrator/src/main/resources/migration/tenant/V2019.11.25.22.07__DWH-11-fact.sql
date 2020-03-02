@@ -32,7 +32,8 @@ CREATE TABLE fact_raw
     accessorial_charge3  DECIMAL,
     discount             DECIMAL,
     distance             FLOAT,
-    processed            BOOLEAN
+    processed            BOOLEAN,
+    project_id           VARCHAR(10)
 );
 
 DROP TABLE IF EXISTS fact;
@@ -72,5 +73,6 @@ CREATE TABLE fact
     accessorial_charge3  DECIMAL,
     discount             DECIMAL,
     distance             FLOAT,
-    excluded             BOOLEAN
+    excluded             BOOLEAN,
+    project_id           VARCHAR(10)
 );

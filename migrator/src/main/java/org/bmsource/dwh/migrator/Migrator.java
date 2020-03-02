@@ -6,6 +6,7 @@ import org.flywaydb.core.Flyway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
@@ -22,8 +23,16 @@ public class Migrator {
     @Autowired
     private DataSource dataSource;
 
+    @Autowired
+    private JdbcTemplate template;
+
     public void migrate() {
         migrateTenants();
+    }
+
+    public void createNewTenant(Tenant tenant) {
+        createTenantSchema(tenant);
+        migrateTenant(tenant);
     }
 
     private void migrateTenants() {
@@ -46,5 +55,9 @@ public class Migrator {
             logger.error("Migration for tenant {} failed", tenant);
             logger.error(e.getMessage(), e);
         }
+    }
+
+    private void createTenantSchema(Tenant tenant) {
+        template.execute("CREATE SCHEMA IF NOT EXISTS \"" + tenant.getSchemaName() + "\"");
     }
 }

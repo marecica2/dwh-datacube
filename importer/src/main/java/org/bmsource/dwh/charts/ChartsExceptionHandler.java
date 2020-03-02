@@ -2,20 +2,18 @@ package org.bmsource.dwh.charts;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.data.rest.webmvc.support.ExceptionMessage;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
-public class RestResponseEntityExceptionHandler {
-    private static final Logger log = LoggerFactory.getLogger(RestResponseEntityExceptionHandler.class);
+public class ChartsExceptionHandler {
+    private static final Logger log = LoggerFactory.getLogger(ChartsExceptionHandler.class);
 
     @ExceptionHandler({Exception.class})
     @ResponseBody
@@ -23,11 +21,10 @@ public class RestResponseEntityExceptionHandler {
         return errorResponse(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler({ObjectOptimisticLockingFailureException.class, OptimisticLockingFailureException.class,
-        DataIntegrityViolationException.class})
+    @ExceptionHandler({HttpMediaTypeNotAcceptableException.class})
     @ResponseBody
-    public ResponseEntity handleConflict(Exception ex) {
-        return errorResponse(ex, HttpStatus.CONFLICT);
+    public ResponseEntity<?> apiException(Exception e) {
+        return errorResponse(e, HttpStatus.BAD_REQUEST);
     }
 
     protected ResponseEntity<ExceptionMessage> errorResponse(Throwable throwable,

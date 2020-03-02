@@ -31,7 +31,7 @@ public class TenantContextInterceptor extends HandlerInterceptorAdapter {
         String tenantSchema = tenantUuid != null ? repository.findById(tenantUuid)
             .orElseThrow(() -> new TenantNotFoundException("Tenant not found"))
             .getSchemaName() : null;
-        logger.debug("Set TenantContext: {}", tenantSchema);
+        logger.trace("Set TenantContext: {}", tenantSchema);
         TenantContext.setTenantSchema(tenantSchema);
         return true;
     }

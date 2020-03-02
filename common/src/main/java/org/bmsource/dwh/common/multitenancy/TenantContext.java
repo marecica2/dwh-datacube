@@ -5,7 +5,6 @@ public class TenantContext {
     private static ThreadLocal<String> tenantSchema = new ThreadLocal<>();
 
     public static String getTenantSchema() {
-        System.out.println("CTX " + Thread.currentThread().getId() + " " + tenantSchema.get());
         return tenantSchema.get();
     }
 

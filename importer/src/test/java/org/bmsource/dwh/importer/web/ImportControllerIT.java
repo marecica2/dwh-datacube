@@ -9,7 +9,6 @@ import org.bmsource.dwh.domain.model.Fact;
 import org.bmsource.dwh.domain.repository.FactRepository;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -53,6 +52,7 @@ public class ImportControllerIT {
     private static boolean printRest = false;
     private static String tenant = "000000-00000-00001";
     private static String project = "1";
+
     static {
         TenantContext.setTenantSchema(tenant);
     }
@@ -102,29 +102,26 @@ public class ImportControllerIT {
     FactRepository factRepository;
 
     @BeforeAll
-    public void setup() {
+    public void setup() throws Exception {
         mvc = webAppContextSetup(this.wac).build();
+        integrationTestUtils.hasRateCards();
+        integrationTestUtils.hasTaxonomy();
+        integrationTestUtils.hasServiceTypeMapping();
     }
 
     @AfterAll
     public void after() throws Exception {
         File sql = ResourceUtils.getFile("classpath:batch_clean_up.sql");
         template.execute(FileUtils.readFileToString(sql));
-    }
 
-    @Before
-    public void before() throws Exception {
-        integrationTestUtils.hasRateCards();
-        integrationTestUtils.hasTaxonomy();
-        integrationTestUtils.hasServiceTypeMapping();
     }
-
 
     @Test
     public void testImport() throws Exception {
         MvcResult transactionResult = mvc.perform(MockMvcRequestBuilders
-            .get("/{projectId}/import", project)
+            .get("/import")
             .header("x-tenant", tenant)
+            .param("projectId", project)
             .contentType(MediaType.APPLICATION_JSON))
             .andDo(doPrint())
             .andExpect(status().isOk())
@@ -137,17 +134,19 @@ public class ImportControllerIT {
         MediaType mediaType = getMediaType();
 
         mvc.perform(MockMvcRequestBuilders
-            .multipart("/{projectId}/import/{transactionId}", project, transactionId)
+            .multipart("/import/{transactionId}", transactionId)
             .file(mockMultipartFile)
             .header("x-tenant", tenant)
+            .param("projectId", project)
             .contentType(mediaType))
             .andDo(doPrint())
             .andExpect(status().isOk())
             .andExpect(content().json(new JSONArray().put(files.get(0)).toString()));
 
         mvc.perform(MockMvcRequestBuilders
-            .post("/{projectId}/import/{transactionId}/mapping", project, transactionId)
+            .post("/import/{transactionId}/mapping", transactionId)
             .header("x-tenant", tenant)
+            .param("projectId", project)
             .contentType(MediaType.APPLICATION_JSON))
             .andDo(doPrint())
             .andExpect(status().isOk())
@@ -162,8 +161,9 @@ public class ImportControllerIT {
                 "Id"));
 
         mvc.perform(MockMvcRequestBuilders
-            .post("/{projectId}/import/{transactionId}/preview", project, transactionId)
+            .post("/import/{transactionId}/preview", transactionId)
             .header("x-tenant", tenant)
+            .param("projectId", project)
             .contentType(MediaType.APPLICATION_JSON)
             .content(new JSONObject().put("mapping", new JSONObject(mapping)).toString()))
             .andDo(doPrint())
@@ -171,8 +171,9 @@ public class ImportControllerIT {
             .andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(100)));
 
         mvc.perform(MockMvcRequestBuilders
-            .post("/{projectId}/import/{transactionId}/start", project, transactionId)
+            .post("/import/{transactionId}/start", transactionId)
             .header("x-tenant", tenant)
+            .param("projectId", project)
             .contentType(MediaType.APPLICATION_JSON)
             .content(new JSONObject().put("mapping", new JSONObject(mapping)).toString()))
             .andDo(doPrint())
@@ -181,8 +182,9 @@ public class ImportControllerIT {
         waitUntilCompleted();
 
         mvc.perform(MockMvcRequestBuilders
-            .get("/{projectId}/import/stats", project)
+            .get("/import/stats")
             .header("x-tenant", tenant)
+            .param("projectId", project)
             .contentType(MediaType.APPLICATION_JSON))
             .andDo(doPrint())
             .andExpect(status().isOk())
@@ -196,6 +198,7 @@ public class ImportControllerIT {
         mvc.perform(MockMvcRequestBuilders
             .get("/facts?page={page}&size={size}", 0, 1)
             .header("x-tenant", tenant)
+            .param("projectId", project)
             .contentType(MediaType.APPLICATION_JSON))
             .andDo(doPrint())
             .andExpect(status().isOk())
@@ -215,8 +218,9 @@ public class ImportControllerIT {
             try {
                 Thread.sleep(500);
                 MvcResult result = mvc.perform(MockMvcRequestBuilders
-                    .get("/{projectId}/import/stats", project)
+                    .get("/import/stats")
                     .header("x-tenant", tenant)
+                    .param("projectId", project)
                     .contentType(MediaType.APPLICATION_JSON))
                     .andReturn();
                 status = new JSONObject(result.getResponse().getContentAsString()).getString("status");
