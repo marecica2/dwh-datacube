@@ -2,8 +2,10 @@ package org.bmsource.dwh.common.multitenancy.app;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "person")
 public class Person {
     @Id
     private int id;

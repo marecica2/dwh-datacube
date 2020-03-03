@@ -8,7 +8,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @EnableMultitenancy(TestApplication.class)
 @EnableAspectJAutoProxy
-@EnableJpaRepositories
+@EnableJpaRepositories(
+//    entityManagerFactoryRef = "multitenantEntityManagerFactory"
+)
 @SpringBootApplication
 public class TestApplication {
 

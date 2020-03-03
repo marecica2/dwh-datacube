@@ -33,10 +33,8 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {TestApplication.class})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@ActiveProfiles("integration-test")
+@ActiveProfiles("integration-test-pg")
 public class MultitenancyIT {
-
-
     private boolean printRest = false;
     private String project = "1";
     private MockMvc mvc;
@@ -57,7 +55,7 @@ public class MultitenancyIT {
     @Test
     public void testForTenant1() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-            .get("/test", project)
+            .get("/test")
             .header(Constants.TENANT_HEADER, TestUtils.TENANT1)
             .contentType(MediaType.APPLICATION_JSON))
             .andDo(doPrint())
@@ -69,7 +67,7 @@ public class MultitenancyIT {
     @Test
     public void testForTenant2() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-            .get("/test", project)
+            .get("/test")
             .header(Constants.TENANT_HEADER, TestUtils.TENANT2)
             .contentType(MediaType.APPLICATION_JSON))
             .andDo(doPrint())
@@ -81,8 +79,9 @@ public class MultitenancyIT {
     @Test
     public void testForUnknownTenant() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-            .get("/test", project)
+            .get("/test")
             .header(Constants.TENANT_HEADER, "foo")
+            .param("projectId", project)
             .contentType(MediaType.APPLICATION_JSON))
             .andDo(doPrint())
             .andExpect(status().is4xxClientError());
