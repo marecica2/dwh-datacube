@@ -2,12 +2,13 @@ package org.bmsource.dwh.common.portal;
 
 import org.bmsource.dwh.common.utils.TestUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Component
+@Repository
 public class TenantRepositoryImpl implements TenantRepository {
 
     public List<Tenant> tenants = new ArrayList<Tenant>() {{

@@ -1,23 +1,16 @@
 package org.bmsource.dwh.migrator;
 
-import org.bmsource.dwh.common.multitenancy.EnableMultitenancy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-@EnableMultitenancy(MigratorApplication.class)
-@SpringBootApplication(
-    scanBasePackages = {
-        "org.bmsource.dwh.common.portal",
-        "org.bmsource.dwh.migrator"
-    })
+@SpringBootApplication
 @EnableTransactionManagement
-@EnableJpaRepositories
 public class MigratorApplication implements CommandLineRunner {
 
     @Autowired
@@ -37,5 +30,4 @@ public class MigratorApplication implements CommandLineRunner {
         migrator.migrate();
         System.exit(0);
     }
-
 }

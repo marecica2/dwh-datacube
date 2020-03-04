@@ -3,10 +3,12 @@ package org.bmsource.dwh.common.portal;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.util.Date;
 
+@Entity
 public class Tenant {
 
     @Id
@@ -25,6 +27,8 @@ public class Tenant {
 
     @Column(name = "updated_at")
     private Date updatedAt;
+
+    public Tenant() {}
 
     public Tenant(String schemaName, String tenantName) {
         this.schemaName = schemaName;

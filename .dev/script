@@ -79,12 +79,12 @@ function test() {
 }
 
 function migrations() {
-  mvn package -DskipTests -pl migrator && mvn exec:java -pl app-migrator
+  mvn package -DskipTests -pl app-migrator && mvn exec:java -pl app-migrator
   success "== Done =="
 }
 
 function migrationsTest() {
-  mvn package -DskipTests -pl migrator && mvn exec:java -pl app-migrator -Dspring.profiles.active=integration-test
+  mvn package -DskipTests -pl app-migrator && mvn exec:java -pl app-migrator -Dspring.profiles.active=integration-test
   success "== Done =="
 }
 
@@ -94,8 +94,8 @@ function kubeStart() {
   mvn clean install -DskipTests
 
   docker build -t marecica2/dwh-react-app -t marecica2/dwh-react-app:$SHA -f ./react-app/Dockerfile ./react-app
-  docker build -t marecica2/dwh-migrator -t marecica2/dwh-migrator:$SHA -f ./migrator/Dockerfile ./migrator
-  docker build -t marecica2/dwh-importer -t marecica2/dwh-importer:$SHA -f ./importer/Dockerfile ./importer
+  docker build -t marecica2/dwh-migrator -t marecica2/dwh-migrator:$SHA -f ./migrator/Dockerfile ./app-migrator
+  docker build -t marecica2/dwh-importer -t marecica2/dwh-importer:$SHA -f ./importer/Dockerfile ./app-importer
 
   kubectl apply -f .k8s
 

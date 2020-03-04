@@ -3,11 +3,16 @@ spring:
     url: jdbc:postgresql://${PG_HOST}:${PG_PORT}/${PG_DATABASE}
     username: ${PG_USER}
     password: ${PG_PASSWORD}
+    driver-class-name: org.postgresql.Driver
   jpa:
     properties:
       hibernate:
         physical_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
         jdbc.lob.non_contextual_creation: true
+        temp.use_jdbc_metadata_defaults: false
+        jdbc.batch_size: 1000
+        ddl-auto: none
+        dialect: org.hibernate.dialect.PostgreSQL9Dialect
   flyway:
     baseline-version: 1
     enabled: false
@@ -20,3 +25,4 @@ spring:
     url: jdbc:postgresql://${PG_TEST_HOST}:${PG_TEST_PORT}/${PG_TEST_DATABASE}
     username: ${PG_TEST_USER}
     password: ${PG_TEST_PASSWORD}
+    driver-class-name: org.postgresql.Driver
