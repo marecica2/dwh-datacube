@@ -1,4 +1,4 @@
-# DWH - Data warehouse [![Build Status](https://travis-ci.com/marecica2/dwh.svg?branch=develop)](https://travis-ci.com/marecica2/dwh) [![codecov](https://codecov.io/gh/marecica2/dwh/branch/develop/graph/badge.svg)](https://codecov.io/gh/marecica2/dwh)
+# DWH - Data warehouse [![pipeline status](https://gitlab.com/marecica2/dwh/badges/develop/pipeline.svg)](https://gitlab.com/marecica2/dwh/-/commits/develop) [![codecov](https://codecov.io/gh/marecica2/dwh/branch/develop/graph/badge.svg)](https://codecov.io/gh/marecica2/dwh)
 
 
 Showcase app for following stack dealing with multi-tenancy, 
