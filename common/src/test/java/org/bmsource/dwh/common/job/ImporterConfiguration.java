@@ -25,7 +25,7 @@ public class ImporterConfiguration {
         return ImportJobConfigurationBuilder.<JobServiceIT.RawFact, JobServiceIT.Fact>get()
             .withBaseEntity(new JobServiceIT.RawFact())
             .withMappedEntity(new JobServiceIT.Fact())
-            .withMapper(item -> {
+            .withMapper((ctx, item) -> {
                 JobServiceIT.Fact fact = new JobServiceIT.Fact();
                 fact.setBillableWeight(item.getBillableWeight());
                 fact.setBusinessUnit(item.getBusinessUnit());

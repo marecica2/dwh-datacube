@@ -1,6 +1,5 @@
 package org.bmsource.dwh.common.job.step;
 
-import org.bmsource.dwh.common.filemanager.FileManager;
 import org.bmsource.dwh.common.job.ImportContext;
 import org.bmsource.dwh.common.job.ImportJobConfiguration;
 import org.springframework.batch.core.StepContribution;

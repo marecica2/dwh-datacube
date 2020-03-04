@@ -9,7 +9,7 @@ import org.bmsource.dwh.common.io.reader.ExcelReader;
 import org.bmsource.dwh.common.job.JobService;
 import org.bmsource.dwh.importer.MappingPreset;
 import org.bmsource.dwh.importer.MappingPresetRepository;
-import org.bmsource.dwh.domain.model.RawFact;
+import org.bmsource.dwh.common.courier.RawFact;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("import")
+@RequestMapping("/import")
 public class ImportController {
 
     private FileManager fileManager = new TmpFileManager();
@@ -38,7 +38,7 @@ public class ImportController {
     @Autowired
     private MappingPresetRepository mappingPresetRepository;
 
-    @GetMapping
+    @PostMapping("/init")
     public String initUpload() {
         return fileManager.createTransaction();
     }

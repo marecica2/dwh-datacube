@@ -1,10 +1,10 @@
 package org.bmsource.dwh.masterdata;
 
 import org.bmsource.dwh.common.utils.StringUtils;
-import org.bmsource.dwh.masterdata.model.ServiceTypeMapping;
-import org.bmsource.dwh.masterdata.model.Taxonomy;
-import org.bmsource.dwh.masterdata.repository.ServiceTypeMappingRepository;
-import org.bmsource.dwh.masterdata.repository.TaxonomyRepository;
+import org.bmsource.dwh.common.masterdata.model.ServiceTypeMapping;
+import org.bmsource.dwh.common.masterdata.model.Taxonomy;
+import org.bmsource.dwh.common.masterdata.repository.ServiceTypeMappingRepository;
+import org.bmsource.dwh.common.masterdata.repository.TaxonomyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.configuration.annotation.JobScope;

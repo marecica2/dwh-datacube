@@ -15,6 +15,7 @@
         <module>common</module>
         <module>importer</module>
         <module>migrator</module>
+        <module>olap</module>
     </modules>
 
     <parent>

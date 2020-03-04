@@ -3,10 +3,10 @@ import { Typography, Tabs, Tab, Box } from '@material-ui/core';
 import crudApi from '../../shared/api/crud.api'
 import Grid from '../common/Grid';
 
-const zipApi = crudApi( { url: '/zip-code-locations', relation: 'zip-code-locations', tenantRequest: true });
-const taxonomyApi = crudApi( { url: '/taxonomy', relation: 'taxonomy', tenantRequest: true });
-const rateCardApi = crudApi( { url: '/rate-cards', relation: 'rate-cards', tenantRequest: true });
-const serviceTypeApi = crudApi( { url: '/service-types', relation: 'service-types', tenantRequest: true });
+const zipApi = crudApi( { url: '/importer/zip-code-locations', relation: 'zip-code-locations', tenantRequest: true });
+const taxonomyApi = crudApi( { url: '/importer/taxonomy', relation: 'taxonomy', tenantRequest: true });
+const rateCardApi = crudApi( { url: '/importer/rate-cards', relation: 'rate-cards', tenantRequest: true });
+const serviceTypeApi = crudApi( { url: '/importer/service-types', relation: 'service-types', tenantRequest: true });
 
 function tabProps(index) {
   return {

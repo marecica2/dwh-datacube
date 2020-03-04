@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.bmsource.dwh.domain.model.RawFact;
+import org.bmsource.dwh.common.courier.RawFact;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;

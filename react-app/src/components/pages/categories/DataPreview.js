@@ -2,7 +2,7 @@ import React from 'react';
 import Grid from '../../common/Grid';
 import crudApi from '../../../shared/api/crud.api';
 
-const factsApi = crudApi( { url: '/facts', relation: 'facts', tenantRequest: true });
+const factsApi = crudApi( { url: '/olap/facts', relation: 'facts', tenantRequest: true });
 
 function DataPreview() {
   return (

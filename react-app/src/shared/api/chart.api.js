@@ -1,6 +1,6 @@
 import { httpRequest } from '../utils';
 
-const baseUrl = '/charts';
+const baseUrl = '/olap/charts';
 
 export default ({ ...config }) => {
   return {

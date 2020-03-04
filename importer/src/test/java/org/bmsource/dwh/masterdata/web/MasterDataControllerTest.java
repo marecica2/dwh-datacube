@@ -2,10 +2,9 @@ package org.bmsource.dwh.masterdata.web;
 
 import org.apache.commons.io.FileUtils;
 import org.bmsource.dwh.ImporterApplication;
-import org.bmsource.dwh.IntegrationTestUtils;
 import org.bmsource.dwh.common.multitenancy.TenantContext;
+import org.bmsource.dwh.common.utils.IntegrationTestUtils;
 import org.bmsource.dwh.common.utils.TestUtils;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;

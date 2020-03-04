@@ -1,14 +1,13 @@
 package org.bmsource.dwh.importer;
 
+import org.bmsource.dwh.common.courier.Fact;
+import org.bmsource.dwh.common.courier.FactRawRepository;
+import org.bmsource.dwh.common.courier.FactRepository;
+import org.bmsource.dwh.common.courier.RawFact;
 import org.bmsource.dwh.common.job.ImportJobConfiguration;
 import org.bmsource.dwh.common.job.ImportJobConfigurationBuilder;
 import org.bmsource.dwh.common.utils.StringUtils;
-import org.bmsource.dwh.domain.model.Fact;
-import org.bmsource.dwh.domain.model.RawFact;
-import org.bmsource.dwh.domain.repository.FactRawRepository;
-import org.bmsource.dwh.domain.repository.FactRepository;
 import org.bmsource.dwh.masterdata.MasterDataService;
-import org.bmsource.dwh.masterdata.MasterDataServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,7 @@ public class ImporterConfiguration {
 
     @Autowired
     @Lazy
-    MasterDataServiceImpl masterDataService;
+    MasterDataService masterDataService;
 
     @Autowired
     JdbcTemplate template;
@@ -40,7 +39,7 @@ public class ImporterConfiguration {
         return ImportJobConfigurationBuilder.<RawFact, Fact>get()
             .withBaseEntity(new RawFact())
             .withMappedEntity(new Fact())
-            .withMapper(item -> {
+            .withMapper((ctx, item) -> {
                 Fact fact = new Fact();
                 fact.setTransactionId(item.getTransactionId());
                 fact.setBusinessUnit(item.getBusinessUnit());
@@ -73,6 +72,7 @@ public class ImporterConfiguration {
                 fact.setAccessorialCharge1(item.getAccessorialCharge1());
                 fact.setAccessorialService2(item.getAccessorialService2());
                 fact.setAccessorialCharge2(item.getAccessorialCharge2());
+                fact.setProjectId(ctx.getProjectId());
 
                 fact.setDistance(item.getDistance());
                 return fact;

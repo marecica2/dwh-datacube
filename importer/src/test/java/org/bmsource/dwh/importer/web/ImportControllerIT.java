@@ -2,14 +2,13 @@ package org.bmsource.dwh.importer.web;
 
 import org.apache.commons.io.FileUtils;
 import org.bmsource.dwh.ImporterApplication;
-import org.bmsource.dwh.IntegrationTestUtils;
 import org.bmsource.dwh.common.multitenancy.TenantContext;
+import org.bmsource.dwh.common.utils.IntegrationTestUtils;
 import org.bmsource.dwh.common.utils.TestUtils;
-import org.bmsource.dwh.domain.model.Fact;
-import org.bmsource.dwh.domain.repository.FactRepository;
+import org.bmsource.dwh.common.courier.Fact;
+import org.bmsource.dwh.common.courier.FactRepository;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.Before;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,7 +118,7 @@ public class ImportControllerIT {
     @Test
     public void testImport() throws Exception {
         MvcResult transactionResult = mvc.perform(MockMvcRequestBuilders
-            .get("/import")
+            .post("/import/init")
             .header("x-tenant", tenant)
             .param("projectId", project)
             .contentType(MediaType.APPLICATION_JSON))
@@ -154,7 +153,7 @@ public class ImportControllerIT {
             .andExpect(MockMvcResultMatchers.jsonPath("$.sourceColumns.*", hasSize(38)))
             .andExpect(MockMvcResultMatchers.jsonPath("$.sourceColumns['Supplier Name']").value("UPS"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.destinationColumns").exists())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.destinationColumns.*", hasSize(30)))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.destinationColumns.*", hasSize(31)))
             .andExpect(MockMvcResultMatchers.jsonPath("$.destinationColumns.transactionId").exists())
             .andExpect(MockMvcResultMatchers.jsonPath("$.destinationColumns.transactionId.type").value("String"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.destinationColumns.transactionId.label").value("Transaction " +

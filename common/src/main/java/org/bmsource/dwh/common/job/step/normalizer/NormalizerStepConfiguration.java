@@ -1,6 +1,7 @@
 package org.bmsource.dwh.common.job.step.normalizer;
 
 import org.bmsource.dwh.common.BaseFact;
+import org.bmsource.dwh.common.job.ImportContext;
 import org.bmsource.dwh.common.job.ImportJobConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,9 +39,12 @@ public class NormalizerStepConfiguration<RawFact extends BaseFact, Fact extends 
 
     @Autowired
     public void setImportJobConfiguration(ImportJobConfiguration<RawFact, Fact> importJobConfiguration) {
+        // TODO FIX ME!!!!
+        ImportContext ctx = new ImportContext();
+        ctx.setProjectId("1");
         this.rawFact = importJobConfiguration.getBaseEntity();
         this.fact = importJobConfiguration.getMappedEntity();
-        this.normalizerProcessor = item -> importJobConfiguration.getMapper().apply(item);
+        this.normalizerProcessor = item -> importJobConfiguration.getMapper().apply(ctx, item);
     }
 
     private DataSource dataSource;

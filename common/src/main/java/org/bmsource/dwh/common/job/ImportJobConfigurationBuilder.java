@@ -1,11 +1,12 @@
 package org.bmsource.dwh.common.job;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public final class ImportJobConfigurationBuilder<RawFact, Fact> {
     private RawFact baseEntity;
     private Fact mappedEntity;
-    private Function<RawFact, Fact> mapper;
+    private BiFunction<ImportContext, RawFact, Fact> mapper;
     private Function<ImportContext, Object> cleanUpHandler;
 
     private ImportJobConfigurationBuilder() {
@@ -25,7 +26,7 @@ public final class ImportJobConfigurationBuilder<RawFact, Fact> {
         return this;
     }
 
-    public ImportJobConfigurationBuilder<RawFact, Fact> withMapper(Function<RawFact, Fact> mapper) {
+    public ImportJobConfigurationBuilder<RawFact, Fact> withMapper(BiFunction<ImportContext, RawFact, Fact> mapper) {
         this.mapper = mapper;
         return this;
     }

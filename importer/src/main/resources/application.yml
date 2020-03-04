@@ -1,7 +1,7 @@
 server:
   port: 3001
   servlet:
-    context-path: /api
+    context-path: /api/importer
 spring:
   data:
     redis.repositories.enabled: false

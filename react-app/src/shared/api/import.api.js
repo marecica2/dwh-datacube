@@ -1,11 +1,12 @@
 import { httpRequest } from '../utils';
 
-const baseUrl = '/import';
+const baseUrl = '/importer/import';
 
 export default {
   initImport: async (options) => {
-    const { data } = await httpRequest(baseUrl, {
+    const { data } = await httpRequest(`${baseUrl}/init`, {
       ...options,
+      method: 'POST',
     })();
     return data;
   },
