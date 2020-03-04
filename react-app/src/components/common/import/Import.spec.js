@@ -1,13 +1,15 @@
 /* eslint-disable import/first */
 import React from 'react';
 import { render, act, fireEvent } from '@testing-library/react';
+import { sources } from 'eventsourcemock';
 
 // jest.mock('material-ui-dropzone');
 // import { DropzoneArea } from 'material-ui-dropzone'
 
 jest.mock('../../../shared/api/import.api');
-import { sources } from 'eventsourcemock';
+jest.mock('../../../shared/api/appState.api');
 import importApiMock from '../../../shared/api/import.api';
+import appStateApiMock from '../../../shared/api/appState.api';
 
 import Import from './Import';
 import { AppStateProvider } from '../../context/AppContext';
@@ -76,12 +78,12 @@ describe('Import workflow', () => {
     importApiMock.getMapping.mockImplementationOnce(() => mapping);
     importApiMock.getMappingPresets.mockImplementationOnce(() => mappingPreset);
     importApiMock.getPreview.mockImplementationOnce(() => preview);
-
+    appStateApiMock.getAppStateUrl.mockImplementationOnce(() => '/api/importer/status');
 
     await act(async () => {
       ui = render(<AppStateProvider><Import/></AppStateProvider>);
     });
-    sources['/api/00000-00000-00001/1/status'].emitOpen();
+    sources['/api/importer/status'].emitOpen();
   });
 
   test('Display correct step on startup', async () => {

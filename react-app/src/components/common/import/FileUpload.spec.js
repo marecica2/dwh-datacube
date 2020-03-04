@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, waitForElement } from '@testing-library/react';
+import { render } from '@testing-library/react';
 // import '@testing-library/jest-dom/extend-expect';
 import axiosMock from 'axios';
 import FileUpload from './FileUpload';
@@ -16,10 +16,10 @@ describe('FileUpload', () => {
   const defaultProps = {
     api: {
       // uploadFiles: jest.fn().mockResolvedValue(files[0].name),
-      uploadFiles : (transactionId, files, onUploadProgress) => {
+      uploadFiles : (transactionId, f, onUploadProgress) => {
         onUploadProgress({ loaded: 50, total: 100});
         onUploadProgress({ loaded: 100, total: 100});
-        return files;
+        return f;
       },
     },
     transaction: '1234',
