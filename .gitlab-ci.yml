@@ -17,6 +17,7 @@ java-build:
   script:
     - export $(cat .env.ci.gitlab | xargs)
     - mvn -ntp clean package -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+    - printenv
     - java -Dspring.profiles.active=integration-test -jar ./app-migrator/target/application.jar
     - mvn -ntp install
   artifacts:
