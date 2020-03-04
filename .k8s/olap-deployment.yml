@@ -1,24 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: importer-deployment
+  name: olap-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      component: importer
+      component: olap
   template:
     metadata:
       labels:
-        component: importer
+        component: olap
     spec:
       initContainers:
         - name: pg-ready
           image: postgres:10.3
           command: ['sh', '-c',  'until pg_isready -h postgres-cluster-ip-service -p 5432;  do echo waiting for database; sleep 2; done;']
       containers:
-        - name: importer
-          image: marecica2/dwh-importer
+        - name: olap
+          image: marecica2/dwh-olap
           ports:
             - containerPort: 3001
           env:

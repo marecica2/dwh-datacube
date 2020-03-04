@@ -17,13 +17,14 @@ java-build:
   script:
     - export $(cat .env.ci.gitlab | xargs)
     - mvn -ntp clean package -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-    - java -Dspring.profiles.active=integration-test -jar ./migrator/target/application.jar
+    - java -Dspring.profiles.active=integration-test -jar ./app-migrator/target/application.jar
     - mvn -ntp install -DskipTests=true
   artifacts:
     paths:
-      - common/target/
-      - importer/target/
-      - migrator/target/
+      - lib-common/target/
+      - app-importer/target/
+      - app-olap/target/
+      - app-migrator/target/
 
 react-build:
   stage: build
@@ -45,5 +46,5 @@ deployment:
   stage: deploy
   script:
     - pwd
-    - cd importer/target
+    - cd app-importer/target
     - ls -la

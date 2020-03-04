@@ -12,10 +12,10 @@
     <description>Data warehouse</description>
 
     <modules>
-        <module>common</module>
-        <module>importer</module>
-        <module>migrator</module>
-        <module>olap</module>
+        <module>lib-common</module>
+        <module>app-importer</module>
+        <module>app-migrator</module>
+        <module>app-olap</module>
     </modules>
 
     <parent>

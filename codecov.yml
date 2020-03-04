@@ -11,8 +11,9 @@ coverage:
 flags:
   java:
     paths:
-      - common/src
-      - importer/src
+      - lib-common/src
+      - app-importer/src
+      - app-olap/src
   reactapp:
     paths:
       - react-app/src

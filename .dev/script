@@ -68,6 +68,11 @@ function init() {
   success "== Done =="
 }
 
+function build() {
+  mvn -ntp clean install -DskipTests
+  success "== Done =="
+}
+
 function test() {
   mvn -ntp install
   success "== Done =="
@@ -110,6 +115,9 @@ if [[ $# -gt 0 ]]; then
 
   elif [[ "$1" == "stack-start" ]]; then
     stackStart
+
+  elif [[ "$1" == "build" ]]; then
+    build
 
   elif [[ "$1" == "test" ]]; then
     test
