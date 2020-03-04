@@ -15,7 +15,7 @@
     <dependencies>
         <dependency>
             <groupId>org.bmsource.dwh</groupId>
-            <artifactId>common</artifactId>
+            <artifactId>lib-common</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
             <optional>true</optional>
