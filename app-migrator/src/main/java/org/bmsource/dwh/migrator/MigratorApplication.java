@@ -11,10 +11,11 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @EnableMultitenancy(MigratorApplication.class)
-@SpringBootApplication(scanBasePackages = {
-    "org.bmsource.dwh.common.portal",
-    "org.bmsource.dwh.migrator"
-})
+@SpringBootApplication(
+    scanBasePackages = {
+        "org.bmsource.dwh.common.portal",
+        "org.bmsource.dwh.migrator"
+    })
 @EnableTransactionManagement
 @EnableJpaRepositories
 public class MigratorApplication implements CommandLineRunner {
