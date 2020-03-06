@@ -44,12 +44,11 @@ react-build:
 codecov:
   stage: coverage
   script:
-    - curl -s https://codecov.io/bash | bash -s - -t $CODECOV_TOKEN -f lib-common/target/site/jacoco/jacoco.xml -c -F java
-    - curl -s https://codecov.io/bash | bash -s - -t $CODECOV_TOKEN -f app-importer/target/site/jacoco/jacoco.xml -c -F java
-    - curl -s https://codecov.io/bash | bash -s - -t $CODECOV_TOKEN -f app-olap/target/site/jacoco/jacoco.xml -c -F java
-    - curl -s https://codecov.io/bash | bash -s - -t $CODECOV_TOKEN -f react-app/coverage/coverage-final.json -c -F reactapp
-
-#    - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f lib-common/target/site/jacoco/jacoco.xml -c -F java
-#    - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f app-importer/target/site/jacoco/jacoco.xml -c -F java
-#    - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f app-olap/target/site/jacoco/jacoco.xml -c -F java
-#    - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f react-app/coverage/coverage-final.json -c -F reactapp
+    - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f lib-common/target/site/jacoco/jacoco.xml -c -F java
+    - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f app-importer/target/site/jacoco/jacoco.xml -c -F java
+    - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f app-olap/target/site/jacoco/jacoco.xml -c -F java
+    - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f react-app/coverage/coverage-final.json -c -F reactapp
+#    - curl -s https://codecov.io/bash | bash -s - -t $CODECOV_TOKEN -f lib-common/target/site/jacoco/jacoco.xml -c -F java
+#    - curl -s https://codecov.io/bash | bash -s - -t $CODECOV_TOKEN -f app-importer/target/site/jacoco/jacoco.xml -c -F java
+#    - curl -s https://codecov.io/bash | bash -s - -t $CODECOV_TOKEN -f app-olap/target/site/jacoco/jacoco.xml -c -F java
+#    - curl -s https://codecov.io/bash | bash -s - -t $CODECOV_TOKEN -f react-app/coverage/coverage-final.json -c -F reactapp
