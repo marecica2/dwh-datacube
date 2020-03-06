@@ -12,7 +12,9 @@ flags:
   java:
     paths:
       - lib-common/src
+      - app-gateway/src
       - app-importer/src
+      - app-migrator/src
       - app-olap/src
   reactapp:
     paths:

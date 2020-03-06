@@ -29,8 +29,8 @@ jobs:
       script:
         - mvn -ntp install
       after_success:
-        - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f common/target/site/jacoco/jacoco.xml -c -F java
-        - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f importer/target/site/jacoco/jacoco.xml -c -F java
+        - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f lib-common/target/site/jacoco/jacoco.xml -c -F java
+        - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f app-importer/target/site/jacoco/jacoco.xml -c -F java
     - language: node_js
       node_js:
         - 12

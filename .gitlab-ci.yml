@@ -1,7 +1,7 @@
 image: docker:latest
 stages:
   - build
-  - deploy
+  - coverage
 
 java-build:
   stage: build
@@ -42,9 +42,10 @@ react-build:
     paths:
       - build/
 
-deployment:
-  stage: deploy
+coverage:
+  stage: coverage
   script:
-    - pwd
-    - cd app-importer/target
-    - ls -la
+    - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f lib-common/target/site/jacoco/jacoco.xml -c -F java
+    - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f app-importer/target/site/jacoco/jacoco.xml -c -F java
+    - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f app-olap/target/site/jacoco/jacoco.xml -c -F java
+    - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f react-app/coverage/coverage-final.json -c -F reactapp
