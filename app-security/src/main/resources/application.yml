@@ -1,0 +1,39 @@
+server:
+  port: 3003
+  servlet:
+    context-path: /api/security
+spring:
+  application:
+    name: security
+  datasource:
+    url: jdbc:postgresql://${PG_HOST}:${PG_PORT}/${PG_DATABASE}?reWriteBatchedInserts=true&currentSchema=master
+    username: ${PG_USER}
+    password: ${PG_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 12
+  jpa:
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+    properties:
+      hibernate:
+        jdbc.lob.non_contextual_creation: true
+        temp.use_jdbc_metadata_defaults: false
+        jdbc.batch_size: 1000
+        dialect: org.bmsource.dwh.common.db.CustomPostgreSQLDialect
+    database-platform: org.bmsource.dwh.common.db.CustomPostgreSQLDialect
+
+---
+
+spring:
+  profiles: integration-test
+  datasource:
+    url: jdbc:postgresql://${PG_TEST_HOST}:${PG_TEST_PORT}/${PG_TEST_DATABASE}?reWriteBatchedInserts=true&currentSchema=master
+    username: ${PG_TEST_USER}
+    password: ${PG_TEST_PASSWORD}
+    hikari:
+      minimum-idle: 2
+      maximum-pool-size: 10

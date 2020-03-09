@@ -24,6 +24,7 @@
     "lodash": "^4.17.15",
     "query-string": "^6.8.3",
     "ramda": "^0.26.1",
+    "ramda-adjunct": "^2.25.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-dropzone": "^10.2.1",

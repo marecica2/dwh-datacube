@@ -27,33 +27,34 @@ public class Migrator {
     private JdbcTemplate template;
 
     public void migrate() {
+        migrateSchema("master");
         migrateTenants();
     }
 
     public void createNewTenant(Tenant tenant) {
         createTenantSchema(tenant);
-        migrateTenant(tenant);
+        migrateSchema(tenant.getSchemaName());
     }
 
     private void migrateTenants() {
         repository.findAll().forEach(tenant -> {
-            migrateTenant(tenant);
+            migrateSchema(tenant.getSchemaName());
         });
     }
 
-    private void migrateTenant(Tenant tenant) {
+    private void migrateSchema(String schema) {
         try {
-            String schema = tenant.getSchemaName();
             Flyway flyway = Flyway
                 .configure()
-                .locations("migration/tenant")
+                .locations("migration/" + schema)
                 .dataSource(dataSource)
                 .schemas(schema).load();
             flyway.migrate();
-            logger.info("Migration for tenant {} successful", tenant);
+            logger.info("Migration for {} successful", schema);
         } catch (Exception e) {
-            logger.error("Migration for tenant {} failed", tenant);
+            logger.error("Migration for {} failed", schema);
             logger.error(e.getMessage(), e);
+            throw e;
         }
     }
 

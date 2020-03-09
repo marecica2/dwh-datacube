@@ -2,31 +2,37 @@ import React, { useEffect, useState, useReducer } from 'react';
 import AppStateApi from '../../shared/api/appState.api';
 
 const INITIAL_APP_STATE = {
-  user: localStorage.user,
-  project: localStorage.project ? JSON.parse(localStorage.project) : { id: '1', name: 'Sample proj 1' },
-  tenant: localStorage.tenant ? JSON.parse(localStorage.tenant) : { id: '000000-00000-00001', name: 'demo' },
+  user: null,
+  token: sessionStorage.token ? JSON.parse(sessionStorage.token) : null,
+  project: sessionStorage.project ? JSON.parse(sessionStorage.project) : { id: '1', name: 'Sample proj 1' },
+  tenant: sessionStorage.tenant ? JSON.parse(sessionStorage.tenant) : { id: '000000-00000-00001', name: 'demo' },
   importStatus: {
     running: false,
   },
   progresses: {},
 };
 
-localStorage.project = JSON.stringify(INITIAL_APP_STATE.project);
-localStorage.tenant = JSON.stringify(INITIAL_APP_STATE.tenant);
+sessionStorage.project = JSON.stringify(INITIAL_APP_STATE.project);
+sessionStorage.tenant = JSON.stringify(INITIAL_APP_STATE.tenant);
 
 const reducer = (state, { type, value }) => {
   switch (type) {
-    case 'login':
-      return { ...state, user: value };
+    case 'loginSuccess':
+      console.log(type);
+      console.log(value);
+      sessionStorage.setItem('token', JSON.stringify(value.token));
+      window.location.href = value.redirect;
+      return { ...state, user: 'admin', token: value.token };
     case 'logout':
-      return { ...state, user: undefined };
+      window.location.href = '/login';
+      return { ...state, user: null };
     case 'project': {
-      localStorage.project = JSON.stringify(value);
+      sessionStorage.project = JSON.stringify(value);
       window.location.href = '/';
       return null;
     }
     case 'tenant':
-      localStorage.tenant = JSON.stringify(value);
+      sessionStorage.tenant = JSON.stringify(value);
       window.location.href = '/';
       return null;
     case 'importStatus':
@@ -36,7 +42,7 @@ const reducer = (state, { type, value }) => {
       return { ...state, importStatus: { running: value.running }, progresses: { ...newProgress } };
     }
     case 'filtersChange':
-      return { ...state, filters : {...state.filters, ...value}};
+      return { ...state, filters: { ...state.filters, ...value } };
     default: {
       console.warn('AppContext No action registered for ', type);
       return state;

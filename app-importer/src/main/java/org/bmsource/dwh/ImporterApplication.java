@@ -15,8 +15,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     DataSourceAutoConfiguration.class,
     RedisRepositoriesAutoConfiguration.class,
 })
-@EnableJpaRepositories(basePackages = "org.bmsource.dwh.**")
-@EntityScan(basePackages = "org.bmsource.dwh.**")
+@EnableJpaRepositories(basePackageClasses = ImporterApplication.class)
+@EntityScan(basePackageClasses = ImporterApplication.class)
 @EnableAspectJAutoProxy
 @EnableAsync
 @EnableTransactionManagement

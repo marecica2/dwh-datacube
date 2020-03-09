@@ -16,6 +16,8 @@
         <module>app-importer</module>
         <module>app-migrator</module>
         <module>app-olap</module>
+        <module>app-gateway</module>
+        <module>app-security</module>
     </modules>
 
     <parent>
@@ -33,6 +35,26 @@
         <junit-jupiter.version>5.3.2</junit-jupiter.version>
         <spring.profiles.active>dev</spring.profiles.active>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>javax.interceptor</groupId>
+            <artifactId>javax.interceptor-api</artifactId>
+            <version>1.2.2</version>
+        </dependency>
+    </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-parent</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <finalName>${project.artifactId}</finalName>

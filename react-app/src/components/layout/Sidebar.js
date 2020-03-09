@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import clsx from 'clsx';
 import {makeStyles, useTheme} from '@material-ui/core/styles';
 import Collapse from '@material-ui/core/Collapse';
@@ -18,6 +18,7 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 import SettingsIcon from '@material-ui/icons/Settings';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import {NavLink as RouterLink} from 'react-router-dom';
+import { AppContext } from '../context/AppContext';
 
 const drawerWidth = 240;
 
@@ -63,7 +64,9 @@ function Sidebar(props) {
   const [categoryOpen, setCategoryOpen] = React.useState(false);
   const AdapterLink = React.forwardRef((props, ref) => <RouterLink innerRef={ref} {...props} />);
 
-  return (
+  const { state } = useContext(AppContext);
+
+  return state.token && (
     <Drawer
       variant="permanent"
       className={clsx(classes.drawer, {

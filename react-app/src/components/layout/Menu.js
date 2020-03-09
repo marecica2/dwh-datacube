@@ -12,8 +12,7 @@ import MailIcon from '@material-ui/icons/Mail';
 import MenuIcon from '@material-ui/icons/Menu';
 import Typography from '@material-ui/core/Typography';
 import { NavLink as Link } from 'react-router-dom';
-
-import AppContext from '../context/AppContext';
+import { AppContext } from '../context/AppContext';
 
 const drawerWidth = 240;
 
@@ -62,7 +61,7 @@ function AppMenu(props) {
     setAnchorEl(null);
   }
 
-  return (
+  return state.token && (
     <AppBar
       position="fixed"
       className={clsx(classes.appBar, {

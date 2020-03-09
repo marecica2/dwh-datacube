@@ -3,6 +3,8 @@ server:
   servlet:
     context-path: /api/olap
 spring:
+  application:
+    name: olap
   data:
     redis.repositories.enabled: false
   datasource:
@@ -14,13 +16,15 @@ spring:
       minimum-idle: 5
       maximum-pool-size: 12
   jpa:
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
     properties:
       hibernate:
-        physical_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
         jdbc.lob.non_contextual_creation: true
         temp.use_jdbc_metadata_defaults: false
         jdbc.batch_size: 1000
-        ddl-auto: none
         dialect: org.bmsource.dwh.common.db.CustomPostgreSQLDialect
     database-platform: org.bmsource.dwh.common.db.CustomPostgreSQLDialect
   flyway:

@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: migrator
   datasource:
     url: jdbc:postgresql://${PG_HOST}:${PG_PORT}/${PG_DATABASE}
     username: ${PG_USER}
