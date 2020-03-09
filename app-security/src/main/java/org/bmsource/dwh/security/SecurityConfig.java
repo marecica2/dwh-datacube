@@ -17,16 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.annotation.Resource;
 
 @Configuration
-@EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled = true)
 @EntityScan
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
-    @Autowired
-    PasswordEncoder encoder;
-
-    @Resource(name = "userService")
-    private UserDetailsService userDetailsService;
 
     @Override
     @Bean
@@ -34,22 +26,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
-    @Autowired
-    public void globalUserDetails(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService)
-            .passwordEncoder(encoder);
-    }
-
-//    @Override
-//    public void configure(WebSecurity web) {
-//        web.ignoring().antMatchers("/actuator/**");
-//    }
-
-    @Override
-    public void configure(HttpSecurity http) throws Exception {
-        http
-            .authorizeRequests()
-            .antMatchers("/actuator/**").permitAll()
-            .antMatchers("/**").authenticated();
-    }
 }

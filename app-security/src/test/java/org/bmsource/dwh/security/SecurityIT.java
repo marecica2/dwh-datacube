@@ -69,12 +69,12 @@ public class SecurityIT {
     @Sql(scripts = "/test_setup.sql", executionPhase = BEFORE_TEST_METHOD)
     @Sql(scripts = "/test_teardown.sql", executionPhase = AFTER_TEST_METHOD)
     public void obtainJWTTokenUsingPasswordGrantFlow() throws Exception {
-//        TestingAuthenticationToken authentication = new TestingAuthenticationToken("dwh-client", "secret");
-//        authentication.setAuthenticated(true);
+        TestingAuthenticationToken authentication = new TestingAuthenticationToken("dwh-client", "secret");
+        authentication.setAuthenticated(true);
 
         MvcResult tokenResponse = mvc.perform(MockMvcRequestBuilders
             .post("/oauth/token")
-            //.principal(authentication)
+            .principal(authentication)
             .param("username", "admin")
             .param("password", "admin")
             .param("grant_type", "password")
