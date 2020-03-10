@@ -27,26 +27,26 @@ public class Migrator {
     private JdbcTemplate template;
 
     public void migrate() {
-        migrateSchema("master");
+        migrateSchema("master", "master");
         migrateTenants();
     }
 
     public void createNewTenant(Tenant tenant) {
         createTenantSchema(tenant);
-        migrateSchema(tenant.getSchemaName());
+        migrateSchema(tenant.getSchemaName(), "tenant");
     }
 
     private void migrateTenants() {
         repository.findAll().forEach(tenant -> {
-            migrateSchema(tenant.getSchemaName());
+            migrateSchema(tenant.getSchemaName(), "tenant");
         });
     }
 
-    private void migrateSchema(String schema) {
+    private void migrateSchema(String schema, String migrationDir) {
         try {
             Flyway flyway = Flyway
                 .configure()
-                .locations("migration/" + schema)
+                .locations("migration/" + migrationDir)
                 .dataSource(dataSource)
                 .schemas(schema).load();
             flyway.migrate();
