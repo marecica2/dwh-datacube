@@ -58,7 +58,6 @@ public class ImportControllerIT {
     }
 
     private List<String> files = new ArrayList<String>() {{
-
         add("/spends.xlsx");
     }};
 
