@@ -4,7 +4,9 @@ import org.bmsource.dwh.common.portal.PortalConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.rest.RepositoryRestMvcAutoConfiguration;
@@ -13,11 +15,9 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.annotation.PostConstruct;
-
 @SpringBootApplication(
     scanBasePackageClasses = {
-        MigratorApplication.class,
+        MigratorCliApplication.class,
     },
     exclude = {
         RedisAutoConfiguration.class,
@@ -26,32 +26,35 @@ import javax.annotation.PostConstruct;
 )
 @EnableJpaRepositories(
     basePackageClasses = {
-        MigratorApplication.class,
+        MigratorCliApplication.class,
         PortalConfiguration.class,
     }
 )
 @EntityScan(basePackageClasses = {
-    MigratorApplication.class,
+    MigratorCliApplication.class,
     PortalConfiguration.class,
 })
 @EnableTransactionManagement
-@Profile("default")
-public class MigratorApplication {
-
-    private static Logger logger = LoggerFactory
-        .getLogger(MigratorApplication.class);
+@Profile("cli")
+public class MigratorCliApplication implements CommandLineRunner {
 
     @Autowired
     Migrator migrator;
 
-    @PostConstruct
-    public void init() {
-        logger.info("Migrating schemas");
-        migrator.migrate();
-        logger.info("Migration completed");
+    private static Logger logger = LoggerFactory
+        .getLogger(MigratorCliApplication.class);
+
+    public static void main(String[] args) {
+        logger.info("CLI Migrating schemas");
+        SpringApplication app = new SpringApplication(MigratorCliApplication.class);
+        app.setWebApplicationType(WebApplicationType.NONE);
+        app.run(args);
+        logger.info("CLI Migration completed");
     }
 
-    public static void main(String... args) {
-        SpringApplication.run(MigratorApplication.class, args);
+    @Override
+    public void run(String... args) {
+        migrator.migrate();
+        System.exit(0);
     }
 }

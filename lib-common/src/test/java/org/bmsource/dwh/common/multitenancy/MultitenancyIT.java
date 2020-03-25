@@ -5,6 +5,7 @@ import org.bmsource.dwh.common.multitenancy.app.TestApplication;
 import org.bmsource.dwh.common.multitenancy.impl.MultitenancyConfiguration;
 import org.bmsource.dwh.common.multitenancy.impl.MultitenantDataSource;
 import org.bmsource.dwh.common.utils.TestUtils;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -48,9 +49,15 @@ public class MultitenancyIT {
     JdbcTemplate template;
 
     @BeforeAll
-    public void setup() throws IOException {
+    public void beforeAll() throws IOException {
         mvc = webAppContextSetup(this.wac).build();
         File sql = ResourceUtils.getFile("classpath:multitenancy-before-script.sql");
+        template.execute(FileUtils.readFileToString(sql));
+    }
+
+    @AfterAll
+    public void afterAll() throws IOException {
+        File sql = ResourceUtils.getFile("classpath:multitenancy-after-script.sql");
         template.execute(FileUtils.readFileToString(sql));
     }
 

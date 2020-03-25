@@ -14,9 +14,12 @@ java-build:
     - postgres
     - redis
   script:
+    - apt-get install postgresql-client
+    - psql -h "postgres" -U "postgres" -d "postgres" -a -f ./.db/init.sql
     - export $(cat .env.ci.gitlab | xargs)
     - mvn -ntp clean install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-    - env $(cat .env.ci.gitlab) java -Dspring.profiles.active=integration-test -jar ./app-migrator/target/application.jar
+    #- env $(cat .env.ci.gitlab) java -Dspring.profiles.active=integration-test -jar ./app-migrator/target/application.jar
+    - env $(cat .env.ci.gitlab) mvn package -DskipTests -pl app-migrator && mvn exec:java -pl app-migrator -Dspring.profiles.active=cli,integration-test
     - mvn -ntp install
   artifacts:
     paths:

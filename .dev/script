@@ -79,12 +79,12 @@ function test() {
 }
 
 function migrations() {
-  mvn package -DskipTests -pl app-migrator && mvn exec:java -pl app-migrator
+  mvn package -DskipTests -pl app-migrator && mvn exec:java -pl app-migrator  -Dspring.profiles.active=cli
   success "== Done =="
 }
 
 function migrationsTest() {
-  mvn package -DskipTests -pl app-migrator && mvn exec:java -pl app-migrator -Dspring.profiles.active=integration-test
+  mvn package -DskipTests -pl app-migrator && mvn exec:java -pl app-migrator -Dspring.profiles.active=cli,integration-test
   success "== Done =="
 }
 
