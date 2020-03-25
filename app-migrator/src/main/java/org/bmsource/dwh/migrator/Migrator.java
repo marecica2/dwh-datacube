@@ -33,12 +33,12 @@ public class Migrator {
 
     public void createNewTenant(Tenant tenant) {
         createTenantSchema(tenant);
-        migrateSchema(tenant.getSchemaName(), "tenant");
+        migrateSchema(tenant.getId(), "tenant");
     }
 
     private void migrateTenants() {
         repository.findAll().forEach(tenant -> {
-            migrateSchema(tenant.getSchemaName(), "tenant");
+            migrateSchema(tenant.getId(), "tenant");
         });
     }
 
@@ -59,6 +59,6 @@ public class Migrator {
     }
 
     private void createTenantSchema(Tenant tenant) {
-        template.execute("CREATE SCHEMA IF NOT EXISTS \"" + tenant.getSchemaName() + "\"");
+        template.execute("CREATE SCHEMA IF NOT EXISTS \"" + tenant.getId() + "\"");
     }
 }
