@@ -17,7 +17,7 @@ java-build:
     - cat /etc/*-release
     - apt-get update
     - apt-get install -y postgresql-client
-    - psql -h "postgres" -U "postgres" -d "postgres" -a -f ./.db/init.sql
+    - PGPASSWORD=postgres psql -h "postgres" -U "postgres" -d "postgres" -a -f ./.db/init.sql
     - export $(cat .env.ci.gitlab | xargs)
     - mvn -ntp clean install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
     #- env $(cat .env.ci.gitlab) java -Dspring.profiles.active=integration-test -jar ./app-migrator/target/application.jar
