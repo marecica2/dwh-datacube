@@ -4,10 +4,10 @@ coverage:
       default: off
       java:
         flags: java
-        target: 70%
-      reactapp:
-        flags: reactapp
-        target: 70%
+        target: 50%
+      react:
+        flags: react
+        target: 50%
 flags:
   java:
     paths:
@@ -17,6 +17,6 @@ flags:
       - app-portal/src
       - app-security/src
       - lib-common/src
-  reactapp:
+  react:
     paths:
       - react-app/src
