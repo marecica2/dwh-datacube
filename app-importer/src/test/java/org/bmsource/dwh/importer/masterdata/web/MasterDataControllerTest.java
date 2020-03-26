@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @ContextConfiguration(classes = { ImporterApplication.class})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class MasterDataControllerTest {
-    private static String tenant = "000000-00000-00001";
+    private static String tenant = TestUtils.TENANT1;
     private static String project = "1";
 
     static {

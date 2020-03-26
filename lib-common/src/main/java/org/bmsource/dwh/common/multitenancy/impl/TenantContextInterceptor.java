@@ -33,7 +33,7 @@ public class TenantContextInterceptor extends HandlerInterceptorAdapter {
         String tenantUuid = request.getHeader(Constants.TENANT_HEADER);
         String tenantSchema = tenantUuid != null ? tenantDao.findById(tenantUuid)
             .orElseThrow(() -> new TenantNotFoundException("Tenant not found"))
-            .getSchemaName() : null;
+            .getId() : null;
         logger.debug("Set TenantContext: {}", tenantSchema);
         TenantContext.setTenantSchema(tenantSchema);
         return true;

@@ -50,7 +50,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ImportControllerIT {
     private static boolean printRest = false;
-    private static String tenant = "000000-00000-00001";
+    private static String tenant = TestUtils.TENANT1;
     private static String project = "1";
 
     static {
