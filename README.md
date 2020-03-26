@@ -1,4 +1,5 @@
-# DWH - Data warehouse [![pipeline status](https://gitlab.com/marecica2/dwh-datacube/badges/develop/pipeline.svg)](https://gitlab.com/marecica2/dwh/-/commits/develop) [![codecov](https://codecov.io/gh/marecica2/dwh/branch/develop/graph/badge.svg)](https://codecov.io/gh/marecica2/dwh)
+# DWH - Data warehouse [![pipeline status](https://gitlab.com/marecica2/dwh-datacube/badges/develop/pipeline.svg)](https://gitlab.com/marecica2/dwh/-/commits/develop) [![codecov](https://codecov.io/gh/marecica2/dwh-datacube/branch/develop/graph/badge.svg)](https://codecov.io/gh/marecica2/dwh-datacube)
+
 
 
 Showcase app for following stack dealing with multi-tenancy, 
