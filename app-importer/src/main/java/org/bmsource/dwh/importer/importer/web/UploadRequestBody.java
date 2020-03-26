@@ -12,10 +12,6 @@ class UploadRequestBody {
         return config;
     }
 
-    public void setConfig(Map<String, Object> config) {
-        this.config = config;
-    }
-
     public Map<String, String> getMapping() {
         return mapping;
     }

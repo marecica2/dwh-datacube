@@ -7,19 +7,17 @@ import javax.validation.constraints.NotNull;
 import java.math.BigInteger;
 
 @Entity
+@Table(name = "zip_code_location")
 public class ZipCodeLocation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private BigInteger id;
 
-    @NotNull
     private String zipCode;
 
-    @NotNull
     private double latitude;
 
-    @NotNull
     private double longitude;
 
     public BigInteger getId() {

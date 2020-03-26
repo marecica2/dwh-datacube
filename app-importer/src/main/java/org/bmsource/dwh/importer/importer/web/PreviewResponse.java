@@ -20,23 +20,11 @@ public class PreviewResponse {
         return entity;
     }
 
-    public void setEntity(RawFact entity) {
-        this.entity = entity;
-    }
-
     public Map<String, List<String>> getErrors() {
         return errors;
     }
 
-    public void setErrors(Map<String, List<String>> errors) {
-        this.errors = errors;
-    }
-
     public boolean isValid() {
         return valid;
-    }
-
-    public void setValid(boolean valid) {
-        this.valid = valid;
     }
 }

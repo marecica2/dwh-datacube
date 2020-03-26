@@ -29,10 +29,6 @@ public class MappingPreset {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Map<String, String> getMapping() {
         return mapping;
     }

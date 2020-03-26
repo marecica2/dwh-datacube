@@ -63,6 +63,19 @@ public class MasterDataControllerTest {
     }
 
     @Test
+    public void testZipUpload() throws Exception {
+        TenantContext.setTenantSchema(tenant);
+        URL file = this.getClass().getResource("/zipcode_locations.xlsx");
+        String url = "/zip-code-locations/import";
+        String fileName = "zipcode_locations.xlsx";
+        IntegrationTestUtils.fileUpload(mockMvc, file, url, fileName);
+        int importedRows = template.queryForObject("SELECT count(*) FROM \"" + TestUtils.TENANT1 + "\"" +
+                ".zip_code_location",
+            Integer.class);
+        Assertions.assertEquals(0, importedRows);
+    }
+
+    @Test
     public void testTaxonomyUpload() throws Exception {
         TenantContext.setTenantSchema(tenant);
         URL file = this.getClass().getResource("/taxonomy.xlsx");

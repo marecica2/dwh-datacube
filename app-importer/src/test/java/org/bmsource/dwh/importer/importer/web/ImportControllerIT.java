@@ -161,6 +161,24 @@ public class ImportControllerIT {
                 "Id"));
 
         mvc.perform(MockMvcRequestBuilders
+            .post("/import/mapping-presets")
+            .header("x-tenant", tenant)
+            .param("projectId", project)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(new JSONObject().put("mapping", new JSONObject(mapping)).put("name", "excel.xlsx").toString()))
+            .andDo(doPrint())
+            .andExpect(status().isOk());
+
+        mvc.perform(MockMvcRequestBuilders
+            .get("/import/mapping-presets")
+            .header("x-tenant", tenant)
+            .param("projectId", project)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andDo(doPrint())
+            .andExpect(status().isOk())
+            .andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(1)));
+
+        mvc.perform(MockMvcRequestBuilders
             .post("/import/{transactionId}/preview", transactionId)
             .header("x-tenant", tenant)
             .param("projectId", project)
@@ -203,6 +221,15 @@ public class ImportControllerIT {
             .andDo(doPrint())
             .andExpect(status().isOk())
             .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.facts").exists());
+
+
+        mvc.perform(MockMvcRequestBuilders
+            .get("/import/errors.zip")
+            .header("x-tenant", tenant)
+            .param("projectId", project)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andDo(doPrint())
+            .andExpect(status().isOk());
     }
 
     private ResultHandler doPrint() {
