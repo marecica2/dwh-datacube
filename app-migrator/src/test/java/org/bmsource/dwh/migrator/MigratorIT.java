@@ -21,7 +21,7 @@ import java.util.Optional;
 @ActiveProfiles("integration-test")
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = { MigratorConfiguration.class })
+@ContextConfiguration(classes = { MigratorApplication.class })
 @Import(TenantRepositoryImpl.class)
 public class MigratorIT {
 
@@ -31,11 +31,11 @@ public class MigratorIT {
     @Autowired
     JdbcTemplate template;
 
-    @BeforeEach
     @AfterEach
-    public void before() {
+    public void cleanup() {
         template.execute(String.format("DROP SCHEMA IF EXISTS %s CASCADE", TenantRepositoryImpl.tenant1.getId()));
         template.execute(String.format("DROP SCHEMA IF EXISTS %s CASCADE", TenantRepositoryImpl.tenant2.getId()));
+        template.execute(String.format("DROP SCHEMA IF EXISTS %s CASCADE", TenantRepositoryImpl.tenant3.getId()));
     }
 
     @Test

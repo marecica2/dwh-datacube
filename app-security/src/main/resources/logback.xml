@@ -19,7 +19,6 @@
     <logger name="org.hibernate.SQL" level="TRACE"/>
     <logger name="org.springframework.jdbc.core.JdbcTemplate" level="TRACE"/>
 <!--    <logger name="org.springframework.transaction.interceptor" level="TRACE"/>-->
-    <logger name="org.flywaydb.core.internal.database.ExecutableSqlScript" level="INFO"/>
 
     <logger name="org.bmsource" level="DEBUG"/>
 

@@ -35,7 +35,7 @@ import javax.annotation.PostConstruct;
     PortalConfiguration.class,
 })
 @EnableTransactionManagement
-@Profile("default")
+@Profile("!cli")
 public class MigratorApplication {
 
     private static Logger logger = LoggerFactory

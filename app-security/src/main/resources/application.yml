@@ -6,7 +6,7 @@ spring:
   application:
     name: security
   datasource:
-    url: jdbc:postgresql://${PG_HOST}:${PG_PORT}/${PG_DATABASE}?reWriteBatchedInserts=true&currentSchema=master
+    url: jdbc:postgresql://${PG_HOST}:${PG_PORT}/${PG_DATABASE}?currentSchema=master&reWriteBatchedInserts=true
     username: ${PG_USER}
     password: ${PG_PASSWORD}
     driver-class-name: org.postgresql.Driver
@@ -33,9 +33,24 @@ spring:
 spring:
   profiles: integration-test
   datasource:
-    url: jdbc:postgresql://${PG_TEST_HOST}:${PG_TEST_PORT}/${PG_TEST_DATABASE}?reWriteBatchedInserts=true&currentSchema=master
-    username: ${PG_TEST_USER}
-    password: ${PG_TEST_PASSWORD}
-    hikari:
-      minimum-idle: 2
-      maximum-pool-size: 10
+    url: jdbc:h2:mem:master;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=false
+    driver-class-name: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQL95Dialect
+    hibernate:
+      ddl-auto: create-drop
+      default_schema: test
+
+---
+
+
+
+#spring:
+#  profiles: integration-test
+#  datasource:
+#    url: jdbc:postgresql://${PG_TEST_HOST}:${PG_TEST_PORT}/${PG_TEST_DATABASE}?reWriteBatchedInserts=true&currentSchema=master
+#    username: ${PG_TEST_USER}
+#    password: ${PG_TEST_PASSWORD}
+#    hikari:
+#      minimum-idle: 2
+#      maximum-pool-size: 10
