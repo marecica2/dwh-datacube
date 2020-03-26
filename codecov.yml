@@ -20,3 +20,9 @@ flags:
   react:
     paths:
       - react-app/src
+
+ignore:
+  - "**/src/main/test/**/*"
+  - "**/target/**/*"
+  - "**/build/**/*"
+  - "**/*.spec.js"
