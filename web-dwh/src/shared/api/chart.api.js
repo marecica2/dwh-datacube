@@ -2,7 +2,7 @@ import { httpRequest } from '../utils';
 
 const baseUrl = '/olap/charts';
 
-export default ({ ...config }) => {
+export default ({ ...config } = {}) => {
   return {
     getChart: async ({ dimensions, measures, sorts, ...filters }) => {
       const { data: resp } = await httpRequest(baseUrl, {

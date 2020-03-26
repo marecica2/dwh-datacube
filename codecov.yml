@@ -4,10 +4,10 @@ coverage:
       default: off
       java:
         flags: java
-        target: 50%
+        target: 30%
       react:
         flags: react
-        target: 50%
+        target: 30%
 flags:
   java:
     paths:
@@ -19,7 +19,7 @@ flags:
       - lib-common/src/main/java
   react:
     paths:
-      - react-app/src
+      - web-dwh/src
 
 ignore:
   - "**/src/main/test/**/*"
