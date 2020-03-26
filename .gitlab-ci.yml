@@ -22,13 +22,15 @@ java-build:
     - mvn -ntp clean install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
     #- env $(cat .env.ci.gitlab) java -Dspring.profiles.active=integration-test -jar ./app-migrator/target/application.jar
     - env $(cat .env.ci.gitlab) mvn package -DskipTests -pl app-migrator && mvn exec:java -pl app-migrator -Dspring.profiles.active=cli,integration-test
-    - mvn -ntp install
+    - mvn -ntp clean install
   artifacts:
     paths:
-      - lib-common/target/
       - app-importer/target/
-      - app-olap/target/
       - app-migrator/target/
+      - app-olap/target/
+      - app-portal/target/
+      - app-security/target/
+      - lib-common/target/
 
 react-build:
   stage: build
@@ -44,7 +46,8 @@ react-build:
     - yarn test:coverage
   artifacts:
     paths:
-      - build/
+      - react-app/build/
+      - react-app/coverage/
 
 codecov:
   stage: coverage
