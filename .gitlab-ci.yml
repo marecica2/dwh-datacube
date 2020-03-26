@@ -14,7 +14,9 @@ java-build:
     - postgres
     - redis
   script:
-    - apt-get install postgresql-client
+    - cat /etc/*-release
+    - apt-get update
+    - apt-get install -y postgresql-client
     - psql -h "postgres" -U "postgres" -d "postgres" -a -f ./.db/init.sql
     - export $(cat .env.ci.gitlab | xargs)
     - mvn -ntp clean install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
