@@ -28,8 +28,6 @@ spring:
         jdbc.batch_size: 1000
         dialect: org.bmsource.dwh.common.db.CustomPostgreSQLDialect
     database-platform: org.bmsource.dwh.common.db.CustomPostgreSQLDialect
-  flyway:
-    baseline-version: 1
   servlet:
     multipart:
       enabled: false

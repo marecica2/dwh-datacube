@@ -52,22 +52,13 @@ public class SecurityIT {
     @Autowired
     JdbcTemplate template;
 
-    @Autowired
-    RedisOperations<String, String> operations;
-
     @BeforeEach
     public void setup() {
         mvc = webAppContextSetup(this.wac).build();
     }
 
-    @AfterEach
-    public void afterEach() {
-        flushRedis();
-    }
-
     @Test
     @Sql(scripts = "/test_setup.sql", executionPhase = BEFORE_TEST_METHOD)
-    @Sql(scripts = "/test_teardown.sql", executionPhase = AFTER_TEST_METHOD)
     public void obtainJWTTokenUsingPasswordGrantFlow() throws Exception {
         TestingAuthenticationToken authentication = new TestingAuthenticationToken("dwh-client", "secret");
         authentication.setAuthenticated(true);
@@ -95,12 +86,5 @@ public class SecurityIT {
             return MockMvcResultHandlers.print();
         return result -> {
         };
-    }
-
-    private void flushRedis() {
-        operations.execute((RedisCallback<Void>) connection -> {
-            connection.serverCommands().flushAll();
-            return null;
-        });
     }
 }
