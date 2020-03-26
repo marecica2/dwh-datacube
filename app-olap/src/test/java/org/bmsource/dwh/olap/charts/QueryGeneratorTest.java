@@ -1,6 +1,7 @@
 package org.bmsource.dwh.olap.charts;
 
 import org.bmsource.dwh.common.multitenancy.TenantContext;
+import org.bmsource.dwh.common.utils.TestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,7 +14,7 @@ import java.util.*;
 @ActiveProfiles({"unit-test"})
 @ExtendWith(SpringExtension.class)
 public class QueryGeneratorTest {
-    private static String tenant = "000000-00000-00001";
+    private static String tenant = TestUtils.TENANT1;
 
     @Test
     public void testQuery() {

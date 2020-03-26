@@ -1,7 +1,7 @@
 CREATE SCHEMA "common";
 CREATE SCHEMA "master";
-CREATE SCHEMA "000000-00000-00001";
-CREATE SCHEMA "000000-00000-00002";
+CREATE SCHEMA "tenant0000000000000001";
+CREATE SCHEMA "tenant0000000000000002";
 
 create table master.roles
 (
@@ -52,9 +52,9 @@ create table if not exists master.user_tenants
 );
 
 insert into master.tenants (id, name, description, created_on, modified_on)
-values ('000000-00000-00001', 'tenant-1', 'Tenant BMW', null, null);
+values ('tenant0000000000000001', 'tenant-1', 'Tenant BMW', null, null);
 insert into master.tenants (id, name, description, created_on, modified_on)
-values ('000000-00000-00002', 'tenant-2', 'Tenant Audi', null, null);
+values ('tenant0000000000000002', 'tenant-2', 'Tenant Audi', null, null);
 
 insert into master.roles(description, name)
 values ('Admin', 'ADMIN');
@@ -67,7 +67,7 @@ values ('admin@gmail.com', 'Super', 'Admin', '$2a$04$EZzbSqieYfe/nFWfBWt2KeCdyq0
 insert into master.user_roles(user_id, role_id)
 values (1, 1);
 insert into master.user_tenants (user_id, tenant_id)
-values (1, '000000-00000-00001');
+values (1, 'tenant0000000000000001');
 
 -- setup tenant user
 insert into master.users (email, first_name, last_name, password, username)
@@ -75,4 +75,4 @@ values ('user@gmail.com', 'John', 'Doe', '$2a$04$EZzbSqieYfe/nFWfBWt2KeCdyq0UuDE
 insert into master.user_roles(user_id, role_id)
 values (2, 2);
 insert into master.user_tenants (user_id, tenant_id)
-values (2, '000000-00000-00002');
+values (2, 'tenant0000000000000002');

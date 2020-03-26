@@ -60,7 +60,7 @@ public class MultitenancyConfiguration implements WebMvcConfigurer {
     public DataSource multitenantDataSource() {
         Map<Object, Object> resolvedDataSources = new HashMap<>();
         for (Tenant tenant : tenantDao.findAll()) {
-            resolvedDataSources.put(tenant.getSchemaName(), createDatasource(tenant.getSchemaName()));
+            resolvedDataSources.put(tenant.getId(), createDatasource(tenant.getId()));
         }
 
         MultitenantDataSource dataSource = new MultitenantDataSource();

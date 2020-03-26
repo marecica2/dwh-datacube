@@ -2,6 +2,7 @@ package org.bmsource.dwh.olap.charts;
 
 import org.bmsource.dwh.common.multitenancy.TenantContext;
 import org.bmsource.dwh.common.utils.IntegrationTestUtils;
+import org.bmsource.dwh.common.utils.TestUtils;
 import org.bmsource.dwh.olap.OlapApplication;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,7 +40,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ChartControllerIT {
     private boolean printRest = false;
-    private static String tenant = "000000-00000-00001";
+    private static String tenant = TestUtils.TENANT1;
     private static String project = "1";
 
     private MockMvc mvc;
