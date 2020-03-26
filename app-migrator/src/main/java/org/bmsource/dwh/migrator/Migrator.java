@@ -27,7 +27,7 @@ public class Migrator {
     private JdbcTemplate template;
 
     public void migrate() {
-        migrateSchema("master", "master");
+        // migrateSchema("master", "master");
         migrateTenants();
     }
 
