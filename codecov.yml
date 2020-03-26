@@ -11,12 +11,12 @@ coverage:
 flags:
   java:
     paths:
-      - app-importer/src
-      - app-migrator/src
-      - app-olap/src
-      - app-portal/src
-      - app-security/src
-      - lib-common/src
+      - app-importer/src/main/java
+      - app-migrator/src/main/java
+      - app-olap/src/main/java
+      - app-portal/src/main/java
+      - app-security/src/main/java
+      - lib-common/src/main/java
   react:
     paths:
       - react-app/src
