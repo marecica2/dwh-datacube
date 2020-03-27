@@ -49,7 +49,7 @@ services:
       PG_TEST_DATABASE: $PG_TEST_DATABASE
       PG_TEST_USER: $PG_TEST_USER
       PG_TEST_PASSWORD: $PG_TEST_PASSWORD
-  react-app:
+  web-dwh:
     build:
       dockerfile: Dockerfile
-      context: ./react-app
+      context: ./web-dwh

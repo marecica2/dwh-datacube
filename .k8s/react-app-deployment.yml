@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: react-app-deployment
+  name: web-dwh-deployment
 spec:
   replicas: 1
   selector:
@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: client
-          image: marecica2/dwh-react-app
+          image: marecica2/dwh-web-dwh
           ports:
             - containerPort: 3000

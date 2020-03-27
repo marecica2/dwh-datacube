@@ -39,15 +39,15 @@ react-build:
   image: node
   cache:
     paths:
-      - react-app/node_modules/
+      - web-dwh/node_modules/
   script:
-    - cd react-app
+    - cd web-dwh
     - yarn install
     - yarn test:coverage
   artifacts:
     paths:
-      - react-app/build/
-      - react-app/coverage/
+      - web-dwh/build/
+      - web-dwh/coverage/
 
 codecov:
   stage: coverage
@@ -59,7 +59,3 @@ codecov:
     - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f app-security/target/site/jacoco/jacoco.xml -c -F java
     - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f lib-common/target/site/jacoco/jacoco.xml -c -F java
     - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f web-dwh/coverage/coverage-final.json -c -F react
-#    - curl -s https://codecov.io/bash | bash -s - -t $CODECOV_TOKEN -f lib-common/target/site/jacoco/jacoco.xml -c -F java
-#    - curl -s https://codecov.io/bash | bash -s - -t $CODECOV_TOKEN -f app-importer/target/site/jacoco/jacoco.xml -c -F java
-#    - curl -s https://codecov.io/bash | bash -s - -t $CODECOV_TOKEN -f app-olap/target/site/jacoco/jacoco.xml -c -F java
-#    - curl -s https://codecov.io/bash | bash -s - -t $CODECOV_TOKEN -f react-app/coverage/coverage-final.json -c -F reactapp

@@ -35,7 +35,7 @@ jobs:
       node_js:
         - 12
       before_script:
-        - cd react-app
+        - cd web-dwh
         - yarn install
       cache:
         directories:
@@ -44,7 +44,7 @@ jobs:
         - yarn test:coverage
       after_success:
         - cd ..
-        - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f react-app/coverage/coverage-final.json -c -F reactapp
+        - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f web-dwh/coverage/coverage-final.json -c -F reactapp
     - stage: deployment
       language: shell
       os: linux

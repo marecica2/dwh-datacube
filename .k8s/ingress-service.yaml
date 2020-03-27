@@ -11,7 +11,7 @@ spec:
         paths:
           - path: /?(.*)
             backend:
-              serviceName: react-app-ip-service
+              serviceName: web-dwh-ip-service
               servicePort: 3000
           - path: /api/?(.*)
             backend:
