@@ -93,13 +93,13 @@ function kubeStart() {
 
   mvn clean install -DskipTests
 
-  docker build -t marecica2/dwh-react-app -t marecica2/dwh-react-app:$SHA -f ./react-app/Dockerfile ./react-app
+  docker build -t marecica2/dwh-web-dwh -t marecica2/dwh-web-dwh:$SHA -f ./web-dwh/Dockerfile ./web-dwh
   docker build -t marecica2/dwh-migrator -t marecica2/dwh-migrator:$SHA -f ./migrator/Dockerfile ./app-migrator
   docker build -t marecica2/dwh-importer -t marecica2/dwh-importer:$SHA -f ./importer/Dockerfile ./app-importer
 
   kubectl apply -f .k8s
 
-  kubectl set image deployments/dwh-react-app-deployment server=marecica2/dwh-react-app
+  kubectl set image deployments/dwh-web-dwh-deployment server=marecica2/dwh-web-dwh
   kubectl set image deployments/migrator-deployment server=marecica2/dwh-migrator
   kubectl set image deployments/importer-deployment server=marecica2/dwh-importer
 

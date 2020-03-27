@@ -54,9 +54,9 @@ services:
     volumes:
       - ./.dev/nginx.local.conf:/etc/nginx/nginx.conf
 
-#  react-app:
+#  web-dwh:
 #    build:
 #      dockerfile: Dockerfile
-#      context: ./react-app
+#      context: ./web-dwh
 #    ports:
 #      - 3000:3000
