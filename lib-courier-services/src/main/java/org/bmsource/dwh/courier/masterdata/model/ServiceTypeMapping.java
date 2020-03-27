@@ -1,4 +1,4 @@
-package org.bmsource.dwh.common.masterdata.model;
+package org.bmsource.dwh.courier.masterdata.model;
 
 import org.bmsource.dwh.common.BaseFact;
 

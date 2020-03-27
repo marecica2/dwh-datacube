@@ -1,9 +1,9 @@
 package org.bmsource.dwh.importer;
 
-import org.bmsource.dwh.common.courier.CourierConfiguration;
 import org.bmsource.dwh.common.job.EnableImportJob;
 import org.bmsource.dwh.common.multitenancy.impl.concurrent.ContextAwarePoolExecutor;
 import org.bmsource.dwh.common.security.client.ClientSecurityConfig;
+import org.bmsource.dwh.courier.CourierConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;

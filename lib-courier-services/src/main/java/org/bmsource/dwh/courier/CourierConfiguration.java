@@ -1,4 +1,4 @@
-package org.bmsource.dwh.common.courier;
+package org.bmsource.dwh.courier;
 
 import org.springframework.context.annotation.Configuration;
 

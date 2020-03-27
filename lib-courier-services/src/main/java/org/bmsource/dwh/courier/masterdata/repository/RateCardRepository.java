@@ -1,6 +1,6 @@
-package org.bmsource.dwh.common.masterdata.repository;
+package org.bmsource.dwh.courier.masterdata.repository;
 
-import org.bmsource.dwh.common.masterdata.model.ZipCodeLocation;
+import org.bmsource.dwh.courier.masterdata.model.RateCard;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,9 +12,10 @@ import java.math.BigInteger;
 
 @Component
 @Transactional
-@RepositoryRestResource(collectionResourceRel = "zip-code-locations", path = "zip-code-locations")
-public interface ZipCodeLocationRepository extends JpaRepository<ZipCodeLocation, BigInteger> {
+@RepositoryRestResource(collectionResourceRel = "rate-cards", path = "rate-cards")
+public interface RateCardRepository extends JpaRepository<RateCard, BigInteger> {
+
     @Modifying
-    @Query("DELETE FROM ZipCodeLocation z")
+    @Query("DELETE FROM RateCard r")
     void delete();
 }

@@ -1,6 +1,6 @@
 package org.bmsource.dwh.importer.importer.web;
 
-import org.bmsource.dwh.common.courier.RawFact;
+import org.bmsource.dwh.courier.RawFact;
 
 import java.util.List;
 import java.util.Map;

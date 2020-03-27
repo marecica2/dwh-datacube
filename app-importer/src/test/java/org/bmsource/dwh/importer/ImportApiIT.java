@@ -1,13 +1,11 @@
-package org.bmsource.dwh.importer.importer.web;
+package org.bmsource.dwh.importer;
 
 import org.apache.commons.io.FileUtils;
-import org.bmsource.dwh.importer.ImporterApplication;
+import org.bmsource.dwh.courier.Fact;
+import org.bmsource.dwh.courier.FactRepository;
 import org.bmsource.dwh.common.filemanager.TmpFileManager;
 import org.bmsource.dwh.common.multitenancy.TenantContext;
-import org.bmsource.dwh.common.utils.IntegrationTestUtils;
 import org.bmsource.dwh.common.utils.TestUtils;
-import org.bmsource.dwh.common.courier.Fact;
-import org.bmsource.dwh.common.courier.FactRepository;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.*;
@@ -48,7 +46,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = { ImporterApplication.class, IntegrationTestUtils.class, TmpFileManager.class })
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class ImportControllerIT {
+public class ImportApiIT {
     private static boolean printRest = false;
     private static String tenant = TestUtils.TENANT1;
     private static String project = "1";
@@ -117,7 +115,7 @@ public class ImportControllerIT {
     }
 
     @Test
-    public void testImport() throws Exception {
+    public void testImportFlow() throws Exception {
         MvcResult transactionResult = mvc.perform(MockMvcRequestBuilders
             .post("/import/init")
             .header("x-tenant", tenant)

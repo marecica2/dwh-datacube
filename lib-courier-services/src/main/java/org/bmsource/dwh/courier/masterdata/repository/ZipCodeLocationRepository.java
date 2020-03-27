@@ -1,6 +1,6 @@
-package org.bmsource.dwh.common.masterdata.repository;
+package org.bmsource.dwh.courier.masterdata.repository;
 
-import org.bmsource.dwh.common.masterdata.model.ServiceTypeMapping;
+import org.bmsource.dwh.courier.masterdata.model.ZipCodeLocation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,10 +12,9 @@ import java.math.BigInteger;
 
 @Component
 @Transactional
-@RepositoryRestResource(collectionResourceRel = "service-types", path = "service-types")
-public interface ServiceTypeMappingRepository extends JpaRepository<ServiceTypeMapping, BigInteger> {
-
+@RepositoryRestResource(collectionResourceRel = "zip-code-locations", path = "zip-code-locations")
+public interface ZipCodeLocationRepository extends JpaRepository<ZipCodeLocation, BigInteger> {
     @Modifying
-    @Query("DELETE FROM ServiceTypeMapping s")
+    @Query("DELETE FROM ZipCodeLocation z")
     void delete();
 }

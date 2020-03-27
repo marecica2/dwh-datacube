@@ -3,13 +3,6 @@ package org.bmsource.dwh.common.utils;
 import org.apache.commons.io.FileUtils;
 import org.bmsource.dwh.common.excel.reader.ExcelReaderHandler;
 import org.bmsource.dwh.common.excel.reader.GenericExcelReader;
-import org.bmsource.dwh.common.masterdata.MasterDataNormalizer;
-import org.bmsource.dwh.common.masterdata.model.RateCard;
-import org.bmsource.dwh.common.masterdata.model.ServiceTypeMapping;
-import org.bmsource.dwh.common.masterdata.model.Taxonomy;
-import org.bmsource.dwh.common.masterdata.repository.RateCardRepository;
-import org.bmsource.dwh.common.masterdata.repository.ServiceTypeMappingRepository;
-import org.bmsource.dwh.common.masterdata.repository.TaxonomyRepository;
 import org.bmsource.dwh.common.multitenancy.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,7 +16,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ResourceUtils;
 
 import java.io.File;
@@ -45,34 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class IntegrationTestUtils {
 
     @Autowired(required = false)
-    TaxonomyRepository taxonomyRepository;
-
-    @Autowired(required = false)
-    ServiceTypeMappingRepository serviceTypeMappingRepository;
-
-    @Autowired(required = false)
-    RateCardRepository rateCardRepository;
-
-    @Autowired(required = false)
     RedisOperations<String, String> operations;
-
-    public void hasTaxonomy(String... optFileName) throws Exception {
-        File file = getResource("taxonomy.xlsx", optFileName);
-        importExcel(FileUtils.openInputStream(file), taxonomyRepository, Taxonomy.class,
-            MasterDataNormalizer.normalizeTaxonomy, taxonomyRepository::delete);
-    }
-
-    public void hasServiceTypeMapping(String... optFileName) throws Exception {
-        File file = getResource("matrix.xlsx", optFileName);
-        importExcel(FileUtils.openInputStream(file), serviceTypeMappingRepository, ServiceTypeMapping.class,
-            MasterDataNormalizer.normalizeServiceTypeMapping, serviceTypeMappingRepository::delete);
-    }
-
-    public void hasRateCards(String... optFileName) throws Exception {
-        File file = getResource("standard_rate_card_small.xlsx", optFileName);
-        importExcel(FileUtils.openInputStream(file), rateCardRepository, RateCard.class,
-            MasterDataNormalizer.normalizeRateCards, rateCardRepository::delete);
-    }
 
     public void flushRedis() {
         operations.execute((RedisCallback<Void>) connection -> {
@@ -81,7 +46,7 @@ public class IntegrationTestUtils {
         });
     }
 
-    private <Type, Repository extends JpaRepository<Type, ?>> void importExcel(
+    public <Type, Repository extends JpaRepository<Type, ?>> void importExcel(
         InputStream inputStream,
         Repository repository,
         Class<Type> classType,
@@ -122,7 +87,7 @@ public class IntegrationTestUtils {
         }
     }
 
-    private File getResource(String defaultFile, String[] optFileName) throws FileNotFoundException {
+    public File getResource(String defaultFile, String[] optFileName) throws FileNotFoundException {
         File file = ResourceUtils.getFile("classpath:" + defaultFile);
         if (optFileName != null && optFileName.length > 0)
             file = ResourceUtils.getFile("classpath:" + optFileName[0]);
