@@ -1,6 +1,6 @@
-package org.bmsource.dwh.common.masterdata.repository;
+package org.bmsource.dwh.courier.masterdata.repository;
 
-import org.bmsource.dwh.common.masterdata.model.RateCard;
+import org.bmsource.dwh.courier.masterdata.model.ServiceTypeMapping;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,10 +12,10 @@ import java.math.BigInteger;
 
 @Component
 @Transactional
-@RepositoryRestResource(collectionResourceRel = "rate-cards", path = "rate-cards")
-public interface RateCardRepository extends JpaRepository<RateCard, BigInteger> {
+@RepositoryRestResource(collectionResourceRel = "service-types", path = "service-types")
+public interface ServiceTypeMappingRepository extends JpaRepository<ServiceTypeMapping, BigInteger> {
 
     @Modifying
-    @Query("DELETE FROM RateCard r")
+    @Query("DELETE FROM ServiceTypeMapping s")
     void delete();
 }

@@ -1,6 +1,6 @@
-package org.bmsource.dwh.common.masterdata.repository;
+package org.bmsource.dwh.courier.masterdata.repository;
 
-import org.bmsource.dwh.common.masterdata.model.Taxonomy;
+import org.bmsource.dwh.courier.masterdata.model.Taxonomy;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

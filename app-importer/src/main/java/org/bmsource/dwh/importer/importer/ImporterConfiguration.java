@@ -1,12 +1,12 @@
 package org.bmsource.dwh.importer.importer;
 
-import org.bmsource.dwh.common.courier.Fact;
-import org.bmsource.dwh.common.courier.FactRawRepository;
-import org.bmsource.dwh.common.courier.FactRepository;
-import org.bmsource.dwh.common.courier.RawFact;
+import org.bmsource.dwh.courier.Fact;
+import org.bmsource.dwh.courier.FactRawRepository;
+import org.bmsource.dwh.courier.FactRepository;
 import org.bmsource.dwh.common.job.ImportJobConfiguration;
 import org.bmsource.dwh.common.job.ImportJobConfigurationBuilder;
 import org.bmsource.dwh.common.utils.StringUtils;
+import org.bmsource.dwh.courier.RawFact;
 import org.bmsource.dwh.importer.masterdata.MasterDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,10 +1,10 @@
 package org.bmsource.dwh.importer;
 
 import org.bmsource.dwh.common.appstate.client.EnableAppState;
-import org.bmsource.dwh.common.courier.CourierConfiguration;
-import org.bmsource.dwh.common.masterdata.MasterDataConfiguration;
+import org.bmsource.dwh.courier.CourierConfiguration;
 import org.bmsource.dwh.common.multitenancy.EnableMultitenancy;
 import org.bmsource.dwh.common.portal.PortalConfiguration;
+import org.bmsource.dwh.importer.masterdata.MasterDataConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration;

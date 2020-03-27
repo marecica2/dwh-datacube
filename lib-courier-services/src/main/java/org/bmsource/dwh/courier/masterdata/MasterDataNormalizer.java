@@ -1,9 +1,9 @@
-package org.bmsource.dwh.common.masterdata;
+package org.bmsource.dwh.courier.masterdata;
 
 import org.bmsource.dwh.common.utils.StringUtils;
-import org.bmsource.dwh.common.masterdata.model.RateCard;
-import org.bmsource.dwh.common.masterdata.model.ServiceTypeMapping;
-import org.bmsource.dwh.common.masterdata.model.Taxonomy;
+import org.bmsource.dwh.courier.masterdata.model.RateCard;
+import org.bmsource.dwh.courier.masterdata.model.ServiceTypeMapping;
+import org.bmsource.dwh.courier.masterdata.model.Taxonomy;
 
 import java.util.function.Function;
 
