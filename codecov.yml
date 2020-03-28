@@ -5,9 +5,9 @@ coverage:
       java:
         flags: java
         target: 30%
-      react:
-        flags: react
-        target: 30%
+#      react:
+#        flags: react
+#        target: 30%
 flags:
   java:
     paths:
@@ -17,9 +17,9 @@ flags:
       - app-portal/src/main/java
       - app-security/src/main/java
       - lib-common/src/main/java
-  react:
-    paths:
-      - web-dwh/src
+#  react:
+#    paths:
+#      - web-dwh/src
 
 ignore:
   - "**/src/main/test/**/*"
