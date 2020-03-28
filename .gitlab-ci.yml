@@ -9,7 +9,7 @@ java-build:
     POSTGRES_DB: postgres
     POSTGRES_USER: postgres
     POSTGRES_PASSWORD: postgres
-  image: maven:3.6.3-jdk-8
+  image: maven:3.6.3-jdk-11
   services:
     - postgres
     - redis
