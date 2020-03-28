@@ -43,6 +43,6 @@ public class SecurityControllerTest {
             MockMvcRequestBuilders
                 .get("/me")
         )
-            .andExpect(status().is5xxServerError());
+            .andExpect(status().is4xxClientError());
     }
 }
