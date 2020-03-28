@@ -3,11 +3,11 @@ package org.bmsource.dwh.security.model;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "roles")
+@Table(name = "roles", schema = "master")
 public class Role {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
     @Enumerated(EnumType.STRING)

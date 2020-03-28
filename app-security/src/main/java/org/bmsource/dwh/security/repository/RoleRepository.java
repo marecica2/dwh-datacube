@@ -10,6 +10,6 @@ import java.util.Set;
 
 public interface RoleRepository extends CrudRepository<Role, Long> {
 
-    @Query(value = "SELECT * FROM Roles where name IN (:roles)", nativeQuery = true)
+    @Query(value = "SELECT * FROM master.Roles where name IN (:roles)", nativeQuery = true)
     Set<Role> find(@Param("roles") List<String> roles);
 }

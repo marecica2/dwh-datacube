@@ -15,12 +15,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 
 import javax.annotation.Resource;
 
 @Configuration
-@EntityScan(basePackageClasses = { SecurityConfiguration.class, PortalConfiguration.class })
-@EnableJpaRepositories(basePackageClasses = { PortalConfiguration.class, SecurityConfiguration.class })
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
@@ -29,4 +28,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/actuator/**", "/register");
+    }
+
+    @Override
+    public void configure(HttpSecurity http) throws Exception {
+        http
+            .authorizeRequests()
+            .antMatchers("/actuator/health", "/register").permitAll();
+
+    }
 }
