@@ -46,7 +46,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>3.2.4</version>
+            <version>3.3.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -60,6 +60,13 @@
             <artifactId>powermock-module-junit4</artifactId>
             <version>2.0.5</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jacoco</groupId>
+            <artifactId>org.jacoco.agent</artifactId>
+            <classifier>runtime</classifier>
+            <scope>test</scope>
+            <version>0.7.8</version>
         </dependency>
     </dependencies>
 
@@ -106,35 +113,56 @@
                         </execution>
                     </executions>
                 </plugin>
+
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.3</version>
+                    <version>0.7.8</version>
                     <executions>
                         <execution>
+                            <id>default-instrument</id>
                             <goals>
-                                <goal>prepare-agent</goal>
+                                <goal>instrument</goal>
                             </goals>
-                            <configuration>
-                                <destFile>
-                                    ${project.build.directory}/coverage-reports/jacoco.exec
-                                </destFile>
-                                <propertyName>jacocoArgLine</propertyName>
-                            </configuration>
                         </execution>
                         <execution>
-                            <id>report</id>
-                            <phase>test</phase>
+                            <id>default-restore-instrumented-classes</id>
+                            <goals>
+                                <goal>restore-instrumented-classes</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>default-report</id>
                             <goals>
                                 <goal>report</goal>
                             </goals>
                             <configuration>
-                                <dataFile>${project.build.directory}/coverage-reports/jacoco.exec</dataFile>
-                                <outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>
+                                <dataFile>${project.build.directory}/coverage.exec</dataFile>
                             </configuration>
                         </execution>
+<!--                        <execution>-->
+<!--                            <id>default-check</id>-->
+<!--                            <goals>-->
+<!--                                <goal>check</goal>-->
+<!--                            </goals>-->
+<!--                            <configuration>-->
+<!--                                <rules>-->
+<!--                                    <rule>-->
+<!--                                        <element>BUNDLE</element>-->
+<!--                                        <limits>-->
+<!--                                            <limit>-->
+<!--                                                <counter>COMPLEXITY</counter>-->
+<!--                                                <value>COVEREDRATIO</value>-->
+<!--                                                <minimum>0.05</minimum>-->
+<!--                                            </limit>-->
+<!--                                        </limits>-->
+<!--                                    </rule>-->
+<!--                                </rules>-->
+<!--                            </configuration>-->
+<!--                        </execution>-->
                     </executions>
                 </plugin>
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
@@ -147,13 +175,17 @@
                         </dependency>
                     </dependencies>
                     <configuration>
+                        <systemPropertyVariables>
+                            <jacoco-agent.destfile>${project.build.directory}/coverage.exec</jacoco-agent.destfile>
+                        </systemPropertyVariables>
                         <includes>
                             <include>**/*Tests.java</include>
+                            <include>**/*Test.java</include>
                             <include>**/*IT.java</include>
                         </includes>
                         <useSystemClassLoader>true</useSystemClassLoader>
                         <forkMode>once</forkMode>
-                        <argLine>${jacocoArgLine} -Dspring.profiles.active=${spring.profiles.active}</argLine>
+                        <argLine>-Dspring.profiles.active=${spring.profiles.active}</argLine>
                         <trimStackTrace>false</trimStackTrace>
                     </configuration>
                 </plugin>
