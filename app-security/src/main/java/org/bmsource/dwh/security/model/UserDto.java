@@ -79,14 +79,4 @@ public class UserDto {
     public void setTenants(Set<Tenant> tenants) {
         this.tenants = tenants;
     }
-
-    @Override
-    public String toString() {
-        return "UserDto{" +
-            "id=" + id +
-            ", firstName='" + firstName + '\'' +
-            ", lastName='" + lastName + '\'' +
-            ", username='" + username + '\'' +
-            '}';
-    }
 }

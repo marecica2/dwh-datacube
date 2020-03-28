@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
     SecurityConfiguration.class, PortalConfiguration.class
 })
 @EnableJpaRepositories(basePackageClasses = {
-    PortalConfiguration.class, SecurityConfiguration.class
+    SecurityConfiguration.class, PortalConfiguration.class
 })
 public class SecurityApplication {
     public static void main(String[] args) {

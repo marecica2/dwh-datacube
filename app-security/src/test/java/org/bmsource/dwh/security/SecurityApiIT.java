@@ -1,12 +1,10 @@
 package org.bmsource.dwh.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.jsonpath.JsonPath;
 import org.bmsource.dwh.security.model.UserDto;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,7 +13,6 @@ import org.springframework.boot.json.JacksonJsonParser;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.jwt.JwtHelper;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
@@ -25,7 +22,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultHandler;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -41,7 +37,6 @@ import javax.transaction.Transactional;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @Transactional
 @SpringBootTest
@@ -77,7 +72,7 @@ public class SecurityApiIT {
     @Sql(scripts = "/test_setup.sql", executionPhase = BEFORE_TEST_METHOD)
     @Sql(scripts = "/test_teardown.sql", executionPhase = AFTER_TEST_METHOD)
     public void obtainJWTTokenUsingPasswordGrantFlow() throws Exception {
-        String accessToken = obtainAccessToken("admin", "admin");
+        String accessToken = getAccessToken("admin", "admin");
         String decodedJwt = JwtHelper.decode(accessToken).getClaims();
         JSONObject jsonToken = new JSONObject(decodedJwt);
         Assert.assertEquals("admin", jsonToken.getString("user_name"));
@@ -99,8 +94,13 @@ public class SecurityApiIT {
     }
 
     @Test
-    @Sql(scripts = "/test_setup.sql", executionPhase = BEFORE_TEST_METHOD)
-    @Sql(scripts = "/test_teardown.sql", executionPhase = AFTER_TEST_METHOD)
+    public void testWrongCredentials() throws Exception {
+        ResultActions result = obtainToken("invalid", "user");
+        result.andExpect(status().is4xxClientError())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.error").value("invalid_grant"));
+    }
+
+    @Test
     public void registerUser() throws Exception {
         UserDto user = new UserDto();
         user.setFirstName("foo");
@@ -115,7 +115,7 @@ public class SecurityApiIT {
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().is2xxSuccessful());
 
-        String token = obtainAccessToken("foobar", "foobar");
+        String token = getAccessToken("foobar", "foobar");
 
         mvc.perform(MockMvcRequestBuilders
             .get("/me")
@@ -124,25 +124,24 @@ public class SecurityApiIT {
             .andExpect(status().is2xxSuccessful());
     }
 
-    private String obtainAccessToken(String username, String password) throws Exception {
+    private String getAccessToken(String username, String password) throws Exception {
+        ResultActions result = obtainToken(username, password);
+        String resultString = result.andReturn().getResponse().getContentAsString();
+        JacksonJsonParser jsonParser = new JacksonJsonParser();
+        return jsonParser.parseMap(resultString).get("access_token").toString();
+    }
+
+    private ResultActions obtainToken(String username, String password) throws Exception {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "password");
         params.add("client_id", CLIENT_ID);
         params.add("username", username);
         params.add("password", password);
 
-        ResultActions result
-            = mvc.perform(MockMvcRequestBuilders.post("/oauth/token")
+        return mvc.perform(MockMvcRequestBuilders.post("/oauth/token")
             .params(params)
-            .with(SecurityMockMvcRequestPostProcessors.httpBasic(CLIENT_ID,CLIENT_SECRET))
-            .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
-
-        String resultString = result.andReturn().getResponse().getContentAsString();
-
-        JacksonJsonParser jsonParser = new JacksonJsonParser();
-        return jsonParser.parseMap(resultString).get("access_token").toString();
+            .with(SecurityMockMvcRequestPostProcessors.httpBasic(CLIENT_ID, CLIENT_SECRET))
+            .accept(MediaType.APPLICATION_JSON));
     }
 
     private ResultHandler doPrint() {
