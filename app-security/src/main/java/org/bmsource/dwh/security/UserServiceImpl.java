@@ -58,22 +58,22 @@ public class UserServiceImpl implements UserDetailsService, UserService {
             .collect(Collectors.toSet());
     }
 
-    public List<UserDto> findAll() {
-        List<UserDto> users = new ArrayList<>();
-        userRepository.findAll().iterator().forEachRemaining(user -> users.add(user.toUserDto()));
-        return users;
-    }
-
-    @Override
-    public User findOne(long id) {
-        Optional<User> user = userRepository.findById(id);
-        return user.orElse(null);
-    }
-
-    @Override
-    public void delete(long id) {
-        userRepository.deleteById(id);
-    }
+//    public List<UserDto> findAll() {
+//        List<UserDto> users = new ArrayList<>();
+//        userRepository.findAll().iterator().forEachRemaining(user -> users.add(user.toUserDto()));
+//        return users;
+//    }
+//
+//    @Override
+//    public User findOne(long id) {
+//        Optional<User> user = userRepository.findById(id);
+//        return user.orElse(null);
+//    }
+//
+//    @Override
+//    public void delete(long id) {
+//        userRepository.deleteById(id);
+//    }
 
     @Override
     public UserDto save(UserDto userDto) {
