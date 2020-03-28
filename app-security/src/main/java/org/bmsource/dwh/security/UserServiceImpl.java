@@ -19,9 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -68,7 +66,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Override
     public User findOne(long id) {
-        return userRepository.findById(id).get();
+        Optional<User> user = userRepository.findById(id);
+        return user.orElse(null);
     }
 
     @Override
@@ -78,6 +77,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Override
     public UserDto save(UserDto userDto) {
+        userDto.setRole(Collections.singletonList("USER"));
         User userWithDuplicateUsername = userRepository.findByUsername(userDto.getUsername());
         if (userWithDuplicateUsername != null && userDto.getId() != userWithDuplicateUsername.getId()) {
             log.error(String.format("Duplicate username %", userDto.getUsername()));

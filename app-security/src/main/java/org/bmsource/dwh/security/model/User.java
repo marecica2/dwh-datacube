@@ -7,11 +7,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users", schema = "master")
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     private String firstName;
     private String lastName;
@@ -20,12 +20,12 @@ public class User {
     private String email;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_roles",
+    @JoinTable(name = "user_roles", schema = "master",
         joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_tenants",
+    @JoinTable(name = "user_tenants", schema = "master",
         joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "tenant_id"))
     private Set<Tenant> tenants;
 

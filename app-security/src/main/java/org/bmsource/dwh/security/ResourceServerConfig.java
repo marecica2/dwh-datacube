@@ -37,7 +37,8 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) {
-        resources.resourceId("app").stateless(false);
+        resources.resourceId("app")
+            .stateless(false);
     }
 
     @Override
