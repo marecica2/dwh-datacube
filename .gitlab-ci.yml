@@ -51,6 +51,9 @@ react-build:
 
 codecov:
   stage: coverage
+  only:
+    refs:
+      - develop
   script:
     - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f app-importer/target/site/jacoco/jacoco.xml -c -F java
     - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f app-migrator/target/site/jacoco/jacoco.xml -c -F java

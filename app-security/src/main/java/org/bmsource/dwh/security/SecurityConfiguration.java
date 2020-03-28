@@ -15,17 +15,4 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
-
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/actuator/**", "/register");
-    }
-
-    @Override
-    public void configure(HttpSecurity http) throws Exception {
-        http
-            .authorizeRequests()
-            .antMatchers("/actuator/health", "/register").permitAll();
-
-    }
 }

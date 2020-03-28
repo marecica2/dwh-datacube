@@ -1,7 +1,7 @@
 server:
   port: ${APP_SECURITY_PORT}
-#  servlet:
-#    context-path: /api/security
+  servlet:
+    context-path: /api/security
 spring:
   application:
     name: security
