@@ -1,7 +1,6 @@
 package org.bmsource.dwh.security;
 
 import org.bmsource.dwh.security.model.Role;
-import org.bmsource.dwh.security.model.RoleType;
 import org.bmsource.dwh.security.model.User;
 import org.bmsource.dwh.security.model.UserDto;
 import org.bmsource.dwh.security.repository.RoleRepository;
@@ -19,7 +18,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -34,10 +34,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Autowired
     private RoleRepository roleRepository;
 
-    @Bean
-    public PasswordEncoder encoder() {
-        return new BCryptPasswordEncoder();
-    }
+    @Autowired
+    PasswordEncoder encoder;
 
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(userId);
@@ -77,26 +75,24 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Override
     public UserDto save(UserDto userDto) {
-        userDto.setRole(Collections.singletonList("USER"));
+        userDto.setRoles(Collections.singletonList("USER"));
         User userWithDuplicateUsername = userRepository.findByUsername(userDto.getUsername());
         if (userWithDuplicateUsername != null && userDto.getId() != userWithDuplicateUsername.getId()) {
-            log.error(String.format("Duplicate username %", userDto.getUsername()));
-            throw new RuntimeException("Duplicate username.");
+            log.error(String.format("Duplicate username %s", userDto.getUsername()));
+            throw new SecurityException("Duplicate username.");
         }
         User userWithDuplicateEmail = userRepository.findByEmail(userDto.getEmail());
         if (userWithDuplicateEmail != null && userDto.getId() != userWithDuplicateEmail.getId()) {
-            log.error(String.format("Duplicate email %", userDto.getEmail()));
-            throw new RuntimeException("Duplicate email.");
+            log.error(String.format("Duplicate email %s", userDto.getEmail()));
+            throw new SecurityException("Duplicate email.");
         }
         User user = new User();
         user.setEmail(userDto.getEmail());
         user.setFirstName(userDto.getFirstName());
         user.setLastName(userDto.getLastName());
         user.setUsername(userDto.getUsername());
-        user.setPassword(encoder().encode(userDto.getPassword()));
-        List<RoleType> roleTypes = new ArrayList<>();
-        userDto.getRole().forEach(role -> roleTypes.add(RoleType.valueOf(role)));
-        user.setRoles(roleRepository.find(userDto.getRole()));
+        user.setPassword(encoder.encode(userDto.getPassword()));
+        user.setRoles(roleRepository.find( Collections.singletonList("USER")));
         userRepository.save(user);
         return userDto;
     }

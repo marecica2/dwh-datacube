@@ -1,5 +1,6 @@
 package org.bmsource.dwh.security.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.bmsource.dwh.common.portal.Tenant;
 
 import javax.persistence.*;
@@ -16,6 +17,8 @@ public class User {
     private String firstName;
     private String lastName;
     private String username;
+
+    @JsonIgnore
     private String password;
     private String email;
 
@@ -29,14 +32,6 @@ public class User {
         joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "tenant_id"))
     private Set<Tenant> tenants;
 
-    public Set<Tenant> getTenants() {
-        return tenants;
-    }
-
-    public void setTenants(Set<Tenant> tenants) {
-        this.tenants = tenants;
-    }
-
     public Set<Role> getRoles() {
         return roles;
     }
@@ -49,20 +44,8 @@ public class User {
         return id;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
     public void setFirstName(String firstName) {
         this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
     }
 
     public void setLastName(String lastName) {
@@ -85,10 +68,6 @@ public class User {
         this.password = password;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
     public void setEmail(String email) {
         this.email = email;
     }
@@ -100,7 +79,7 @@ public class User {
         userDto.setFirstName(this.firstName);
         userDto.setLastName(this.lastName);
         userDto.setUsername(this.username);
-        userDto.setRole(this.roles.stream().map(role -> role.getName().toString()).collect(Collectors.toList()));
+        userDto.setRoles(this.roles.stream().map(role -> role.getName().toString()).collect(Collectors.toList()));
         userDto.setTenants(this.tenants);
         return userDto;
     }

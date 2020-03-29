@@ -14,24 +14,24 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class SecurityExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(SecurityExceptionHandler.class);
 
-    @ExceptionHandler({Exception.class})
+    @ExceptionHandler({ Exception.class })
     @ResponseBody
     public ResponseEntity<?> handleAnyException(Exception e) {
         return errorResponse(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    protected ResponseEntity<ExceptionMessage> errorResponse(Throwable throwable,
-                                                             HttpStatus status) {
-        logger.error("error caught: " + throwable.getMessage(), throwable);
-        if (null != throwable) {
-            return response(new ExceptionMessage(throwable), status);
-        } else {
-            return response(null, status);
-        }
+    @ExceptionHandler({ SecurityException.class })
+    @ResponseBody
+    public ResponseEntity<?> handleSecurityException(Exception e) {
+        return errorResponse(e, HttpStatus.BAD_REQUEST);
+    }
+
+    protected ResponseEntity<ExceptionMessage> errorResponse(Throwable throwable, HttpStatus status) {
+        logger.error(throwable.getMessage(), throwable);
+        return response(new ExceptionMessage(throwable), status);
     }
 
     protected <T> ResponseEntity<T> response(T body, HttpStatus status) {
-        logger.debug("Responding with a status of {}", status);
         return new ResponseEntity<>(body, new HttpHeaders(), status);
     }
 }

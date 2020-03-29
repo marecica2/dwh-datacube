@@ -89,8 +89,8 @@ public class SecurityApiIT {
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(MockMvcResultMatchers.jsonPath("$.username").value("admin"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.authorities").exists())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.enabled").value(true));
+            .andExpect(MockMvcResultMatchers.jsonPath("$.roles").exists())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.tenants").exists());
     }
 
     @Test
@@ -122,6 +122,13 @@ public class SecurityApiIT {
             .header("Authorization", "Bearer " + token)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().is2xxSuccessful());
+
+
+        mvc.perform(MockMvcRequestBuilders
+            .post("/register")
+            .content(new ObjectMapper().writeValueAsString(user))
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().is4xxClientError());
     }
 
     private String getAccessToken(String username, String password) throws Exception {

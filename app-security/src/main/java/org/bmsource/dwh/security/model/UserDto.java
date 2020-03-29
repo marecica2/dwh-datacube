@@ -13,7 +13,7 @@ public class UserDto {
     private String username;
     private String password;
     private String email;
-    private List<String> role;
+    private List<String> roles;
     private Set<Tenant> tenants;
 
     public long getId() {
@@ -64,12 +64,12 @@ public class UserDto {
         this.email = email;
     }
 
-    public List<String> getRole() {
-        return role;
+    public List<String> getRoles() {
+        return roles;
     }
 
-    public void setRole(List<String> role) {
-        this.role = role;
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
     }
 
     public Set<Tenant> getTenants() {

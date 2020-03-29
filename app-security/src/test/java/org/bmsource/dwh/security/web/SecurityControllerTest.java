@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -37,12 +38,11 @@ public class SecurityControllerTest {
     private MockMvc mvc;
 
     @Test
+    @WithMockUser()
     public void handleException() throws Exception {
-        when(userService.loadUserByUsername(any())).thenThrow(new RuntimeException("Exception"));
-        mvc.perform(
-            MockMvcRequestBuilders
-                .get("/me")
-        )
-            .andExpect(status().is4xxClientError());
+        when(userRepository.findByUsername(any())).thenThrow(new RuntimeException("Exception"));
+        mvc.perform(MockMvcRequestBuilders
+            .get("/me"))
+            .andExpect(status().is5xxServerError());
     }
 }
