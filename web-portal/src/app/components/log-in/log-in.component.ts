@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from "@angular/router";
 import { NgForm } from "@angular/forms";
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { AuthService, AuthResponse } from "../../shared/auth.service";
+import { AuthService, Token } from "../../shared/auth.service";
 
 @Component({
   selector: 'app-log-in',
@@ -38,9 +38,9 @@ export class LogInComponent implements OnInit {
 
     this.isLoading = true;
 
-    this.authService.login(username, password).subscribe((tokenResponse: AuthResponse) => {
+    this.authService.login(username, password).subscribe((tokenResponse: Token) => {
       this.isLoading = false;
-      this.router.navigate(['/tenant'])
+      this.router.navigate(['/tenant'],{ queryParamsHandling: "merge" })
     }, errorMessage => {
       this.error = errorMessage;
       this.snackBar.open(errorMessage, '', {
