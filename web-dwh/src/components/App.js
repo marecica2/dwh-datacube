@@ -15,6 +15,7 @@ import Import from './pages/Import';
 import { AppStateProvider } from './context/AppContext';
 import GlobalHttpInterptors from './common/GlobalHttpInterceptors';
 import authApi from '../shared/api/auth.api';
+import Loader from './common/Loader';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -31,15 +32,16 @@ function App() {
   const theme = useTheme();
   const classes = useStyles(theme);
   const [isSidebarOpen, setSidebarOpen] = React.useState(true);
+  const [user, setUser] = React.useState(null);
 
 
   useEffect(() => {
     const api = async () => {
-      const user = await authApi.loggedUser();
-      console.log(user);
+      const loggedUser = await authApi.loggedUser();
+      setUser(loggedUser);
     };
     api();
-  }, []);
+  }, [setUser]);
 
   function handleDrawerOpen() {
     setSidebarOpen(true);
@@ -55,18 +57,26 @@ function App() {
       <Router history={history}>
         <AppStateProvider>
           <GlobalHttpInterptors>
-            <Menu open={isSidebarOpen} menuIconClick={handleDrawerOpen}/>
-            <Sidebar handleDrawerClose={handleDrawerClose} isSidebarOpen={isSidebarOpen}/>
-            <main className={classes.content}>
-              <Switch>
-                <Route path="/category/supplier" component={Supplier}/>
-                <Route path="/category/service-type" component={DataPreview}/>
-                <Route path="/import" component={Import}/>
-                <Route path="/settings" component={Settings}/>
-                <Route path="/login" component={Login}/>
-                <Route path="/" strict component={Home}/>
-              </Switch>
-            </main>
+            {user ? (
+              <div>
+                <Menu open={isSidebarOpen} menuIconClick={handleDrawerOpen}/>
+                <Sidebar handleDrawerClose={handleDrawerClose} isSidebarOpen={isSidebarOpen}/>
+                <main className={classes.content}>
+                  <Switch>
+                    <Route path="/category/supplier" component={Supplier}/>
+                    <Route path="/category/service-type" component={DataPreview}/>
+                    <Route path="/import" component={Import}/>
+                    <Route path="/settings" component={Settings}/>
+                    <Route path="/login" component={Login}/>
+                    <Route path="/" strict component={Home}/>
+                  </Switch>
+                </main>
+              </div>
+            ) : (
+              <>
+                <Loader/>
+              </>
+            )}
           </GlobalHttpInterptors>
         </AppStateProvider>
       </Router>

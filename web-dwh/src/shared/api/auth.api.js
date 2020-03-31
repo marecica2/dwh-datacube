@@ -17,11 +17,11 @@ export default {
     return resp;
   },
   loggedUser: async (options) => {
-    const { data: resp } = await httpRequest(`${baseUrl}/me`, {
+    const response = await httpRequest(`${baseUrl}/me`, {
       method: 'GET',
       tenantRequest: false,
       ...options,
     })();
-    return resp;
+    return response.status > 299 ? null : response.data;
   },
 };
