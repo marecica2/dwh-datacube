@@ -61,6 +61,12 @@ function AppMenu(props) {
     setAnchorEl(null);
   }
 
+  function signOut() {
+    handleClose();
+    sessionStorage.removeItem('token');
+    window.location.href = '/portal/login';
+  }
+
   return state.token && (
     <AppBar
       position="fixed"
@@ -174,7 +180,7 @@ function AppMenu(props) {
         >
 
           <MenuItem onClick={handleClose}>User preferences</MenuItem>
-          <MenuItem onClick={handleClose}>Sign out</MenuItem>
+          <MenuItem onClick={signOut}>Sign out</MenuItem>
         </Menu>
       </Toolbar>
     </AppBar>

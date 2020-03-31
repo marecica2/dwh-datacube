@@ -16,7 +16,7 @@ class GlobalXRayHttpInterceptors extends React.Component {
 
   redirectToLoginScreen = () => {
     const { history, location } = this.props;
-    history.push(`${loginPath}?redirectUri=${encodeURIComponent(location.pathname)}`);
+    window.location.href = `${loginPath}?redirectUri=${encodeURIComponent(location.pathname)}`;
   };
 
   redirectToErrorScreen = () => {
