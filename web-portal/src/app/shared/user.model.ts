@@ -1,12 +1,15 @@
 export class User {
-  constructor(
-    public email: string,
-    public id: string,
-    private _token: string,
-    private _expiresIn: number,
-  ) {}
+  public id: number;
+  public firstName: string;
+  public lastName: string;
+  public username: string;
+  public email: string;
+  public roles: string[];
+  public tenants: object[];
+  public token: string;
+  public refreshToken: string;
+  public expiresIn: number;
 
-  get token() {
-    return this._token;
-  }
+  constructor(
+  ) {}
 }
