@@ -45,10 +45,17 @@ public class ExcelReader<T> implements DataReader<List<Object>> {
             .open(inputStream);
         sheet = workbook.getSheetAt(0);
         rowIterator = sheet.rowIterator();
-        rowsCount = sheet.getLastRowNum() - 1;
+        rowsCount = getLastRowNum() - 1;
         header = nextRow().stream()
             .map(Object::toString)
             .collect(Collectors.toList());
+    }
+
+    // TODO sheet.getLastRowNum() doesnt work with all xlsx and return 0
+    private int getLastRowNum() {
+        if(sheet.getLastRowNum() == 0)
+            return 1000000;
+        return sheet.getLastRowNum();
     }
 
     @Override
