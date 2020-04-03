@@ -19,7 +19,9 @@ export class TenantComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.tenantSub = this.authService.userSubject.subscribe(user => {
-      this.tenants = user.tenants;
+      if (user) {
+        this.tenants = user.tenants;
+      }
     });
   }
 

@@ -1,13 +1,17 @@
 <mat-toolbar color="primary">
   <mat-toolbar-row>
-    <span>Acme company</span>
-    <span class="spacer"></span>
-    <mat-icon class="icon" aria-hidden="false" aria-label="Example user verified icon">
-      verified_user
-    </mat-icon>
+    <ng-container [ngTemplateOutlet]="placeholderRef"></ng-container>
 
-    <span *ngIf="isAuthenticated">
-      <button mat-button (click)="onLogout()" >Log out</button>
-    </span>
+    <span>DWH Portal</span>
+    <span class="spacer"></span>
+
+    <ng-container *ngIf="isAuthenticated">
+      <button mat-button>{{ user.firstName }} {{ user.lastName }}</button>
+      <button mat-button (click)="onLogout()">
+<!--        <mat-icon class="icon" aria-hidden="false" aria-label="Example user verified icon">-->
+<!--          exit_to_app-->
+<!--        </mat-icon>-->
+        Log out</button>
+    </ng-container>
   </mat-toolbar-row>
 </mat-toolbar>
