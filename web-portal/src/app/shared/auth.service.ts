@@ -35,7 +35,9 @@ export interface UserResponse {
 })
 export class AuthService {
   public userSubject = new BehaviorSubject<User>(null);
+  public tokenSubject = new BehaviorSubject<Token>(null);
   private user: User;
+  private selectedTenant: Tenant;
   private token: Token;
 
   constructor(
@@ -43,45 +45,25 @@ export class AuthService {
     private router: Router,
     private activatedRoute: ActivatedRoute,
   ) {
-    this.user = AuthService.getItem('user');
     this.token = AuthService.getItem('token');
-    if (this.user !== null)
+    if (this.token !== null) {
+      this.tokenSubject.next(this.token);
+    }
+    this.user = AuthService.getItem('user');
+    if (this.user !== null) {
       this.userSubject.next(this.user);
+    }
   }
 
-  login(username: string, password: string): Observable<string> {
+  public login(username: string, password: string): Observable<any> {
     return this.fetchToken(username, password)
       .pipe(
-        mergeMap(this.fetchUserInfo.bind(this)),
-        map(() => {
-          return 'finished'
-        }),
+        switchMap((token: Token) => this.fetchUserInfo(token)),
         catchError(AuthService.handleError.bind(this)),
       );
   }
 
-  private fetchToken(username: string, password: string): Observable<Token> {
-    const formData = new FormData();
-    formData.append('username', username);
-    formData.append('password', password);
-    formData.append('grant_type', 'password');
-    const headers = {
-      'Authorization': `Basic ${btoa(`${CLIENT_ID}:${CLIENT_SECRET}`)}`,
-    };
-    return this.http
-      .post<Token>(`${baseUrl}/oauth/token`, formData, { headers }).pipe(
-        tap((auth: Token) => {
-          this.token = auth;
-          AuthService.setItem('token', auth);
-        }),
-      )
-  }
-
-  public isAuthenticated(): boolean {
-    return AuthService.getItem('token') !== null;
-  }
-
-  protected getToken(): string {
+  public getToken(): string {
     return this.token.access_token;
   }
 
@@ -96,6 +78,10 @@ export class AuthService {
   public selectTenant(tenant: Tenant) {
     const route = this.activatedRoute.snapshot;
     const { queryParams: { redirectUri } } = route;
+
+    this.selectedTenant = tenant;
+    AuthService.setItem('tenant', tenant);
+
     if (redirectUri) {
       window.location.href = redirectUri;
     } else {
@@ -103,12 +89,29 @@ export class AuthService {
     }
   }
 
-  private fetchUserInfo(): Observable<any> {
+  private fetchToken(username: string, password: string): Observable<Token> {
+    const formData = new FormData();
+    formData.append('username', username);
+    formData.append('password', password);
+    formData.append('grant_type', 'password');
+    const headers = {
+      'Authorization': `Basic ${btoa(`${CLIENT_ID}:${CLIENT_SECRET}`)}`,
+    };
+    return this.http
+      .post<Token>(`${baseUrl}/oauth/token`, formData, { headers }).pipe(
+        tap((token: Token) => {
+          this.token = token;
+          this.tokenSubject.next(token);
+          AuthService.setItem('token', token);
+        }),
+      )
+  }
+
+  private fetchUserInfo(token: Token): Observable<any> {
     return this.http
       .get<UserResponse>(`${baseUrl}/me`)
       .pipe(
         tap((usr: UserResponse) => {
-          const token: Token = AuthService.getItem('token');
           AuthService.setItem('user', usr);
           const user = new User();
           user.id = usr.id;
@@ -122,6 +125,9 @@ export class AuthService {
           user.refreshToken = token.refresh_token;
           this.userSubject.next(user);
         }),
+        map((user: UserResponse) => ({
+          token, user,
+        })),
         catchError(AuthService.handleError.bind(this)),
       );
   }

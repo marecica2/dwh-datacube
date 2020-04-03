@@ -1,4 +1,16 @@
 <div>
-  <app-header></app-header>
-  <router-outlet></router-outlet>
+  <mat-drawer-container class="container" autosize>
+    <mat-drawer #drawer class="sidenav" mode="over">
+      <p>menu</p>
+    </mat-drawer>
+    <div class="sidenav-content">
+      <ng-template #drawerToggle>
+        <button mat-icon-button (click)="drawer.toggle()">
+          <mat-icon>menu</mat-icon>
+        </button>
+      </ng-template>
+      <app-header [placeholderRef]="drawerToggle"></app-header>
+    </div>
+    <router-outlet></router-outlet>
+  </mat-drawer-container>
 </div>

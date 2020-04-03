@@ -1,5 +1,5 @@
 import { Subscription } from "rxjs";
-import { Component, OnDestroy, OnInit } from "@angular/core";
+import { Component, Input, OnDestroy, OnInit, TemplateRef } from "@angular/core";
 import { AuthService } from "../../shared/auth.service";
 import { User } from "../../shared/user.model";
 
@@ -9,7 +9,10 @@ import { User } from "../../shared/user.model";
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit, OnDestroy {
-  private userSub: Subscription;
+  @Input()
+  public placeholderRef: TemplateRef<any>;
+
+  userSub: Subscription;
   user: User;
   isAuthenticated = false;
 
@@ -17,9 +20,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.isAuthenticated = this.authService.isAuthenticated();
-    this.userSub = this.authService.userSubject.subscribe(user => {
+    this.userSub = this.authService.userSubject.subscribe((user) => {
       this.isAuthenticated = !!user;
+      this.user = user;
     });
   }
 
