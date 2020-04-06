@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { BehaviorSubject, Observable, throwError } from "rxjs";
 import { catchError, map, switchMap, tap } from "rxjs/operators";
-import { User } from "./user.model";
+import { User } from "../shared/user.model";
 import { ActivatedRoute, Router } from "@angular/router";
-import { Tenant } from "./tenant.model";
+import { Tenant } from "../shared/tenant.model";
 
 const baseUrl = '/api/security';
 const CLIENT_ID = 'dwh-client';
@@ -71,7 +71,7 @@ export class AuthService {
     AuthService.deleteItem('user');
     AuthService.deleteItem('tenant');
     this.userSubject.next(null);
-    this.router.navigate(['/login']);
+    this.router.navigate(['/auth/login']);
   }
 
   public selectTenant(tenant: Tenant) {

@@ -1,9 +1,11 @@
 <mat-drawer-container class="container">
-  <mat-drawer #drawer class="sidenav" mode="side">
+  <mat-drawer #drawer class="sidenav" mode="over">
 
     <mat-toolbar color="primary">
       <mat-toolbar-row>
-        <app-logo></app-logo>
+        <a class="logo" routerLink="">
+          <app-logo></app-logo>
+        </a>
         <span class="spacer"></span>
         <button mat-icon-button (click)="drawer.toggle()">
           <mat-icon>close</mat-icon>
@@ -11,11 +13,15 @@
       </mat-toolbar-row>
     </mat-toolbar>
 
-    <button mat-button routerLink="/apps" color="primary">
+    <button mat-button routerLink="/user-access" color="primary" routerLinkActive="mat-accent">
+      <mat-icon class="mat-icon-large">perm_identity</mat-icon>
+      Identity & User management
+    </button>
+    <button mat-button routerLink="/apps" color="primary" routerLinkActive="mat-accent">
       <mat-icon class="mat-icon-large">apps</mat-icon>
       Applications
     </button>
-    <button mat-button routerLink="/tenant" color="primary">
+    <button mat-button routerLink="/auth/tenant" color="primary" routerLinkActive="mat-accent">
       <mat-icon class="mat-icon-large">supervised_user_circle</mat-icon>
       Tenant selection
     </button>
@@ -28,10 +34,12 @@
         <button mat-icon-button (click)="drawer.toggle()">
           <mat-icon>menu</mat-icon>
         </button>
-        <app-logo></app-logo>
+        <a class="logo" routerLink="">
+          <app-logo></app-logo>
+        </a>
       </ng-container>
     </ng-template>
-    <app-header [placeholderRef]="drawerToggle"></app-header>
+      <app-header [placeholderRef]="drawerToggle"></app-header>
     <router-outlet></router-outlet>
   </div>
 

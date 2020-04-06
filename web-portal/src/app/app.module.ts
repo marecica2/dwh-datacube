@@ -5,23 +5,17 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
 
+import { SharedModule } from "./shared/shared.module";
+import { CoreModule } from "./core.module";
 import { AppComponent } from './app.component';
-import { AuthInterceptor } from "./shared/auth.interceptor";
-import { AngularMaterialModule } from "./angular-material.module";
 import { AppRoutingModule } from './app-routing.module';
 import { HeaderComponent } from './components/layout/header/header.component';
-import { LoginComponent } from './components/pages/login/login.component';
-import { RegisterComponent } from './components/pages/register/register.component';
-import { TenantComponent } from './components/pages/tenant/tenant.component';
 import { AppsComponent } from './components/pages/apps/apps.component';
 import { LogoComponent } from './components/layout/logo.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent,
-    RegisterComponent,
-    TenantComponent,
     HeaderComponent,
     AppsComponent,
     LogoComponent,
@@ -31,12 +25,12 @@ import { LogoComponent } from './components/layout/logo.component';
     FormsModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
-    FlexLayoutModule,
-    AppRoutingModule,
-    AngularMaterialModule,
     HttpClientModule,
+    FlexLayoutModule,
+    SharedModule,
+    CoreModule,
+    AppRoutingModule,
   ],
-  providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
