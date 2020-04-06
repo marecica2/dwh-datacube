@@ -8,7 +8,6 @@ import { Component } from "@angular/core";
         <span>DWH Portal</span>
     </div>
   `,
-  styles: ['mat-icon {  }'],
 })
 export class LogoComponent {
 
