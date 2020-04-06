@@ -16,9 +16,14 @@
 
 .container .mat-drawer .mat-button {
   display: block;
+  width: 100%;
+  padding: 15px;
   text-align: left;
+  font-size: 1.2em;
 }
 
-.spacer {
-  flex: 1 1 auto;
+.mat-button mat-icon {
+  position: relative;
+  top: -5px;
+  margin-right: 10px;
 }

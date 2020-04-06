@@ -1,7 +1,7 @@
 import { Subscription } from "rxjs";
 import { Component, Input, OnDestroy, OnInit, TemplateRef } from "@angular/core";
-import { AuthService } from "../../shared/auth.service";
-import { User } from "../../shared/user.model";
+import { AuthService } from "../../../shared/auth.service";
+import { User } from "../../../shared/user.model";
 
 @Component({
   selector: 'app-header',

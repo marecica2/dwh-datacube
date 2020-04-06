@@ -4,6 +4,36 @@ body {
   background-color: #fafafa;
 }
 
+.mat-drawer-content {
+  height: auto !important;
+}
+
+.mat-icon-large {
+  font-size: 36px;
+}
+
+mat-icon {
+  height: initial !important;
+  width: initial !important;
+  font-size: inherit;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+
+.aligned {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+
+
+/* vertical layout */
+
 .vertical-container {
   margin: auto;
   width: 50%;
@@ -20,16 +50,7 @@ body {
   transform: translateY(-50%);
 }
 
-.centered-card {
-}
-
-.mat-drawer-content {
-  height: auto !important;
-}
-
-.mat-icon {
-  font-size: 32px;
-}
+/* centered card  */
 
 .centered-card .example-form {
 }

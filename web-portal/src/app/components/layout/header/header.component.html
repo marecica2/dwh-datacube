@@ -1,9 +1,6 @@
 <mat-toolbar color="primary" *ngIf="isAuthenticated">
   <mat-toolbar-row>
     <ng-container [ngTemplateOutlet]="placeholderRef"></ng-container>
-    &nbsp;&nbsp;&nbsp;
-
-    <app-logo></app-logo>
     <span class="spacer"></span>
 
     <ng-container *ngIf="isAuthenticated">

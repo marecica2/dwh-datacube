@@ -1,18 +1,22 @@
-<mat-drawer-container class="container" autosize>
+<mat-drawer-container class="container">
   <mat-drawer #drawer class="sidenav" mode="side">
 
     <mat-toolbar color="primary">
       <mat-toolbar-row>
         <app-logo></app-logo>
+        <span class="spacer"></span>
+        <button mat-icon-button (click)="drawer.toggle()">
+          <mat-icon>close</mat-icon>
+        </button>
       </mat-toolbar-row>
     </mat-toolbar>
 
     <button mat-button routerLink="/apps" color="primary">
-      <mat-icon>apps</mat-icon>
+      <mat-icon class="mat-icon-large">apps</mat-icon>
       Applications
     </button>
     <button mat-button routerLink="/tenant" color="primary">
-      <mat-icon>supervised_user_circle</mat-icon>
+      <mat-icon class="mat-icon-large">supervised_user_circle</mat-icon>
       Tenant selection
     </button>
 
@@ -20,9 +24,12 @@
 
   <div class="sidenav-content">
     <ng-template #drawerToggle>
-      <button mat-icon-button (click)="drawer.toggle()">
-        <mat-icon>menu</mat-icon>
-      </button>
+      <ng-container *ngIf="!drawer.opened">
+        <button mat-icon-button (click)="drawer.toggle()">
+          <mat-icon>menu</mat-icon>
+        </button>
+        <app-logo></app-logo>
+      </ng-container>
     </ng-template>
     <app-header [placeholderRef]="drawerToggle"></app-header>
     <router-outlet></router-outlet>
