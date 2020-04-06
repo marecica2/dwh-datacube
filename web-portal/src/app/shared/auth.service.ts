@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
-import { BehaviorSubject, concat, Observable, Subject } from "rxjs";
-import { catchError, map, mergeMap, switchMap, tap } from "rxjs/operators";
-import { throwError } from "rxjs";
+import { BehaviorSubject, Observable, throwError } from "rxjs";
+import { catchError, map, switchMap, tap } from "rxjs/operators";
 import { User } from "./user.model";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Tenant } from "./tenant.model";

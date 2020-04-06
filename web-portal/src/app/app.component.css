@@ -7,6 +7,18 @@
 }
 
 .container .mat-drawer {
-  padding-left: 20px;
-  min-width: 200px;
+  min-width: 300px;
+}
+
+.mat-drawer-content {
+  height: auto;
+}
+
+.container .mat-drawer .mat-button {
+  display: block;
+  text-align: left;
+}
+
+.spacer {
+  flex: 1 1 auto;
 }

@@ -1,4 +1,53 @@
+@import '~@angular/material/prebuilt-themes/indigo-pink.css';
+
 body {
   background-color: #fafafa;
-  margin: 0px;
+}
+
+.vertical-container {
+  margin: auto;
+  width: 50%;
+  max-width: 500px;
+  height: 100vh;
+  position: relative;
+}
+
+.vertical-center {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+.centered-card {
+}
+
+.mat-drawer-content {
+  height: auto !important;
+}
+
+.mat-icon {
+  font-size: 32px;
+}
+
+.centered-card .example-form {
+}
+
+.centered-card .example-full-width, .centered-card .btn-block {
+  width: 100%;
+}
+
+.centered-card mat-card-header {
+  text-align: center;
+  width: 100%;
+  display: block;
+}
+
+.centered-card .mat-card {
+  padding: 50px;
+}
+
+.centered-card .mat-form-field-appearance-legacy .mat-form-field-infix {
+  padding: 0.8375em 0;
 }
