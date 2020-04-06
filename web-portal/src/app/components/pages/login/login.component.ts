@@ -2,14 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from "@angular/router";
 import { NgForm } from "@angular/forms";
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { AuthService, Token } from "../../shared/auth.service";
+import { AuthService, Token } from "../../../shared/auth.service";
 
 @Component({
-  selector: 'app-log-in',
-  templateUrl: './log-in.component.html',
-  styleUrls: ['./log-in.component.css']
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css']
 })
-export class LogInComponent implements OnInit {
+export class LoginComponent implements OnInit {
   user = {
     username: "admin",
     password: "admin",

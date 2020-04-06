@@ -3,12 +3,12 @@ import { Component } from "@angular/core";
 @Component({
   selector: 'app-logo',
   template: `
-    <span>
-        <mat-icon>insert_chart_outlined</mat-icon>&nbsp;&nbsp;
+    <div class="aligned">
+        <mat-icon class="mat-icon-large">insert_chart_outlined</mat-icon>&nbsp;&nbsp;
         <span>DWH Portal</span>
-    </span>
+    </div>
   `,
-  styles: ['mat-icon { position: relative; top:8px; }'],
+  styles: ['mat-icon {  }'],
 })
 export class LogoComponent {
 

@@ -9,17 +9,17 @@ import { AppComponent } from './app.component';
 import { AuthInterceptor } from "./shared/auth.interceptor";
 import { AngularMaterialModule } from "./angular-material.module";
 import { AppRoutingModule } from './app-routing.module';
-import { HeaderComponent } from './components/header/header.component';
-import { LogInComponent } from './components/log-in/log-in.component';
-import { RegisterComponent } from './components/register/register.component';
-import { TenantComponent } from './components/tenant/tenant.component';
-import { AppsComponent } from './components/apps/apps.component';
+import { HeaderComponent } from './components/layout/header/header.component';
+import { LoginComponent } from './components/pages/login/login.component';
+import { RegisterComponent } from './components/pages/register/register.component';
+import { TenantComponent } from './components/pages/tenant/tenant.component';
+import { AppsComponent } from './components/pages/apps/apps.component';
 import { LogoComponent } from './components/layout/logo.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    LogInComponent,
+    LoginComponent,
     RegisterComponent,
     TenantComponent,
     HeaderComponent,
