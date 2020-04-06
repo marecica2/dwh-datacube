@@ -14,6 +14,7 @@ import { LogInComponent } from './components/log-in/log-in.component';
 import { RegisterComponent } from './components/register/register.component';
 import { TenantComponent } from './components/tenant/tenant.component';
 import { AppsComponent } from './components/apps/apps.component';
+import { LogoComponent } from './components/layout/logo.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { AppsComponent } from './components/apps/apps.component';
     TenantComponent,
     HeaderComponent,
     AppsComponent,
+    LogoComponent,
   ],
   imports: [
     BrowserModule,
@@ -38,4 +40,5 @@ import { AppsComponent } from './components/apps/apps.component';
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class AppModule { }
+export class AppModule {
+}

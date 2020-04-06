@@ -1,17 +1,30 @@
-<mat-toolbar color="primary">
+<mat-toolbar color="primary" *ngIf="isAuthenticated">
   <mat-toolbar-row>
     <ng-container [ngTemplateOutlet]="placeholderRef"></ng-container>
+    &nbsp;&nbsp;&nbsp;
 
-    <span>DWH Portal</span>
+    <app-logo></app-logo>
     <span class="spacer"></span>
 
     <ng-container *ngIf="isAuthenticated">
       <button mat-button>{{ user.firstName }} {{ user.lastName }}</button>
-      <button mat-button (click)="onLogout()">
-<!--        <mat-icon class="icon" aria-hidden="false" aria-label="Example user verified icon">-->
-<!--          exit_to_app-->
-<!--        </mat-icon>-->
-        Log out</button>
+
+      <button mat-icon-button [matMenuTriggerFor]="menu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item disabled>
+          <mat-icon>perm_identity</mat-icon>
+          <span>My Profile</span>
+        </button>
+
+        <button mat-menu-item (click)="onLogout()">
+          <mat-icon>exit_to_app</mat-icon>
+          <span>Sign Out</span>
+        </button>
+      </mat-menu>
+
     </ng-container>
   </mat-toolbar-row>
 </mat-toolbar>
