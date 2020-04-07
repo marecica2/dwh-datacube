@@ -1,0 +1,29 @@
+<nav mat-tab-nav-bar>
+  <a mat-tab-link
+     routerLink="/iam/users"
+     routerLinkActive #rla="routerLinkActive"
+     [active]="rla.isActive">
+    Users
+  </a>
+  <a mat-tab-link
+     routerLink="/iam/tenants"
+     routerLinkActive #rla="routerLinkActive"
+     [active]="rla.isActive">
+    Tenants
+  </a>
+  <a mat-tab-link
+     routerLink="/iam/apps"
+     routerLinkActive #rla="routerLinkActive"
+     [active]="rla.isActive">
+    Apps
+  </a>
+  <a mat-tab-link
+     routerLink="/iam/tokens"
+     routerLinkActive #rla="routerLinkActive"
+     [active]="rla.isActive">
+    OAuth2 Tokens
+  </a>
+</nav>
+<div style="padding: 28px">
+  <router-outlet></router-outlet>
+</div>

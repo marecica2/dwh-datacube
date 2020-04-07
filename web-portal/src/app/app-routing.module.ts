@@ -8,6 +8,10 @@ const routes: Routes = [
     path: 'auth', loadChildren: () =>
       import("./auth/auth.module").then(m => m.AuthModule)
   },
+  {
+    path: 'iam', loadChildren: () =>
+      import("./iam/iam.module").then(m => m.IamModule)
+  },
   { path: 'apps', component: AppsComponent },
 ];
 
