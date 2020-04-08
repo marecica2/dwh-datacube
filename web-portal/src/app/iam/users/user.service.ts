@@ -31,7 +31,7 @@ export class UserService {
 
   getUsers(sort: string, order: string, page: number): Observable<UsersApiResponse> {
     const href = '/api/security/users';
-    const requestUrl = `${href}?sort=${sort}&order=${order}&page=${page}&size=5`;
+    const requestUrl = `${href}?sort=${sort},${order}&page=${page}&size=5`;
     return this.http.get<UsersApiResponse>(requestUrl);
   }
 }

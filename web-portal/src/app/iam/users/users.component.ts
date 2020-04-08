@@ -17,6 +17,7 @@ export class UsersComponent implements AfterViewInit {
   resultsLength = 0;
   isLoadingResults = true;
   isRateLimitReached = false;
+  pageSize = 5;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -40,7 +41,6 @@ export class UsersComponent implements AfterViewInit {
           this.resultsLength = response.page.totalElements;
           return response._embedded.users;
         }),
-        tap(data => console.log(data)),
         catchError(() => {
           this.isLoadingResults = false;
           return observableOf([]);
