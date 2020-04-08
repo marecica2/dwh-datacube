@@ -1,4 +1,3 @@
-export interface Tenant {
-  id: string;
-  schemaName: string;
+export class Tenant {
+  constructor(id: string, schemaName: string) {}
 }

@@ -2,8 +2,8 @@ import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from "../shared/shared.module";
 import { CoreModule } from "../core.module";
-import { UsersTableComponent } from './users/usersTable.component';
-import { TenantsTableComponent } from './tenants/tenantsTable.component';
+import { UsersTableComponent } from './users/users-table.component';
+import { TenantsTableComponent } from './tenants/tenants-table.component';
 import { IamComponent } from './iam/iam.component';
 
 const routes: Routes = [

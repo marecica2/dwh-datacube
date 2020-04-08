@@ -8,17 +8,39 @@ export interface Page {
   number: number
 }
 
-export interface CrudRepositoryResponse<Entity> {
+export interface PaginationResponse<Entity> {
   _embedded: { users: Entity[] };
   page: Page;
 }
 
-export abstract class AbstractCrudRepositoryService<Entity> {
+export interface ColumnDefinition {
+  [columnName: string]: {
+    type: string,
+    label?: string,
+  }
+}
+
+export class CrudRepositoryService<Entity> {
   constructor(protected http: HttpClient, protected baseUrl: string) {
   }
 
-  findAll(sort: string, order: string, page: number): Observable<CrudRepositoryResponse<Entity>> {
+  findAll(sort: string, order: string, page: number): Observable<PaginationResponse<Entity>> {
     const requestUrl = `${this.baseUrl}?sort=${sort},${order}&page=${page}&size=5`;
-    return this.http.get<CrudRepositoryResponse<Entity>>(requestUrl);
+    return this.http.get<PaginationResponse<Entity>>(requestUrl);
+  }
+
+  create(entity: Entity): Observable<Entity> {
+    const requestUrl = `${this.baseUrl}`;
+    return this.http.post<Entity>(requestUrl, entity);
+  }
+
+  update(entity: Entity): Observable<Entity> {
+    const requestUrl = `${this.baseUrl}`;
+    return this.http.patch<Entity>(requestUrl, entity);
+  }
+
+  delete(entity: Entity): Observable<Entity> {
+    const requestUrl = `${this.baseUrl}`;
+    return this.http.delete<Entity>(requestUrl, entity);
   }
 }

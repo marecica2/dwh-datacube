@@ -1,0 +1,22 @@
+<div class="crud-table-container">
+  <div class="loading-shade"
+       *ngIf="isLoadingResults">
+    <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+  </div>
+
+  <div class="crud-table">
+    <table mat-table [dataSource]="data" class="crud-table-table"
+           matSort matSortActive="created" matSortDisableClear matSortDirection="desc">
+
+      <ng-container [matColumnDef]="key" *ngFor="let key of columnKeys">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{ columnDefinition[key]?.label || key }}</th>
+        <td mat-cell *matCellDef="let row">{{ row[key] }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columnKeys"></tr>
+      <tr mat-row *matRowDef="let row; columns: columnKeys;"></tr>
+    </table>
+  </div>
+
+  <mat-paginator [length]="resultsLength" [pageSize]="pageSize"></mat-paginator>
+</div>
