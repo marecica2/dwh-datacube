@@ -2,8 +2,8 @@ import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from "../shared/shared.module";
 import { CoreModule } from "../core.module";
-import { UsersComponent } from './users/users.component';
-import { TenantsComponent } from './tenants/tenants.component';
+import { UsersTableComponent } from './users/usersTable.component';
+import { TenantsTableComponent } from './tenants/tenantsTable.component';
 import { IamComponent } from './iam/iam.component';
 
 const routes: Routes = [
@@ -13,10 +13,10 @@ const routes: Routes = [
   },
   {
     path: '', component: IamComponent, children: [
-      { path: 'users', component: UsersComponent },
-      { path: 'tenants', component: TenantsComponent },
-      { path: 'apps', component: TenantsComponent },
-      { path: 'tokens', component: TenantsComponent },
+      { path: 'users', component: UsersTableComponent },
+      { path: 'tenants', component: TenantsTableComponent },
+      { path: 'apps', component: TenantsTableComponent },
+      { path: 'tokens', component: TenantsTableComponent },
     ]
   },
 ];
@@ -24,8 +24,8 @@ const routes: Routes = [
 @NgModule({
   declarations: [
     IamComponent,
-    UsersComponent,
-    TenantsComponent,
+    UsersTableComponent,
+    TenantsTableComponent,
   ],
   imports: [
     RouterModule.forChild(routes),
