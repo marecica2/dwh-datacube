@@ -1,21 +1,44 @@
 <div class="example-container">
-  <table mat-table [dataSource]="transactions">
-    <!-- Item Column -->
-    <ng-container matColumnDef="item">
-      <th mat-header-cell *matHeaderCellDef> Item </th>
-      <td mat-cell *matCellDef="let transaction"> {{transaction.item}} </td>
-      <td mat-footer-cell *matFooterCellDef> Total </td>
-    </ng-container>
+  <div class="example-loading-shade"
+       *ngIf="isLoadingResults || isRateLimitReached">
+    Loading
+    <!--    <mat-spinner *ngIf="isLoadingResults"></mat-spinner>-->
+  </div>
 
-    <!-- Cost Column -->
-    <ng-container matColumnDef="cost">
-      <th mat-header-cell *matHeaderCellDef> Cost </th>
-      <td mat-cell *matCellDef="let transaction"> {{transaction.cost | currency}} </td>
-      <td mat-footer-cell *matFooterCellDef> {{getTotalCost() | currency}} </td>
-    </ng-container>
+  <div class="example-table-container">
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    <tr mat-footer-row *matFooterRowDef="displayedColumns; sticky: true"></tr>
-  </table>
+    <table mat-table [dataSource]="data" class="example-table"
+           matSort matSortActive="created" matSortDisableClear matSortDirection="desc">
+
+      <ng-container matColumnDef="number">
+        <th mat-header-cell *matHeaderCellDef>#</th>
+        <td mat-cell *matCellDef="let row">{{ row.number }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="username">
+        <th mat-header-cell *matHeaderCellDef>Username</th>
+        <td mat-cell *matCellDef="let row">{{ row.username }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="firstName">
+        <th mat-header-cell *matHeaderCellDef>First name</th>
+        <td mat-cell *matCellDef="let row">{{ row.firstName }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="lastName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Last Name</th>
+        <td mat-cell *matCellDef="let row">{{ row.lastName }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Email</th>
+        <td mat-cell *matCellDef="let row">{{ row.email }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+
+  <mat-paginator [length]="resultsLength" [pageSize]="5"></mat-paginator>
 </div>

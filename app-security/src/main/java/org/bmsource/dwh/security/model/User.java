@@ -52,6 +52,22 @@ public class User {
         this.lastName = lastName;
     }
 
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public Set<Tenant> getTenants() {
+        return tenants;
+    }
+
     public String getUsername() {
         return username;
     }
