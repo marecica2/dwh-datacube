@@ -1,37 +1,15 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
-
-export interface UsersApiResponse {
-  _embedded: { users: User[] };
-  page: Page;
-}
-
-export interface User {
-  username: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-}
-
-export interface Page {
-  size: number,
-  totalElements: number,
-  totalPages: number,
-  number: number
-}
+import { AbstractCrudRepositoryService } from "../../shared/crudRepository/crudRepositoryApi";
+import { User } from "./user.model";
 
 @Injectable({
   providedIn: 'root',
 })
-export class UserService {
+export class UserService extends AbstractCrudRepositoryService<User> {
+  private static baseUrl = '/api/security/users';
 
-  constructor(private http: HttpClient) {
-  }
-
-  getUsers(sort: string, order: string, page: number): Observable<UsersApiResponse> {
-    const href = '/api/security/users';
-    const requestUrl = `${href}?sort=${sort},${order}&page=${page}&size=5`;
-    return this.http.get<UsersApiResponse>(requestUrl);
+  constructor(http: HttpClient) {
+    super(http, UserService.baseUrl)
   }
 }

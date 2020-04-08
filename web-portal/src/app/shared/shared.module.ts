@@ -3,8 +3,7 @@ import { CommonModule } from "@angular/common";
 import { AngularMaterialModule } from "./angular-material.module";
 
 @NgModule({
-  declarations: [
-  ],
+  declarations: [],
   imports: [
     AngularMaterialModule,
     CommonModule,
@@ -14,4 +13,5 @@ import { AngularMaterialModule } from "./angular-material.module";
     CommonModule,
   ]
 })
-export class SharedModule {}
+export class SharedModule {
+}
