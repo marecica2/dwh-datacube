@@ -1,9 +1,15 @@
 .example-container {
-  min-height: 50vh;
+  position: relative;
+  min-height: 500px;
+}
+
+.example-table-container {
+  max-height: calc(100vh - 175px);
   overflow: auto;
 }
 
 table {
+  height: 100%;
   width: 100%;
 }
 
@@ -13,4 +19,33 @@ tr.mat-footer-row {
 
 .mat-table-sticky {
   border-top: 1px solid #e0e0e0;
+}
+
+.example-loading-shade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 56px;
+  right: 0;
+  background: rgba(0, 0, 0, 0.15);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.example-rate-limit-reached {
+  color: #980000;
+  max-width: 360px;
+  text-align: center;
+}
+
+/* Column Widths */
+.mat-column-number,
+.mat-column-state {
+  max-width: 64px;
+}
+
+.mat-column-created {
+  max-width: 124px;
 }

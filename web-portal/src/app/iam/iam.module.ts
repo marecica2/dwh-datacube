@@ -8,6 +8,10 @@ import { IamComponent } from './iam/iam.component';
 
 const routes: Routes = [
   {
+    path: "",
+    redirectTo: "users"
+  },
+  {
     path: '', component: IamComponent, children: [
       { path: 'users', component: UsersComponent },
       { path: 'tenants', component: TenantsComponent },
