@@ -7,7 +7,7 @@ import { User } from "./user.model";
   providedIn: 'root',
 })
 export class UserService extends CrudRepositoryService<User> {
-  private static baseUrl = '/api/security/users';
+  private static baseUrl = '/api/security/users/search/findAllEager';
 
   constructor(http: HttpClient) {
     super(http, UserService.baseUrl)

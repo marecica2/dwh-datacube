@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { UserService } from "./user.service";
-import { ColumnDefinition } from "../../shared/crudRepository/crudRepositoryApi";
+import { ColumnDefinition, ColumnType } from "../../shared/crudRepository/crudRepositoryApi";
 
 @Component({
   selector: 'iam-users-table',
@@ -17,19 +17,19 @@ export class UsersTableComponent {
 
   columnDefinition: ColumnDefinition = {
     username: {
-      type: 'string',
+      type: ColumnType.STRING,
       label: 'User name',
     },
     firstName: {
-      type: 'string',
+      type: ColumnType.STRING,
       label: 'First name',
     },
     lastName: {
-      type: 'string',
+      type: ColumnType.STRING,
       label: 'First name',
     },
     email: {
-      type: 'string',
+      type: ColumnType.STRING,
     },
   };
 
