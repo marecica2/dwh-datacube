@@ -1,9 +1,13 @@
 import { AfterViewInit, Component, Input, OnInit, ViewChild } from "@angular/core";
-import { MatPaginator } from "@angular/material/paginator";
-import { MatSort } from "@angular/material/sort";
 import { merge, of as observableOf } from "rxjs";
 import { catchError, map, startWith, switchMap } from "rxjs/operators";
+
+import { MatPaginator } from "@angular/material/paginator";
+import { MatSort } from "@angular/material/sort";
+import { MatDialog } from "@angular/material/dialog";
+
 import { ColumnDefinition, ColumnType, CrudRepositoryService, PaginationResponse } from "./crudRepositoryApi";
+import { EditDialogComponent } from "./editDialog/edit-dialog.component";
 
 @Component({
   selector: 'crud-table-component',
@@ -11,7 +15,7 @@ import { ColumnDefinition, ColumnType, CrudRepositoryService, PaginationResponse
   styleUrls: ['./crud-table.component.css'],
   exportAs: 'abstractCrudTableComponent',
 })
-export class CrudTableComponent<Entity> implements AfterViewInit, OnInit {
+export class CrudTableComponent<Entity> implements AfterViewInit {
   public columnType = ColumnType;
   private data: Entity[] = [];
   private page = 0;
@@ -26,27 +30,10 @@ export class CrudTableComponent<Entity> implements AfterViewInit, OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  ngOnInit(): void {
-  }
-
-  getColumnKeys(): string[] {
-    return Object.keys(this.columnDefinition);
-  }
-
-  getHeaderDefKeys(): string[] {
-    if (this.editable) {
-      return Object.keys(this.columnDefinition).concat(['actions']);
-    }
-    return Object.keys(this.columnDefinition);
-  }
-
-  getEntity(el: Element) {
-    console.log(el);
+  constructor(private dialog: MatDialog) {
   }
 
   ngAfterViewInit() {
-
-    // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
     merge(this.sort.sortChange, this.paginator.page)
@@ -68,7 +55,20 @@ export class CrudTableComponent<Entity> implements AfterViewInit, OnInit {
       ).subscribe((data: Entity[]) => this.data = data);
   }
 
-  renderValue(value) {
+  private openEditDialog(entity: Entity) {
+    this.dialog.open(EditDialogComponent, {
+      data: { entity, formTemplate: this.columnDefinition, service: this.service },
+    });
+  }
 
+  private getColumnKeys(): string[] {
+    return Object.keys(this.columnDefinition);
+  }
+
+  private getHeaderDefKeys(): string[] {
+    if (this.editable) {
+      return Object.keys(this.columnDefinition).concat(['actions']);
+    }
+    return Object.keys(this.columnDefinition);
   }
 }
