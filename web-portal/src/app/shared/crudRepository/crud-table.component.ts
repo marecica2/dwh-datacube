@@ -3,7 +3,7 @@ import { MatPaginator } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
 import { merge, of as observableOf } from "rxjs";
 import { catchError, map, startWith, switchMap } from "rxjs/operators";
-import { ColumnDefinition, CrudRepositoryService, PaginationResponse } from "./crudRepositoryApi";
+import { ColumnDefinition, ColumnType, CrudRepositoryService, PaginationResponse } from "./crudRepositoryApi";
 
 @Component({
   selector: 'crud-table-component',
@@ -12,9 +12,9 @@ import { ColumnDefinition, CrudRepositoryService, PaginationResponse } from "./c
   exportAs: 'abstractCrudTableComponent',
 })
 export class CrudTableComponent<Entity> implements AfterViewInit, OnInit {
+  public columnType = ColumnType;
   private data: Entity[] = [];
   private page = 0;
-  private pageSize = 5;
 
   private isLoadingResults = true;
 
@@ -66,5 +66,9 @@ export class CrudTableComponent<Entity> implements AfterViewInit, OnInit {
           return observableOf([]);
         })
       ).subscribe((data: Entity[]) => this.data = data);
+  }
+
+  renderValue(value) {
+
   }
 }

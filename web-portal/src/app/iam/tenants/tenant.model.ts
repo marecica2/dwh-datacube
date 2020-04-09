@@ -1,3 +1,3 @@
 export class Tenant {
-  constructor(id: string, schemaName: string) {}
+  constructor(public id: string, public schemaName: string) {}
 }

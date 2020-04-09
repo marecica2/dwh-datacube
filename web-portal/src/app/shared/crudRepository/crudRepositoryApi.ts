@@ -26,7 +26,17 @@ export interface ColumnDefinition {
     label?: string,
     formattedValue?: (value: any) => string;
     selectValuesProvider?: (value: any) => string;
+    accessor?: string,
   }
+}
+
+export interface ColumnDef {
+  label?: string,
+  formattedValue?: (value: any) => string;
+}
+
+export interface MultiValueColumnDef extends ColumnDef{
+  selectValuesProvider: (value: any) => string;
 }
 
 export class CrudRepositoryService<Entity> {
