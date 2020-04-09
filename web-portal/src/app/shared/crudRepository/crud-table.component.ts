@@ -12,21 +12,36 @@ import { ColumnDefinition, CrudRepositoryService, PaginationResponse } from "./c
   exportAs: 'abstractCrudTableComponent',
 })
 export class CrudTableComponent<Entity> implements AfterViewInit, OnInit {
-  data: Entity[] = [];
-  columnKeys: string[];
-  resultsLength = 0;
-  isLoadingResults = true;
-  pageSize = 5;
+  private data: Entity[] = [];
+  private page = 0;
+  private pageSize = 5;
 
-  @Input('columnDefinition') columnDefinition: ColumnDefinition;
-  @Input('relation') relation: string;
+  private isLoadingResults = true;
+
+  @Input('columnDefinition') columnDefinition: ColumnDefinition = {};
   @Input('crudService') service: CrudRepositoryService<Entity>;
+  @Input('relation') relation: string;
+  @Input('editable') editable: boolean;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
   ngOnInit(): void {
-    this.columnKeys = Object.keys(this.columnDefinition);
+  }
+
+  getColumnKeys(): string[] {
+    return Object.keys(this.columnDefinition);
+  }
+
+  getHeaderDefKeys(): string[] {
+    if (this.editable) {
+      return Object.keys(this.columnDefinition).concat(['actions']);
+    }
+    return Object.keys(this.columnDefinition);
+  }
+
+  getEntity(el: Element) {
+    console.log(el);
   }
 
   ngAfterViewInit() {
@@ -39,11 +54,11 @@ export class CrudTableComponent<Entity> implements AfterViewInit, OnInit {
         startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
-          return this.service.findAll(this.sort.active, this.sort.direction, this.paginator.pageIndex);
+          return this.service.findAll(this.sort.active, this.sort.direction, this.paginator.pageIndex, this.paginator.pageSize);
         }),
         map((response: PaginationResponse<Entity>) => {
           this.isLoadingResults = false;
-          this.resultsLength = response.page.totalElements;
+          this.page = response.page.totalElements;
           return response._embedded[this.relation];
         }),
         catchError(() => {
