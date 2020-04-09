@@ -1,0 +1,20 @@
+<form #editForm="ngForm" (ngSubmit)="onSubmit(editForm)" *ngIf="true">
+  <mat-form-field class="block-input" *ngFor="let item of formKeys()">
+    <mat-label>{{ item }}</mat-label>
+    <input
+      matInput
+      [name]="item"
+      [ngModel]="entity[item]"
+      required
+    >
+  </mat-form-field>
+  <button
+    mat-raised-button
+    type="submit"
+    color="primary"
+    class="btn-block"
+    [disabled]="!editForm.valid"
+  >
+    Save
+  </button>
+</form>
