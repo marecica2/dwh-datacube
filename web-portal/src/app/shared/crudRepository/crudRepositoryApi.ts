@@ -24,8 +24,8 @@ export class CrudRepositoryService<Entity> {
   constructor(protected http: HttpClient, protected baseUrl: string) {
   }
 
-  findAll(sort: string, order: string, page: number): Observable<PaginationResponse<Entity>> {
-    const requestUrl = `${this.baseUrl}?sort=${sort},${order}&page=${page}&size=5`;
+  findAll(sort: string, order: string, page: number, pageSize: number): Observable<PaginationResponse<Entity>> {
+    const requestUrl = `${this.baseUrl}?sort=${sort},${order}&page=${page}&size=${pageSize}`;
     return this.http.get<PaginationResponse<Entity>>(requestUrl);
   }
 

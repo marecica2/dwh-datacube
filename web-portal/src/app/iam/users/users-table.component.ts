@@ -9,6 +9,7 @@ import { ColumnDefinition } from "../../shared/crudRepository/crudRepositoryApi"
       [crudService]="service"
       [columnDefinition]="columnDefinition"
       [relation]="'users'"
+      [editable]="true"
     >
     </crud-table-component>`,
 })
