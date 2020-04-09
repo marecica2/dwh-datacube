@@ -8,6 +8,13 @@ export interface Page {
   number: number
 }
 
+export enum ColumnType {
+  STRING = 'string',
+  NUMBER = 'number',
+  SELECT = 'select',
+  MULTI_SELECT = 'multiSelect',
+}
+
 export interface PaginationResponse<Entity> {
   _embedded: { users: Entity[] };
   page: Page;
@@ -15,8 +22,10 @@ export interface PaginationResponse<Entity> {
 
 export interface ColumnDefinition {
   [columnName: string]: {
-    type: string,
+    type: ColumnType,
     label?: string,
+    formattedValue?: (value: any) => string;
+    selectValuesProvider?: (value: any) => string;
   }
 }
 
