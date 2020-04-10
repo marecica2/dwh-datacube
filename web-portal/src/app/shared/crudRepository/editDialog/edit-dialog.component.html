@@ -1,13 +1,29 @@
+<h2>Edit</h2>
 <form #editForm="ngForm" (ngSubmit)="onSubmit(editForm)" *ngIf="true">
-  <mat-form-field class="block-input" *ngFor="let item of formKeys()">
-    <mat-label>{{ item }}</mat-label>
-    <input
-      matInput
-      [name]="item"
-      [ngModel]="entity[item]"
-      required
-    >
-  </mat-form-field>
+  <ng-container class="block-input" *ngFor="let key of formKeys()">
+    <ng-container [ngSwitch]="formTemplate[key].type">
+
+      <ng-container *ngSwitchCase="columnType.MULTI_SELECT">
+        <ng-container
+          [ngTemplateOutlet]="select"
+          [ngTemplateOutletContext]="{ $implicit: entity[key], 'key': key }"
+        >
+        </ng-container>
+      </ng-container>
+
+      <ng-container *ngSwitchDefault>
+        <mat-form-field class="block-input">
+          <mat-label>{{ key }}</mat-label>
+          <input
+            matInput
+            [name]="key"
+            [ngModel]="entity[key]"
+          >
+        </mat-form-field>
+      </ng-container>
+
+    </ng-container>
+  </ng-container>
   <button
     mat-raised-button
     type="submit"
@@ -15,6 +31,16 @@
     class="btn-block"
     [disabled]="!editForm.valid"
   >
-    Save
+    Submit
   </button>
+
+  <ng-template #select let-value let-key="key">
+    {{ json.stringify(value) }}
+    <mat-form-field class="block-input">
+      <mat-label>{{ key }}</mat-label>
+      <mat-select [value]="value">
+        <mat-option *ngFor="let item of selectValues[key]" value="item">{{ item }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </ng-template>
 </form>

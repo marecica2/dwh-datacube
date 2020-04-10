@@ -6,7 +6,7 @@ import { MatPaginator } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
 import { MatDialog } from "@angular/material/dialog";
 
-import { ColumnDefinition, ColumnType, CrudRepositoryService, PaginationResponse } from "./crudRepositoryApi";
+import { ColumnDefinition, ColumnType, CrudRepositoryServiceImpl, PaginationResponse } from "./crudRepositoryApi";
 import { EditDialogComponent } from "./editDialog/edit-dialog.component";
 
 @Component({
@@ -23,7 +23,7 @@ export class CrudTableComponent<Entity> implements AfterViewInit {
   private isLoadingResults = true;
 
   @Input('columnDefinition') columnDefinition: ColumnDefinition = {};
-  @Input('crudService') service: CrudRepositoryService<Entity>;
+  @Input('crudService') service: CrudRepositoryServiceImpl<Entity>;
   @Input('relation') relation: string;
   @Input('editable') editable: boolean;
 
@@ -41,7 +41,7 @@ export class CrudTableComponent<Entity> implements AfterViewInit {
         startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
-          return this.service.findAll(this.sort.active, this.sort.direction, this.paginator.pageIndex, this.paginator.pageSize);
+          return this.service.findAllPaginatedSorted(this.sort.active, this.sort.direction, this.paginator.pageIndex, this.paginator.pageSize);
         }),
         map((response: PaginationResponse<Entity>) => {
           this.isLoadingResults = false;
