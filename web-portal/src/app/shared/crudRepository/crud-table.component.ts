@@ -17,10 +17,10 @@ import { EditDialogComponent } from "./editDialog/edit-dialog.component";
 })
 export class CrudTableComponent<Entity> implements AfterViewInit {
   public columnType = ColumnType;
-  private data: Entity[] = [];
-  private page = 0;
+  data: Entity[] = [];
+  page = 0;
 
-  private isLoadingResults = true;
+  isLoadingResults = true;
 
   @Input('columnDefinition') columnDefinition: ColumnDefinition = {};
   @Input('crudService') service: CrudRepositoryServiceImpl<Entity>;
@@ -55,17 +55,17 @@ export class CrudTableComponent<Entity> implements AfterViewInit {
       ).subscribe((data: Entity[]) => this.data = data);
   }
 
-  private openEditDialog(entity: Entity) {
+  openEditDialog(entity: Entity) {
     this.dialog.open(EditDialogComponent, {
       data: { entity, formTemplate: this.columnDefinition, service: this.service },
     });
   }
 
-  private getColumnKeys(): string[] {
+  getColumnKeys(): string[] {
     return Object.keys(this.columnDefinition);
   }
 
-  private getHeaderDefKeys(): string[] {
+  getHeaderDefKeys(): string[] {
     if (this.editable) {
       return Object.keys(this.columnDefinition).concat(['actions']);
     }

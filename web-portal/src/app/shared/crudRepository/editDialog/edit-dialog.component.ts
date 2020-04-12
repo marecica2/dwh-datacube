@@ -11,11 +11,11 @@ import { tap } from "rxjs/operators";
   styleUrls: ['./edit-dialog.component.css']
 })
 export class EditDialogComponent<Entity> implements OnInit {
-  private json = JSON;
-  private columnType = ColumnType;
-  private formTemplate: ColumnDefinition;
-  private entity: Entity;
-  private selectValues = {};
+  json = JSON;
+  columnType = ColumnType;
+  formTemplate: ColumnDefinition;
+  entity: Entity;
+  selectValues = {};
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: { entity: Entity, formTemplate: ColumnDefinition }) {
     this.formTemplate = data.formTemplate;

@@ -17,8 +17,8 @@ import { RoleService } from "../roles/role.service";
     </crud-table-component>`,
 })
 export class UsersTableComponent {
-  private columnDefinition: ColumnDefinition;
-  constructor(private service: UserService, private tenantService: TenantService, private roleService: RoleService) {
+  columnDefinition: ColumnDefinition;
+  constructor(public service: UserService, public tenantService: TenantService, public roleService: RoleService) {
     this.columnDefinition = {
       username: {
         type: ColumnType.STRING,

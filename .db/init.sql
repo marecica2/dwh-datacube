@@ -63,7 +63,7 @@ values ('User', 'USER');
 
 -- setup admin user
 insert into master.users (email, first_name, last_name, password, username)
-values ('admin@gmail.com', 'Super', 'Admin', '$2a$04$EZzbSqieYfe/nFWfBWt2KeCdyq0UuDEM1ycFF8HzmlVR6sbsOnw7u', 'administrator');
+values ('admin@gmail.com', 'Super', 'Admin', '$2a$04$EZzbSqieYfe/nFWfBWt2KeCdyq0UuDEM1ycFF8HzmlVR6sbsOnw7u', 'admin');
 insert into master.user_roles(user_id, role_id)
 values (1, 1);
 insert into master.user_tenants (user_id, tenant_id)

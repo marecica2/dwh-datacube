@@ -38,6 +38,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     PasswordEncoder encoder;
 
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
+        System.out.println(userId);
         User user = userRepository.findByUsername(userId);
         if (user == null) {
             log.error("Invalid username or password.");
