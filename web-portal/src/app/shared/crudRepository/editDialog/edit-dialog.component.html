@@ -1,24 +1,23 @@
 <h2>Edit</h2>
-<form #editForm="ngForm" (ngSubmit)="onSubmit(editForm)" *ngIf="true">
+<form [formGroup]="editForm" *ngIf="true"  (ngSubmit)="onSubmit()">
   <ng-container class="block-input" *ngFor="let key of formKeys()">
-    <ng-container [ngSwitch]="formTemplate[key].type">
+    <ng-container [ngSwitch]="getType(formTemplate[key])">
 
-      <ng-container *ngSwitchCase="columnType.MULTI_SELECT">
-        <ng-container
-          [ngTemplateOutlet]="select"
-          [ngTemplateOutletContext]="{ $implicit: entity[key], 'key': key }"
-        >
-        </ng-container>
+      <ng-container *ngSwitchCase="columnType.SELECT">
+        <mat-form-field class="block-input" [formGroup]="editForm" *ngIf="selectValues[key]">
+          <mat-label>{{ formTemplate[key].columnLabel || key }}</mat-label>
+          <mat-select multiple [formControlName]="key" [(value)]="entity[key]">
+            <mat-option *ngFor="let item of selectValues[key]" [value]="item[formTemplate[key].value]">
+              {{ formTemplate[key].formattedValue ? formTemplate[key].formattedValue(item[formTemplate[key].displayValue]) : item[formTemplate[key].displayValue] }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
       </ng-container>
 
       <ng-container *ngSwitchDefault>
         <mat-form-field class="block-input">
-          <mat-label>{{ key }}</mat-label>
-          <input
-            matInput
-            [name]="key"
-            [ngModel]="entity[key]"
-          >
+          <mat-label>{{ formTemplate[key].columnLabel || key }}</mat-label>
+          <input matInput [formControlName]="key">
         </mat-form-field>
       </ng-container>
 
@@ -33,14 +32,6 @@
   >
     Submit
   </button>
-
-  <ng-template #select let-value let-key="key">
-    {{ json.stringify(value) }}
-    <mat-form-field class="block-input">
-      <mat-label>{{ key }}</mat-label>
-      <mat-select [value]="value">
-        <mat-option *ngFor="let item of selectValues[key]" value="item">{{ item }}</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </ng-template>
 </form>
+
+

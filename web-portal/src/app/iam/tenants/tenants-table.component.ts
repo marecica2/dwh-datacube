@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {TenantService} from "./tenant.service";
-import {ColumnDefinition, ColumnType} from "../../shared/crudRepository/crudRepositoryApi";
+import {SimpleColumn, ColumnDefinition, ColumnType} from "../../shared/crudRepository/crudRepositoryApi";
 
 @Component({
   selector: 'iam-tenants-table',
@@ -14,16 +14,13 @@ import {ColumnDefinition, ColumnType} from "../../shared/crudRepository/crudRepo
 })
 export class TenantsTableComponent {
   columnDefinition: ColumnDefinition = {
-    schemaName: {
-      type: ColumnType.STRING,
+    schemaName: <SimpleColumn>{
       label: 'Schema name',
     },
-    createdAt: {
-      type: ColumnType.STRING,
+    createdAt: <SimpleColumn>{
       label: 'Created at',
     },
-    updatedAt: {
-      type: ColumnType.STRING,
+    updatedAt: <SimpleColumn>{
     },
   };
 

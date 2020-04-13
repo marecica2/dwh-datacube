@@ -1,19 +1,12 @@
-import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
+import {HttpClient} from '@angular/common/http';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
 
 export interface Page {
-  size: number,
-  totalElements: number,
-  totalPages: number,
-  number: number
-}
-
-export enum ColumnType {
-  STRING = 'string',
-  NUMBER = 'number',
-  SELECT = 'select',
-  MULTI_SELECT = 'multiSelect',
+  size: number;
+  totalElements: number;
+  totalPages: number;
+  number: number;
 }
 
 export interface PaginationResponse<Entity> {
@@ -21,28 +14,38 @@ export interface PaginationResponse<Entity> {
   page: Page;
 }
 
-export interface ColumnDefinition {
-  [columnName: string]: {
-    type: ColumnType,
-    label?: string,
-    formattedValue?: (value: any) => string;
-    selectValuesProvider?: (value: any) => string;
-    accessor?: string,
-    service?: any,
+export class SimpleColumn {
+  constructor(
+    public columnLabel?: string,
+    public formattedValue?: (value: any) => string,
+  ) {
   }
 }
 
-export interface ColumnDef {
-  label?: string,
-  formattedValue?: (value: any) => string;
+export class SelectColumn {
+  constructor(
+    public value: string | number,
+    public displayValue: string | number,
+    public service: CrudRepositoryService<any>,
+    public columnLabel?: string,
+    public formattedValue?: (value: any) => string,
+  ) {
+  }
 }
 
-export interface MultiValueColumnDef extends ColumnDef{
-  selectValuesProvider: (value: any) => string;
+export enum ColumnType {
+  SIMPLE = 'SimpleColumn',
+  SELECT = 'SelectColumn',
+}
+
+export type Column = SimpleColumn | SelectColumn;
+
+export interface ColumnDefinition {
+  [columnName: string]: Column;
 }
 
 export interface CrudRepositoryService<Entity> {
-  findAll(): Observable<Entity[]>;
+  findAll(): Observable<object[]>;
 
   findAllPaginatedSorted(sort: string, order: string, page: number, pageSize: number): Observable<PaginationResponse<Entity>>;
 
@@ -59,7 +62,7 @@ export class CrudRepositoryServiceImpl<Entity> implements CrudRepositoryService<
 
   findAll(): Observable<Entity[]> {
     const requestUrl = `${this.baseUrl}`;
-    return this.http.get<Entity[]>(requestUrl).pipe(map(resp => resp['_embedded'][this.relation]));
+    return this.http.get<Entity[]>(requestUrl).pipe(map(resp => resp['_embedded'][this.relation] as Entity[]));
   }
 
   findAllPaginatedSorted(sort: string, order: string, page: number, pageSize: number): Observable<PaginationResponse<Entity>> {
