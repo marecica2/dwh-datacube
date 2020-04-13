@@ -1,16 +1,24 @@
-import { AfterViewInit, Component, Input, OnInit, ViewChild } from "@angular/core";
-import { merge, of as observableOf } from "rxjs";
-import { catchError, map, startWith, switchMap } from "rxjs/operators";
+import {AfterViewInit, Component, Input, ViewChild} from "@angular/core";
+import {merge, of as observableOf} from "rxjs";
+import {catchError, map, startWith, switchMap} from "rxjs/operators";
 
-import { MatPaginator } from "@angular/material/paginator";
-import { MatSort } from "@angular/material/sort";
-import { MatDialog } from "@angular/material/dialog";
+import {MatPaginator} from "@angular/material/paginator";
+import {MatSort} from "@angular/material/sort";
+import {MatDialog} from "@angular/material/dialog";
 
-import { ColumnDefinition, ColumnType, CrudRepositoryServiceImpl, PaginationResponse } from "./crudRepositoryApi";
-import { EditDialogComponent } from "./editDialog/edit-dialog.component";
+import {
+  Column,
+  ColumnDefinition,
+  ColumnType,
+  CrudRepositoryServiceImpl,
+  PaginationResponse,
+  SelectColumn,
+  SimpleColumn
+} from "./crudRepositoryApi";
+import {EditDialogComponent} from "./editDialog/edit-dialog.component";
 
 @Component({
-  selector: 'crud-table-component',
+  selector: 'app-crud-table-component',
   templateUrl: './crud-table.component.html',
   styleUrls: ['./crud-table.component.css'],
   exportAs: 'abstractCrudTableComponent',
@@ -31,6 +39,22 @@ export class CrudTableComponent<Entity> implements AfterViewInit {
   @ViewChild(MatSort) sort: MatSort;
 
   constructor(private dialog: MatDialog) {
+  }
+
+  getType(object: Object): string {
+    return object.constructor.name;
+  }
+
+  getSimpleValue(row: Entity, key: string) {
+    const column: Column = this.columnDefinition[key];
+    const value = row[key];
+    return this.getFormattedValue(value, column);
+  }
+
+  getSelectValue(row: Entity, key: string, item: object) {
+    const column = this.columnDefinition[key] as SelectColumn;
+    const value = item[column.displayValue];
+    return this.getFormattedValue(value, column);
   }
 
   ngAfterViewInit() {
@@ -57,7 +81,7 @@ export class CrudTableComponent<Entity> implements AfterViewInit {
 
   openEditDialog(entity: Entity) {
     this.dialog.open(EditDialogComponent, {
-      data: { entity, formTemplate: this.columnDefinition, service: this.service },
+      data: {entity, formTemplate: this.columnDefinition, service: this.service},
     });
   }
 
@@ -70,5 +94,12 @@ export class CrudTableComponent<Entity> implements AfterViewInit {
       return Object.keys(this.columnDefinition).concat(['actions']);
     }
     return Object.keys(this.columnDefinition);
+  }
+
+  private getFormattedValue(value: any, col: SimpleColumn | SelectColumn) {
+    if (col.formattedValue != null) {
+      return col.formattedValue(value);
+    }
+    return value;
   }
 }
