@@ -26,6 +26,9 @@ export class UsersTableComponent {
 
   constructor(public service: UserService, public tenantService: TenantService, public roleService: RoleService) {
     this.columnDefinition = {
+      id: new SimpleColumn(
+        'Id',
+      ),
       username: new SimpleColumn(
         'User name',
         (value: string) => value.toUpperCase(),
