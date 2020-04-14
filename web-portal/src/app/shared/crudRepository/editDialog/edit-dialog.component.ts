@@ -1,52 +1,44 @@
-import {Component, Inject, OnInit} from "@angular/core";
-import {MAT_DIALOG_DATA} from "@angular/material/dialog";
-import {FormControl, FormGroup, NgForm} from "@angular/forms";
+import { Component, Inject, OnInit } from "@angular/core";
+import { MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { FormControl, FormGroup } from "@angular/forms";
 
-import {ColumnDefinition, ColumnType} from "../crudRepositoryApi";
-import {tap} from "rxjs/operators";
+import { ColumnDefinition, ColumnType, CrudEntity, CrudRepositoryService, SelectColumn } from "../crudRepositoryApi";
 
 @Component({
   selector: 'edit-dialog',
   templateUrl: './edit-dialog.component.html',
   styleUrls: ['./edit-dialog.component.css']
 })
-export class EditDialogComponent<Entity> implements OnInit {
-  json = JSON;
-  columnType = ColumnType;
-  formTemplate: ColumnDefinition;
-  entity: Entity;
-  selectValues = {};
-  editForm: FormGroup;
+export class EditDialogComponent<Entity extends CrudEntity<Entity>> implements OnInit {
+  public json = JSON;
+  public columnType = ColumnType;
+  public formTemplate: ColumnDefinition;
+  public entity: Entity;
+  public selectValues = {};
+  public editForm: FormGroup;
+  private service: CrudRepositoryService<Entity>;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: { entity: Entity, formTemplate: ColumnDefinition }) {
+  constructor(@Inject(
+    MAT_DIALOG_DATA) public data: { entity: Entity, formTemplate: ColumnDefinition, service: CrudRepositoryService<Entity> }) {
     this.formTemplate = data.formTemplate;
     this.entity = data.entity;
     this.editForm = new FormGroup({});
+    this.service = data.service;
   }
 
   getType(object: Object): string {
     return object.constructor.name;
   }
 
-  compare(a,b) {
-    console.log(a, b);
-  }
-
-  compareWith(key: string) {
-    return (obj1: any, obj2: any) => {
-      console.log(key, obj1, obj2)
-      return false;
-    }
-  }
-
   ngOnInit(): void {
     Object.keys(this.formTemplate).forEach((formItem: string) => {
       switch (this.getType(this.formTemplate[formItem])) {
         case ColumnType.SELECT:
-          this.formTemplate[formItem].service
+          const selectFormElement = this.formTemplate[formItem] as SelectColumn;
+          selectFormElement.service
             .findAll()
             .subscribe(data => {
-              const attribute = this.formTemplate[formItem].value;
+              const attribute = selectFormElement.value;
               const values = this.entity[formItem].map(val => val[attribute]);
               console.log(values);
               this.editForm.addControl(formItem, new FormControl(values));
@@ -65,6 +57,8 @@ export class EditDialogComponent<Entity> implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.editForm);
+    this.service.update(this.entity.getId(), this.editForm.value).subscribe(resp => {
+      console.log(resp);
+    })
   }
 }

@@ -7,7 +7,7 @@ import { Tenant } from "./tenant.model";
   providedIn: 'root',
 })
 export class TenantService extends CrudRepositoryServiceImpl<Tenant> {
-  private static baseUrl = '/api/security/tenants';
+  private static baseUrl = '/api/security';
 
   constructor(http: HttpClient) {
     super(http, TenantService.baseUrl, 'tenants')

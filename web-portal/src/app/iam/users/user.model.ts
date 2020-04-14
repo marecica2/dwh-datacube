@@ -1,10 +1,21 @@
-import { Tenant } from "../tenants/tenant.model";
+import {Tenant} from "../tenants/tenant.model";
+import {CrudEntity} from "../../shared/crudRepository/crudRepositoryApi";
+import {Role} from "../roles/role.model";
 
-export interface User {
-  username: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  roles: string[];
-  tenants: Tenant[];
+export class User implements CrudEntity<User> {
+
+  constructor(
+    public id: number,
+    public username: string,
+    public firstName: string,
+    public lastName: string,
+    public email: string,
+    public roles: Role[],
+    public tenants: Tenant[],
+  ) {
+  }
+
+  getId(): number {
+    return this.id;
+  }
 }

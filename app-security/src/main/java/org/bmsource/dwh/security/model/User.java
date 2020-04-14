@@ -1,7 +1,6 @@
 package org.bmsource.dwh.security.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.bmsource.dwh.common.portal.Tenant;
 
 import javax.persistence.*;
@@ -23,12 +22,12 @@ public class User {
     private String password;
     private String email;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles", schema = "master",
         joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_tenants", schema = "master",
         joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "tenant_id"))
     private Set<Tenant> tenants;

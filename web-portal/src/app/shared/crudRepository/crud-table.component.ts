@@ -1,29 +1,29 @@
-import {AfterViewInit, Component, Input, ViewChild} from "@angular/core";
-import {merge, of as observableOf} from "rxjs";
-import {catchError, map, startWith, switchMap} from "rxjs/operators";
+import { AfterViewInit, Component, Input, ViewChild } from "@angular/core";
+import { merge, of as observableOf } from "rxjs";
+import { catchError, map, startWith, switchMap } from "rxjs/operators";
 
-import {MatPaginator} from "@angular/material/paginator";
-import {MatSort} from "@angular/material/sort";
-import {MatDialog} from "@angular/material/dialog";
+import { MatPaginator } from "@angular/material/paginator";
+import { MatSort } from "@angular/material/sort";
+import { MatDialog } from "@angular/material/dialog";
 
 import {
   Column,
   ColumnDefinition,
-  ColumnType,
+  ColumnType, CrudEntity,
   CrudRepositoryServiceImpl,
   PaginationResponse,
   SelectColumn,
   SimpleColumn
 } from "./crudRepositoryApi";
-import {EditDialogComponent} from "./editDialog/edit-dialog.component";
+import { EditDialogComponent } from "./editDialog/edit-dialog.component";
 
 @Component({
-  selector: 'app-crud-table-component',
-  templateUrl: './crud-table.component.html',
-  styleUrls: ['./crud-table.component.css'],
-  exportAs: 'abstractCrudTableComponent',
-})
-export class CrudTableComponent<Entity> implements AfterViewInit {
+             selector: 'app-crud-table-component',
+             templateUrl: './crud-table.component.html',
+             styleUrls: ['./crud-table.component.css'],
+             exportAs: 'abstractCrudTableComponent',
+           })
+export class CrudTableComponent<Entity extends CrudEntity<Entity>> implements AfterViewInit {
   public columnType = ColumnType;
   data: Entity[] = [];
   page = 0;
@@ -31,7 +31,7 @@ export class CrudTableComponent<Entity> implements AfterViewInit {
   isLoadingResults = true;
 
   @Input('columnDefinition') columnDefinition: ColumnDefinition = {};
-  @Input('crudService') service: CrudRepositoryServiceImpl<Entity>;
+  @Input('crudService') service: CrudRepositoryServiceImpl<CrudEntity<Entity>>;
   @Input('relation') relation: string;
   @Input('editable') editable: boolean;
 
@@ -65,7 +65,12 @@ export class CrudTableComponent<Entity> implements AfterViewInit {
         startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
-          return this.service.findAllPaginatedSorted(this.sort.active, this.sort.direction, this.paginator.pageIndex, this.paginator.pageSize);
+          return this.service.findAllPaginatedSorted(
+            this.sort.active,
+            this.sort.direction,
+            this.paginator.pageIndex,
+            this.paginator.pageSize
+          );
         }),
         map((response: PaginationResponse<Entity>) => {
           this.isLoadingResults = false;
@@ -79,10 +84,14 @@ export class CrudTableComponent<Entity> implements AfterViewInit {
       ).subscribe((data: Entity[]) => this.data = data);
   }
 
-  openEditDialog(entity: Entity) {
-    this.dialog.open(EditDialogComponent, {
-      data: {entity, formTemplate: this.columnDefinition, service: this.service},
-    });
+  openEditDialog(data: object) {
+    const entity = this.service.fromJson(data);
+    this.service.getById(entity.getId()).subscribe(data => {
+      console.log(data);
+      this.dialog.open(EditDialogComponent, {
+        data: {entity, formTemplate: this.columnDefinition, service: this.service},
+      });
+    })
   }
 
   getColumnKeys(): string[] {
