@@ -1,19 +1,13 @@
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { CrudRepositoryServiceImpl } from "../../shared/crudRepository/crudRepositoryApi";
+import { Injectable, Injector } from "@angular/core";
 import { User } from "./user.model";
+import { RestService } from "@lagoshny/ngx-hal-client";
 
 @Injectable({
   providedIn: 'root',
 })
-export class UserService extends CrudRepositoryServiceImpl<User> {
-  private static baseUrl = '/api/security';
+export class UserService extends RestService<User> {
 
-  constructor(http: HttpClient) {
-    super(http, UserService.baseUrl, 'users')
-  }
-
-  fromJson(data: object): User {
-    return Object.assign(Object.create(User.prototype), data);
+  constructor(injector: Injector) {
+    super(User, 'users', injector);
   }
 }

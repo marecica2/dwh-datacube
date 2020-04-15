@@ -1,14 +1,8 @@
-import {Component} from '@angular/core';
-import {UserService} from './user.service';
-import {
-  SimpleColumn,
-  ColumnDefinition,
-  ColumnType,
-  SelectColumn
-} from '../../shared/crudRepository/crudRepositoryApi';
-import {Tenant} from "../tenants/tenant.model";
-import {TenantService} from "../tenants/tenant.service";
-import {RoleService} from "../roles/role.service";
+import { Component } from '@angular/core';
+import { ColumnDefinition, SelectColumn, SimpleColumn } from '../../shared/crudRepository/crudRepositoryApi';
+import { TenantService } from "../tenants/tenant.service";
+import { RoleService } from "../roles/role.service";
+import { UserService } from "./user.service";
 
 @Component({
   selector: 'iam-users-table',

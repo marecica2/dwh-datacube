@@ -1,20 +1,26 @@
-import {CrudEntity} from "../../shared/crudRepository/crudRepositoryApi";
+import { CrudResource } from "../../shared/crudRepository/crudRepositoryApi";
 
-export class Role implements CrudEntity<Role>{
-  constructor(
-    public id: number,
-    public name: string,
-    public description: string,
-    public createdOn: number,
-    public modifiedOn: number,
-  ) {
-  }
+export class Role extends CrudResource {
+  public id: number
+  public name: string
+  public description: string
+  public createdOn: number
+  public modifiedOn: number
 
-  getId(): any {
+  getIdentity(): any {
     return this.id;
   }
 
-  fromJson(data: object): Role {
-    return undefined;
+  getRelations(): string[] {
+    return [];
+  }
+
+  fromJson(json: any): Role {
+    this.id = json.id;
+    this.name = json.name;
+    this.description = json.description;
+    this.createdOn = json.createdOn;
+    this.modifiedOn = json.modifiedOn;
+    return this;
   }
 }

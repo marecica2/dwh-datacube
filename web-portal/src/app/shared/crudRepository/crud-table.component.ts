@@ -1,42 +1,34 @@
 import { AfterViewInit, Component, Input, ViewChild } from "@angular/core";
-import { merge, of as observableOf } from "rxjs";
-import { catchError, map, startWith, switchMap } from "rxjs/operators";
+import { merge, of as observableOf, Subject } from "rxjs";
+import { catchError, map, startWith, switchMap, tap } from "rxjs/operators";
+import { Resource, RestService } from "@lagoshny/ngx-hal-client";
 
 import { MatPaginator } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
 import { MatDialog } from "@angular/material/dialog";
 
-import {
-  Column,
-  ColumnDefinition,
-  ColumnType, CrudEntity,
-  CrudRepositoryServiceImpl,
-  PaginationResponse,
-  SelectColumn,
-  SimpleColumn
-} from "./crudRepositoryApi";
+import { Column, ColumnDefinition, ColumnType, CrudResource, SelectColumn, SimpleColumn } from "./crudRepositoryApi";
 import { EditDialogComponent } from "./editDialog/edit-dialog.component";
 
+
 @Component({
-             selector: 'app-crud-table-component',
-             templateUrl: './crud-table.component.html',
-             styleUrls: ['./crud-table.component.css'],
-             exportAs: 'abstractCrudTableComponent',
-           })
-export class CrudTableComponent<Entity extends CrudEntity<Entity>> implements AfterViewInit {
-  public columnType = ColumnType;
-  data: Entity[] = [];
-  page = 0;
-
-  isLoadingResults = true;
-
+  selector: 'app-crud-table-component',
+  templateUrl: './crud-table.component.html',
+  styleUrls: ['./crud-table.component.css'],
+  exportAs: 'abstractCrudTableComponent',
+})
+export class CrudTableComponent<Entity extends CrudResource> implements AfterViewInit {
   @Input('columnDefinition') columnDefinition: ColumnDefinition = {};
-  @Input('crudService') service: CrudRepositoryServiceImpl<CrudEntity<Entity>>;
+  @Input('crudService') service: RestService<Entity>;
   @Input('relation') relation: string;
   @Input('editable') editable: boolean;
-
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  public columnType = ColumnType;
+  public data: Entity[] = [];
+  public length = 0;
+  public isLoadingResults = true;
+  public reloadSubject = new Subject<void>();
 
   constructor(private dialog: MatDialog) {
   }
@@ -60,22 +52,20 @@ export class CrudTableComponent<Entity extends CrudEntity<Entity>> implements Af
   ngAfterViewInit() {
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
-    merge(this.sort.sortChange, this.paginator.page)
+    merge(this.sort.sortChange, this.paginator.page, this.reloadSubject)
       .pipe(
         startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
-          return this.service.findAllPaginatedSorted(
-            this.sort.active,
-            this.sort.direction,
-            this.paginator.pageIndex,
-            this.paginator.pageSize
+          const query = [{ key: 'sort', value: `${this.sort.active},${this.sort.direction}` }, { key: 'page', value: this.paginator.pageIndex }];
+          return this.service.getAll(
+            { size: this.paginator.pageSize, params: query },
           );
         }),
-        map((response: PaginationResponse<Entity>) => {
+        map((response: any) => {
+          this.length = this.service.totalElement();
           this.isLoadingResults = false;
-          this.page = response.page.totalElements;
-          return response._embedded[this.relation];
+          return response;
         }),
         catchError(() => {
           this.isLoadingResults = false;
@@ -84,12 +74,15 @@ export class CrudTableComponent<Entity extends CrudEntity<Entity>> implements Af
       ).subscribe((data: Entity[]) => this.data = data);
   }
 
-  openEditDialog(data: object) {
-    const entity = this.service.fromJson(data);
-    this.service.getById(entity.getId()).subscribe(data => {
-      console.log(data);
-      this.dialog.open(EditDialogComponent, {
-        data: {entity, formTemplate: this.columnDefinition, service: this.service},
+  openEditDialog(entity: Entity) {
+    this.service.get(entity.getIdentity(), [{key: 'projection', value: 'full'}] ).subscribe(data => {
+      const  dialogRef = this.dialog.open(EditDialogComponent, {
+        data: { entity: data, formTemplate: this.columnDefinition, service: this.service },
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if(result && result.success) {
+          this.reloadSubject.next();
+        }
       });
     })
   }

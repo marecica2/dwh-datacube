@@ -1,14 +1,26 @@
-import {CrudEntity} from "../../shared/crudRepository/crudRepositoryApi";
+import { CrudResource } from "../../shared/crudRepository/crudRepositoryApi";
 
-export class Tenant implements CrudEntity<Tenant> {
-  constructor(public id: string, public schemaName: string) {
-  }
+export class Tenant extends CrudResource {
+  public id: string;
+  public schemaName: string;
+  public description: string;
+  public createdAt: Date;
+  public updatedAt: Date;
 
-  getId(): any {
+  getIdentity(): any {
     return this.id;
   }
 
-  fromJson(data: object): Tenant {
-    return undefined;
+  getRelations(): string[] {
+    return [];
+  }
+
+  fromJson(json: any ): Tenant {
+    this.id = json.id;
+    this.schemaName = json.schemaName;
+    this.description = json.description;
+    this.createdAt = json.createdAt;
+    this.updatedAt = json.updatedAt;
+    return this;
   }
 }

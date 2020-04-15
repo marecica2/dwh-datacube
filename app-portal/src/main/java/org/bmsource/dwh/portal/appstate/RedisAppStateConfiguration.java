@@ -4,7 +4,7 @@ import org.bmsource.dwh.common.appstate.AppState;
 import org.bmsource.dwh.common.appstate.client.RedisAppStateService;
 import org.bmsource.dwh.common.portal.*;
 import org.bmsource.dwh.common.redis.RedisConfiguration;
-import org.bmsource.dwh.portal.tenants.TenantRep;
+import org.bmsource.dwh.portal.tenants.TenantRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +18,6 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.listener.PatternTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Configuration
 @ComponentScan(basePackageClasses = { PortalConfiguration.class, RedisAppStateConfiguration.class })
 @EntityScan(basePackageClasses = { PortalConfiguration.class, RedisAppStateConfiguration.class })
@@ -30,7 +27,7 @@ public class RedisAppStateConfiguration {
     private Logger logger = LoggerFactory.getLogger(RedisAppStateConfiguration.class);
 
     @Autowired
-    private TenantRep tenantRepository;
+    private TenantRepository tenantRepository;
 
     @Autowired
     private ProjectRepository projectRepository;
