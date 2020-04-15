@@ -7,20 +7,26 @@
   </a>
   <a mat-tab-link
      routerLink="/iam/tenants"
-     routerLinkActive #rla="routerLinkActive"
-     [active]="rla.isActive">
+     routerLinkActive #rlb="routerLinkActive"
+     [active]="rlb.isActive">
     Tenants
   </a>
   <a mat-tab-link
+     routerLink="/iam/roles"
+     routerLinkActive #rlc="routerLinkActive"
+     [active]="rlc.isActive">
+    Roles
+  </a>
+  <a mat-tab-link
      routerLink="/iam/apps"
-     routerLinkActive #rla="routerLinkActive"
-     [active]="rla.isActive">
+     routerLinkActive #rld="routerLinkActive"
+     [active]="rld.isActive">
     Apps
   </a>
   <a mat-tab-link
      routerLink="/iam/tokens"
-     routerLinkActive #rla="routerLinkActive"
-     [active]="rla.isActive">
+     routerLinkActive #rle="routerLinkActive"
+     [active]="rle.isActive">
     OAuth2 Tokens
   </a>
 </nav>

@@ -5,6 +5,7 @@ import { CoreModule } from "../core.module";
 import { UsersTableComponent } from './users/users-table.component';
 import { TenantsTableComponent } from './tenants/tenants-table.component';
 import { IamComponent } from './iam/iam.component';
+import { RolesTableComponent } from "./roles/roles-table.component";
 
 const routes: Routes = [
   {
@@ -15,6 +16,7 @@ const routes: Routes = [
     path: '', component: IamComponent, children: [
       { path: 'users', component: UsersTableComponent },
       { path: 'tenants', component: TenantsTableComponent },
+      { path: 'roles', component: RolesTableComponent },
       { path: 'apps', component: TenantsTableComponent },
       { path: 'tokens', component: TenantsTableComponent },
     ]
@@ -26,6 +28,7 @@ const routes: Routes = [
     IamComponent,
     UsersTableComponent,
     TenantsTableComponent,
+    RolesTableComponent,
   ],
   imports: [
     RouterModule.forChild(routes),

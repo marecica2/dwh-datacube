@@ -7,8 +7,8 @@
         <mat-form-field class="block-input" [formGroup]="editForm" *ngIf="selectValues[key]">
           <mat-label>{{ formTemplate[key].columnLabel || key }}</mat-label>
           <mat-select multiple [formControlName]="key" [(value)]="entity[key]">
-            <mat-option *ngFor="let item of selectValues[key]" [value]="item[formTemplate[key].value]">
-              {{ formTemplate[key].formattedValue ? formTemplate[key].formattedValue(item[formTemplate[key].displayValue]) : item[formTemplate[key].displayValue] }}
+            <mat-option *ngFor="let item of selectValues[key]" [value]="item[formTemplate[key]]">
+              {{ formTemplate[key].formattedValue ? formTemplate[key].formattedValue(item[formTemplate[key]]) : item[formTemplate[key]] }}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -27,10 +27,17 @@
     mat-raised-button
     type="submit"
     color="primary"
-    class="btn-block"
     [disabled]="!editForm.valid"
   >
     Submit
+  </button>
+  <button
+    (click)="onCancel()"
+    mat-raised-button
+    type="button"
+    color="accent"
+  >
+    Cancel
   </button>
 </form>
 

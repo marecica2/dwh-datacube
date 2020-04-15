@@ -3,17 +3,24 @@ import {TenantService} from "./tenant.service";
 import {SimpleColumn, ColumnDefinition, ColumnType} from "../../shared/crudRepository/crudRepositoryApi";
 
 @Component({
-  selector: 'iam-tenants-table',
+  selector: 'app-tenants-table',
   template: `
-    <crud-table-component
+    <app-crud-table-component
       [crudService]="service"
       [columnDefinition]="columnDefinition"
       [relation]="'tenants'"
+      [editable]="true"
     >
-    </crud-table-component>`,
+    </app-crud-table-component>`,
 })
 export class TenantsTableComponent {
   columnDefinition: ColumnDefinition = {
+    id: <SimpleColumn>{
+      label: 'Tenant Id',
+    },
+    description: <SimpleColumn>{
+      label: 'Description',
+    },
     schemaName: <SimpleColumn>{
       label: 'Schema name',
     },

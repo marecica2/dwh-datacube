@@ -1,25 +1,33 @@
 import { Component, Inject, OnInit } from "@angular/core";
-import { MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { FormControl, FormGroup } from "@angular/forms";
 
-import { ColumnDefinition, ColumnType, CrudEntity, CrudRepositoryService, SelectColumn } from "../crudRepositoryApi";
+import { ColumnDefinition, ColumnType, CrudResource, SelectColumn } from "../crudRepositoryApi";
+import { Resource, RestService } from "@lagoshny/ngx-hal-client";
 
 @Component({
   selector: 'edit-dialog',
   templateUrl: './edit-dialog.component.html',
   styleUrls: ['./edit-dialog.component.css']
 })
-export class EditDialogComponent<Entity extends CrudEntity<Entity>> implements OnInit {
+export class EditDialogComponent<Entity extends CrudResource> implements OnInit {
   public json = JSON;
   public columnType = ColumnType;
   public formTemplate: ColumnDefinition;
   public entity: Entity;
   public selectValues = {};
   public editForm: FormGroup;
-  private service: CrudRepositoryService<Entity>;
+  private service: RestService<Entity>;
 
-  constructor(@Inject(
-    MAT_DIALOG_DATA) public data: { entity: Entity, formTemplate: ColumnDefinition, service: CrudRepositoryService<Entity> }) {
+  constructor(
+    public dialogRef: MatDialogRef<EditDialogComponent<Entity>>,
+    @Inject(MAT_DIALOG_DATA) public data: {
+      success: boolean;
+      entity: Entity,
+      formTemplate: ColumnDefinition,
+      service: RestService<Entity>
+    }
+  ) {
     this.formTemplate = data.formTemplate;
     this.entity = data.entity;
     this.editForm = new FormGroup({});
@@ -36,11 +44,10 @@ export class EditDialogComponent<Entity extends CrudEntity<Entity>> implements O
         case ColumnType.SELECT:
           const selectFormElement = this.formTemplate[formItem] as SelectColumn;
           selectFormElement.service
-            .findAll()
+            .getAll()
             .subscribe(data => {
               const attribute = selectFormElement.value;
               const values = this.entity[formItem].map(val => val[attribute]);
-              console.log(values);
               this.editForm.addControl(formItem, new FormControl(values));
               this.selectValues[formItem] = data;
             });
@@ -56,9 +63,14 @@ export class EditDialogComponent<Entity extends CrudEntity<Entity>> implements O
     return Object.keys(this.formTemplate);
   }
 
+  onCancel() {
+    this.dialogRef.close();
+  }
+
   onSubmit() {
-    this.service.update(this.entity.getId(), this.editForm.value).subscribe(resp => {
-      console.log(resp);
+    this.service.update(this.entity.fromJson(this.editForm.value) as Entity).subscribe(resp => {
+      this.dialogRef.close({ success: true });
+      this.data.success = true;
     })
   }
 }

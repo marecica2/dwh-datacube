@@ -1,21 +1,14 @@
-import {Injectable} from "@angular/core";
-import {HttpClient} from "@angular/common/http";
-import {
-  CrudRepositoryService,
-  CrudRepositoryServiceImpl,
-  PaginationResponse
-} from "../../shared/crudRepository/crudRepositoryApi";
-import {from, Observable} from "rxjs";
-import {Role} from "./role.model";
-import {User} from "../users/user.model";
+import { Injectable, Injector } from "@angular/core";
+import { Role } from "./role.model";
+import { RestService } from "@lagoshny/ngx-hal-client";
 
 @Injectable({
   providedIn: 'root',
 })
-export class RoleService extends CrudRepositoryServiceImpl<User> {
-  private static baseUrl = '/api/security';
+export class RoleService extends RestService<Role> {
 
-  constructor(http: HttpClient) {
-    super(http, RoleService.baseUrl, 'roles')
+  constructor(injector: Injector) {
+    super(Role, 'roles', injector);
   }
 }
+

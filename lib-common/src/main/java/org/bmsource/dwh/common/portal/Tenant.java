@@ -14,16 +14,28 @@ public class Tenant {
     @Column(name = "name")
     private String schemaName;
 
+    @Column(name = "description")
+    private String description;
+
     @Column(name = "created_on")
     private Date createdAt;
 
     @Column(name = "modified_on")
     private Date updatedAt;
 
-    public Tenant() {}
+    public Tenant() {
+    }
 
     public Tenant(String schemaName) {
         this.schemaName = schemaName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getId() {
