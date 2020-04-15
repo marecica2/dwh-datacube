@@ -9,12 +9,12 @@ import org.springframework.data.web.HateoasPageableHandlerMethodArgumentResolver
 @Configuration
 public class RestConfiguration extends RepositoryRestConfigurerAdapter {
 
-    @Bean
-    public HateoasPageableHandlerMethodArgumentResolver customResolver(
-            HateoasPageableHandlerMethodArgumentResolver pageableResolver) {
-        pageableResolver.setOneIndexedParameters(true);
-        pageableResolver.setFallbackPageable(PageRequest.of(0, Integer.MAX_VALUE));
-        pageableResolver.setMaxPageSize(Integer.MAX_VALUE);
-        return pageableResolver;
-    }
+//    @Bean
+//    public HateoasPageableHandlerMethodArgumentResolver customResolver(
+//            HateoasPageableHandlerMethodArgumentResolver pageableResolver) {
+//        pageableResolver.setOneIndexedParameters(true);
+//        pageableResolver.setFallbackPageable(PageRequest.of(0, Integer.MAX_VALUE));
+//        pageableResolver.setMaxPageSize(Integer.MAX_VALUE);
+//        return pageableResolver;
+//    }
 }
