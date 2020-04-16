@@ -68,7 +68,8 @@ export class EditDialogComponent<Entity extends CrudResource> implements OnInit 
   }
 
   onSubmit() {
-    this.service.update(this.entity.fromJson(this.editForm.value) as Entity).subscribe(resp => {
+    console.log(this.editForm.value);
+    this.service.patch(this.entity.fromJson(this.editForm.value) as Entity).subscribe(resp => {
       this.dialogRef.close({ success: true });
       this.data.success = true;
     })

@@ -33,5 +33,5 @@ export enum ColumnType {
 export type Column = SimpleColumn | SelectColumn;
 
 export interface ColumnDefinition {
-  [columnName: string]: Column;
+  [columnName: string]: SimpleColumn | SelectColumn;
 }
