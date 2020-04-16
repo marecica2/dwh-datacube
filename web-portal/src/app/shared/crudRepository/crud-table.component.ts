@@ -1,13 +1,13 @@
 import { AfterViewInit, Component, Input, ViewChild } from "@angular/core";
 import { merge, of as observableOf, Subject } from "rxjs";
-import { catchError, map, startWith, switchMap, tap } from "rxjs/operators";
-import { Resource, RestService } from "@lagoshny/ngx-hal-client";
+import { catchError, map, startWith, switchMap } from "rxjs/operators";
+import { RestService } from "@lagoshny/ngx-hal-client";
 
 import { MatPaginator } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
 import { MatDialog } from "@angular/material/dialog";
 
-import { Column, ColumnDefinition, ColumnType, CrudResource, SelectColumn, SimpleColumn } from "./crudRepositoryApi";
+import { ColumnDefinition, ColumnType, CrudResource, SelectColumn, SimpleColumn } from "./crudRepositoryApi";
 import { EditDialogComponent } from "./editDialog/edit-dialog.component";
 
 
@@ -38,7 +38,7 @@ export class CrudTableComponent<Entity extends CrudResource> implements AfterVie
   }
 
   getSimpleValue(row: Entity, key: string) {
-    const column: Column = this.columnDefinition[key];
+    const column = this.columnDefinition[key] as SimpleColumn;
     const value = row[key];
     return this.getFormattedValue(value, column);
   }

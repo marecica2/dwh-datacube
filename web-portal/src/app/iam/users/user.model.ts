@@ -20,14 +20,12 @@ export class User extends CrudResource {
   }
 
   fromJson(json: any ): User {
-    const r: Role = new Role();
-    const t: Tenant = new Tenant();
     this.id = json.id;
     this.username = json.username;
     this.firstName = json.firstName;
-    this.lastName = json.firstName;
-    this.roles = this.roles.map((item, index) => item.fromJson(json.roles[index]))
-    this.tenants = this.tenants.map((item, index) => item.fromJson(json.roles[index]))
+    this.lastName = json.lastName;
+    this.roles =  json.roles.map(item => this._links.self.href + '/roles/' + item);
+    this.tenants =  json.tenants.map(item => this._links.self.href + '/tenants/' + item);
     return this;
   }
 }

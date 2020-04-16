@@ -1,6 +1,7 @@
 package org.bmsource.dwh.security.model;
 
 import org.bmsource.dwh.common.portal.Tenant;
+import org.bmsource.dwh.common.portal.TenantProjection;
 import org.springframework.data.rest.core.config.Projection;
 
 import java.util.Set;
@@ -17,7 +18,7 @@ public interface UserProjection {
 
     String getEmail();
 
-    Set<Role> getRoles();
+    Set<RoleProjection> getRoles();
 
-    Set<Tenant> getTenants();
+    Set<TenantProjection> getTenants();
 }

@@ -36,13 +36,13 @@ export class UsersTableComponent {
       email: new SimpleColumn(
       ),
       tenants: new SelectColumn(
-        'schemaName',
+        'id',
         'schemaName',
         tenantService,
         'Tenants',
       ),
       roles: new SelectColumn(
-        'name',
+        'id',
         'name',
         roleService,
         'Roles',
