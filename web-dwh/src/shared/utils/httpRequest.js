@@ -18,8 +18,8 @@ const httpRequest = (url, options = {}) => {
 
   let requestUrl = `${portalApiPath}${url}`;
   if (tenantRequest) {
-    const projectId = JSON.parse(localStorage.project).id;
-    defaultHeaders['x-tenant'] = JSON.parse(localStorage.tenant).id;
+    const projectId = JSON.parse(sessionStorage.project).id;
+    defaultHeaders['x-tenant'] = JSON.parse(sessionStorage.tenant).id;
     requestUrl = `${portalApiPath}${url}`;
     defaultParams.projectId = projectId
   }
