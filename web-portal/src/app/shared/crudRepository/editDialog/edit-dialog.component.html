@@ -1,5 +1,5 @@
 <h2>Edit</h2>
-<form [formGroup]="editForm" *ngIf="true"  (ngSubmit)="onSubmit()">
+<form [formGroup]="editForm" *ngIf="true" (ngSubmit)="onSubmit()">
   <ng-container class="block-input" *ngFor="let key of formKeys()">
     <ng-container [ngSwitch]="getFormItemType(formTemplate[key])">
 
@@ -27,8 +27,8 @@
 
       <ng-container *ngSwitchDefault>
         <mat-form-field class="block-input">
-          <mat-label>{{ formTemplate[key].columnLabel || key }}</mat-label>
-          <input matInput [formControlName]="key">
+          <mat-label>{{ formTemplate[key].columnLabel || key }} {{ getType(entity[key]) }}</mat-label>
+          <input matInput [formControlName]="key" [readonly]="formTemplate[key].readonly">
         </mat-form-field>
       </ng-container>
 

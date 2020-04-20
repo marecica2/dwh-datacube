@@ -57,10 +57,12 @@ export class UsersTableComponent {
       createdOn: new SimpleColumn(
         'Created',
         (value: string) => moment(value).fromNow().toString(),
+        true,
       ),
       modifiedOn: new SimpleColumn(
         'Modified',
         (value: string) => moment(value).fromNow().toString(),
+        true,
       ),
     };
   }
