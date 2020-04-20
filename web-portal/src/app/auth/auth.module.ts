@@ -7,11 +7,22 @@ import { SharedModule } from "../shared/shared.module";
 import { LoginComponent } from "./login/login.component";
 import { RegisterComponent } from "./register/register.component";
 import { TenantComponent } from "./tenant/tenant.component";
+import { RoleGuard } from "./role.guard";
 
 const routes: Routes = [
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
-  { path: 'tenant', component: TenantComponent },
+  {
+    path: 'login',
+    component: LoginComponent,
+  },
+  {
+    path: 'register',
+    component: RegisterComponent,
+  },
+  {
+    path: 'tenant',
+    component: TenantComponent,
+    canActivate: [RoleGuard], data: { roles: ['USER'] },
+  },
 ];
 
 @NgModule({
