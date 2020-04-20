@@ -1,8 +1,16 @@
 import { Component } from '@angular/core';
-import { ColumnDefinition, SelectColumn, SimpleColumn } from '../../shared/crudRepository/crudRepositoryApi';
+import {
+  ColumnDefinition,
+  MultiSelectColumn,
+  SelectColumn,
+  SimpleColumn
+} from '../../shared/crudRepository/crudRepositoryApi';
+import * as moment from 'moment';
+
 import { TenantService } from "../tenants/tenant.service";
 import { RoleService } from "../roles/role.service";
 import { UserService } from "./user.service";
+import { User } from "./user.model";
 
 @Component({
   selector: 'iam-users-table',
@@ -12,17 +20,16 @@ import { UserService } from "./user.service";
       [columnDefinition]="columnDefinition"
       [relation]="'users'"
       [editable]="true"
+      [modelType]="userRef"
     >
     </app-crud-table-component>`,
 })
 export class UsersTableComponent {
   columnDefinition: ColumnDefinition;
+  userRef = User;
 
   constructor(public service: UserService, public tenantService: TenantService, public roleService: RoleService) {
     this.columnDefinition = {
-      id: new SimpleColumn(
-        'Id',
-      ),
       username: new SimpleColumn(
         'User name',
         (value: string) => value.toUpperCase(),
@@ -35,18 +42,25 @@ export class UsersTableComponent {
       ),
       email: new SimpleColumn(
       ),
-      tenants: new SelectColumn(
-        'id',
-        'schemaName',
+      tenants: new MultiSelectColumn(
+        'name',
         tenantService,
         'Tenants',
+        null,
       ),
-      roles: new SelectColumn(
-        'id',
+      roles: new MultiSelectColumn(
         'name',
         roleService,
         'Roles',
         (value: string) => value.toLowerCase(),
+      ),
+      createdOn: new SimpleColumn(
+        'Created',
+        (value: string) => moment(value).fromNow().toString(),
+      ),
+      modifiedOn: new SimpleColumn(
+        'Modified',
+        (value: string) => moment(value).fromNow().toString(),
       ),
     };
   }

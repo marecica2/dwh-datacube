@@ -1,6 +1,10 @@
 package org.bmsource.dwh.security.model;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "roles", schema = "master")
@@ -15,9 +19,11 @@ public class Role {
 
     private String description;
 
-    private Long createdOn;
+    @CreationTimestamp
+    private Date createdOn;
 
-    private Long modifiedOn;
+    @UpdateTimestamp
+    private Date modifiedOn;
 
     public RoleType getName() {
         return name;
@@ -43,19 +49,19 @@ public class Role {
         this.description = description;
     }
 
-    public Long getCreatedOn() {
+    public Date getCreatedOn() {
         return createdOn;
     }
 
-    public void setCreatedOn(Long createdOn) {
+    public void setCreatedOn(Date createdOn) {
         this.createdOn = createdOn;
     }
 
-    public Long getModifiedOn() {
+    public Date getModifiedOn() {
         return modifiedOn;
     }
 
-    public void setModifiedOn(Long modifiedOn) {
+    public void setModifiedOn(Date modifiedOn) {
         this.modifiedOn = modifiedOn;
     }
 }

@@ -1,14 +1,25 @@
 <h2>Edit</h2>
 <form [formGroup]="editForm" *ngIf="true"  (ngSubmit)="onSubmit()">
   <ng-container class="block-input" *ngFor="let key of formKeys()">
-    <ng-container [ngSwitch]="getType(formTemplate[key])">
+    <ng-container [ngSwitch]="getFormItemType(formTemplate[key])">
+
+      <ng-container *ngSwitchCase="columnType.MULTI_SELECT">
+        <mat-form-field class="block-input" [formGroup]="editForm" *ngIf="selectValues[key]">
+          <mat-label>{{ formTemplate[key].columnLabel || key }}</mat-label>
+          <mat-select [compareWith]="compareWith" multiple [formControlName]="key">
+            <mat-option *ngFor="let selectOptionValue of selectValues[key]" [value]="selectOptionValue">
+              {{ formTemplate[key].formattedValue ? formTemplate[key].formattedValue(selectOptionValue[$any(formTemplate[key]).displayValue]) : selectOptionValue[$any(formTemplate[key]).displayValue] }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </ng-container>
 
       <ng-container *ngSwitchCase="columnType.SELECT">
         <mat-form-field class="block-input" [formGroup]="editForm" *ngIf="selectValues[key]">
           <mat-label>{{ formTemplate[key].columnLabel || key }}</mat-label>
-          <mat-select multiple [formControlName]="key" [(value)]="entity[key]">
-            <mat-option *ngFor="let item of selectValues[key]" [value]="item[formTemplate[key].value]">
-              {{ formTemplate[key].formattedValue ? formTemplate[key].formattedValue(item[formTemplate[key].displayValue]) : item[formTemplate[key].displayValue] }}
+          <mat-select [compareWith]="compareWith" [formControlName]="key">
+            <mat-option *ngFor="let item of selectValues[key]" [value]="item[$any(formTemplate[key])]">
+              {{ formTemplate[key].formattedValue ? formTemplate[key].formattedValue(item[$any(formTemplate[key]).displayValue]) : item[$any(formTemplate[key]).displayValue] }}
             </mat-option>
           </mat-select>
         </mat-form-field>

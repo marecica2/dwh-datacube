@@ -61,7 +61,7 @@ public class TenantDao {
         public Tenant mapRow(ResultSet rs, int rowNum) throws SQLException {
             Tenant tenant = new Tenant();
             tenant.setId(rs.getString("id"));
-            tenant.setSchemaName(rs.getString("id"));
+            tenant.setName(rs.getString("id"));
             return tenant;
         }
     }

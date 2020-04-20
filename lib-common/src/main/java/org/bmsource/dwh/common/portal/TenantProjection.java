@@ -8,11 +8,11 @@ import java.util.Date;
 public interface TenantProjection {
     String getId();
 
-    String getSchemaName();
+    String getName();
 
     String getDescription();
 
-    Date getCreatedAt();
+    Date getCreatedOn();
 
-    Date getUpdatedAt();
+    Date getModifiedOn();
 }

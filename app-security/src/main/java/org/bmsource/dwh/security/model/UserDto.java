@@ -1,7 +1,10 @@
 package org.bmsource.dwh.security.model;
 
 import org.bmsource.dwh.common.portal.Tenant;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -15,6 +18,8 @@ public class UserDto {
     private String email;
     private List<String> roles;
     private Set<Tenant> tenants;
+    private Date createdOn;
+    private Date modifiedOn;
 
     public long getId() {
         return id;
@@ -78,5 +83,21 @@ public class UserDto {
 
     public void setTenants(Set<Tenant> tenants) {
         this.tenants = tenants;
+    }
+
+    public Date getCreatedOn() {
+        return createdOn;
+    }
+
+    public void setCreatedOn(Date createdOn) {
+        this.createdOn = createdOn;
+    }
+
+    public Date getModifiedOn() {
+        return modifiedOn;
+    }
+
+    public void setModifiedOn(Date modifiedOn) {
+        this.modifiedOn = modifiedOn;
     }
 }

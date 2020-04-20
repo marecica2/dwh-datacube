@@ -1,6 +1,8 @@
-import {Component} from '@angular/core';
-import {TenantService} from "./tenant.service";
-import {SimpleColumn, ColumnDefinition, ColumnType} from "../../shared/crudRepository/crudRepositoryApi";
+import { Component } from '@angular/core';
+import { TenantService } from "./tenant.service";
+import { ColumnDefinition, SimpleColumn } from "../../shared/crudRepository/crudRepositoryApi";
+import { Tenant } from "./tenant.model";
+import * as moment from "moment";
 
 @Component({
   selector: 'app-tenants-table',
@@ -10,25 +12,31 @@ import {SimpleColumn, ColumnDefinition, ColumnType} from "../../shared/crudRepos
       [columnDefinition]="columnDefinition"
       [relation]="'tenants'"
       [editable]="true"
+      [modelType]="tenantRef"
     >
     </app-crud-table-component>`,
 })
 export class TenantsTableComponent {
+  tenantRef = Tenant;
+
   columnDefinition: ColumnDefinition = {
-    id: <SimpleColumn>{
-      label: 'Tenant Id',
-    },
-    description: <SimpleColumn>{
-      label: 'Description',
-    },
-    schemaName: <SimpleColumn>{
-      label: 'Schema name',
-    },
-    createdAt: <SimpleColumn>{
-      label: 'Created at',
-    },
-    updatedAt: <SimpleColumn>{
-    },
+    id: new SimpleColumn(
+      'Tenant Id'
+    ),
+    name: new SimpleColumn(
+        'Tenant Name'
+    ),
+    description: new SimpleColumn(
+        'Description'
+    ),
+    createdOn: new SimpleColumn(
+        'Created',
+        (value: string) => moment(value).fromNow().toString(),
+    ),
+    modifiedOn: new SimpleColumn(
+        'Modified',
+        (value: string) => moment(value).fromNow().toString(),
+    ),
   };
 
   constructor(public service: TenantService) {

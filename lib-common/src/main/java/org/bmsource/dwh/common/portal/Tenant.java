@@ -1,5 +1,9 @@
 package org.bmsource.dwh.common.portal;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -8,26 +12,34 @@ import java.util.Date;
 public class Tenant {
 
     @Id
-    @Column(name = "id")
+    @GenericGenerator(
+            name = "assigned-sequence",
+            strategy = "org.bmsource.dwh.common.portal.StringSequenceIdentifier",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "tenants_id_seq"),
+                    @org.hibernate.annotations.Parameter(name = "sequence_prefix", value = "tenant"),
+            }
+    )
+    @GeneratedValue(generator = "assigned-sequence", strategy = GenerationType.SEQUENCE)
     private String id;
 
     @Column(name = "name")
-    private String schemaName;
+    private String name;
 
     @Column(name = "description")
     private String description;
 
-    @Column(name = "created_on")
-    private Date createdAt;
+    @CreationTimestamp
+    private Date createdOn;
 
-    @Column(name = "modified_on")
-    private Date updatedAt;
+    @UpdateTimestamp
+    private Date modifiedOn;
 
     public Tenant() {
     }
 
-    public Tenant(String schemaName) {
-        this.schemaName = schemaName;
+    public Tenant(String name) {
+        this.name = name;
     }
 
     public String getDescription() {
@@ -46,27 +58,19 @@ public class Tenant {
         this.id = id;
     }
 
-    public String getSchemaName() {
-        return schemaName;
+    public String getName() {
+        return name;
     }
 
-    public void setSchemaName(String schemaName) {
-        this.schemaName = schemaName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
+    public Date getCreatedOn() {
+        return createdOn;
     }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
+    public Date getModifiedOn() {
+        return modifiedOn;
     }
 }
