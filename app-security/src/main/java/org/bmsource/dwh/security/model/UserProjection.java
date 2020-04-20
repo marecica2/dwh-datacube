@@ -4,6 +4,7 @@ import org.bmsource.dwh.common.portal.Tenant;
 import org.bmsource.dwh.common.portal.TenantProjection;
 import org.springframework.data.rest.core.config.Projection;
 
+import java.util.Date;
 import java.util.Set;
 
 @Projection(name = "full", types = { User.class })
@@ -21,4 +22,8 @@ public interface UserProjection {
     Set<RoleProjection> getRoles();
 
     Set<TenantProjection> getTenants();
+
+    Date getCreatedOn();
+
+    Date getModifiedOn();
 }

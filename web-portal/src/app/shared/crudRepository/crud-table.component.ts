@@ -7,7 +7,7 @@ import { MatPaginator } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
 import { MatDialog } from "@angular/material/dialog";
 
-import { ColumnDefinition, ColumnType, CrudResource, SelectColumn, SimpleColumn } from "./crudRepositoryApi";
+import { ColumnDefinition, ColumnType, CrudResource, MultiSelectColumn, SimpleColumn } from "./crudRepositoryApi";
 import { EditDialogComponent } from "./editDialog/edit-dialog.component";
 
 
@@ -22,6 +22,8 @@ export class CrudTableComponent<Entity extends CrudResource> implements AfterVie
   @Input('crudService') service: RestService<Entity>;
   @Input('relation') relation: string;
   @Input('editable') editable: boolean;
+  @Input('modelType') modelType: { new(...args: any[]): Entity; };
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   public columnType = ColumnType;
@@ -44,7 +46,7 @@ export class CrudTableComponent<Entity extends CrudResource> implements AfterVie
   }
 
   getSelectValue(row: Entity, key: string, item: object) {
-    const column = this.columnDefinition[key] as SelectColumn;
+    const column = this.columnDefinition[key] as MultiSelectColumn;
     const value = item[column.displayValue];
     return this.getFormattedValue(value, column);
   }
@@ -57,7 +59,10 @@ export class CrudTableComponent<Entity extends CrudResource> implements AfterVie
         startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
-          const query = [{ key: 'sort', value: `${this.sort.active},${this.sort.direction}` }, { key: 'page', value: this.paginator.pageIndex }];
+          const query = [{ key: 'sort', value: `${this.sort.active},${this.sort.direction}` }, {
+            key: 'page',
+            value: this.paginator.pageIndex
+          }];
           return this.service.getAll(
             { size: this.paginator.pageSize, params: query },
           );
@@ -74,17 +79,21 @@ export class CrudTableComponent<Entity extends CrudResource> implements AfterVie
       ).subscribe((data: Entity[]) => this.data = data);
   }
 
-  openEditDialog(entity: Entity) {
-    this.service.get(entity.getIdentity(), [{key: 'projection', value: 'full'}] ).subscribe(data => {
-      const  dialogRef = this.dialog.open(EditDialogComponent, {
-        data: { entity: data, formTemplate: this.columnDefinition, service: this.service },
-      });
-      dialogRef.afterClosed().subscribe(result => {
-        if(result && result.success) {
-          this.reloadSubject.next();
-        }
-      });
+  editEntity(entity: Entity) {
+    this.service.get(entity.getIdentity(), [{ key: 'projection', value: 'full' }]).subscribe(editableEntity => {
+      this.openDialog(editableEntity);
     })
+  }
+
+  public openDialog(entity: Entity) {
+    const dialogRef = this.dialog.open(EditDialogComponent, {
+      data: { entity, modelType: this.modelType, formTemplate: this.columnDefinition, service: this.service },
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && result.success) {
+        this.reloadSubject.next();
+      }
+    });
   }
 
   getColumnKeys(): string[] {
@@ -98,7 +107,7 @@ export class CrudTableComponent<Entity extends CrudResource> implements AfterVie
     return Object.keys(this.columnDefinition);
   }
 
-  private getFormattedValue(value: any, col: SimpleColumn | SelectColumn) {
+  private getFormattedValue(value: any, col: SimpleColumn | MultiSelectColumn) {
     if (col.formattedValue != null) {
       return col.formattedValue(value);
     }

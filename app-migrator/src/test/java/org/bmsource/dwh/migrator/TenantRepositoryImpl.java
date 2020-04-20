@@ -25,11 +25,11 @@ public class TenantRepositoryImpl implements TenantRepository {
 
     static {
         tenant1.setId("tenant1");
-        tenant1.setSchemaName("tenant1");
+        tenant1.setName("tenant1");
         tenant2.setId("tenant2");
-        tenant2.setSchemaName("tenant2");
+        tenant2.setName("tenant2");
         tenant3.setId("tenant3");
-        tenant3.setSchemaName("tenant3");
+        tenant3.setName("tenant3");
     }
 
     @Override

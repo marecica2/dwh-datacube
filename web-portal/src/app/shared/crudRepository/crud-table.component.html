@@ -13,20 +13,22 @@
             disableClear>{{ columnDefinition[key]?.columnLabel || key }}</th>
         <td mat-cell *matCellDef="let row">
           <ng-container [ngSwitch]="getType(columnDefinition[key])">
+
+            <ng-container *ngSwitchCase="columnType.MULTI_SELECT">
+              <ng-container
+                [ngTemplateOutlet]="multiValue"
+                [ngTemplateOutletContext]="{ $implicit: row, 'key': key }"
+              >
+              </ng-container>
+            </ng-container>
             <ng-container *ngSwitchCase="columnType.SELECT">
               <ng-container
                 [ngTemplateOutlet]="multiValue"
                 [ngTemplateOutletContext]="{ $implicit: row, 'key': key }"
               >
               </ng-container>
-              <ng-template #multiValue let-row let-key="key">
-                <mat-chip-list>
-                  <ng-container *ngFor="let item of row[key]">
-                    <mat-chip style="font-size: 0.8em">{{ getSelectValue(row, key, item) }}</mat-chip>
-                  </ng-container>
-                </mat-chip-list>
-              </ng-template>
             </ng-container>
+
             <ng-container *ngSwitchDefault>
               {{ getSimpleValue(row, key) }}
             </ng-container>
@@ -35,10 +37,12 @@
       </ng-container>
 
       <ng-container [matColumnDef]="'actions'">
-        <th mat-header-cell *matHeaderCellDef style="width: 150px; text-align: right"></th>
+        <th mat-header-cell *matHeaderCellDef style="width: 150px; text-align: right">
+          <button mat-raised-button color="primary" (click)="openDialog(null)">New</button>
+        </th>
         <td mat-cell *matCellDef="let el" style="width: 150px; text-align: right">
-          <button mat-button color="primary" (click)="openEditDialog(el)">Edit</button>
-          <button mat-button color="primary" (click)="openEditDialog(el)">Delete</button>
+          <button mat-button color="primary" (click)="editEntity(el)">Edit</button>
+          <button mat-button color="primary" (click)="editEntity(el)">Delete</button>
         </td>
       </ng-container>
 
@@ -49,3 +53,16 @@
 
   <mat-paginator [length]="length" [pageSizeOptions]="[5, 10, 20, 50]" showFirstLastButtons></mat-paginator>
 </div>
+
+<ng-template #multiValue let-row let-key="key">
+  <mat-chip-list>
+    <ng-container *ngFor="let item of row[key]">
+      <mat-chip style="font-size: 0.8em">{{ getSelectValue(row, key, item) }}</mat-chip>
+    </ng-container>
+  </mat-chip-list>
+</ng-template>
+<ng-template #singleValue let-row let-key="key">
+  <mat-chip-list>
+    <mat-chip color="primary" style="font-size: 0.8em">{{ getSelectValue(row, key, row[key]) }}</mat-chip>
+  </mat-chip-list>
+</ng-template>

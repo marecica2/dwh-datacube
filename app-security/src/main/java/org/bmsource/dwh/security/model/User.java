@@ -2,8 +2,11 @@ package org.bmsource.dwh.security.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.bmsource.dwh.common.portal.Tenant;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -12,7 +15,7 @@ import java.util.stream.Collectors;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_id_seq")
     private long id;
     private String firstName;
     private String lastName;
@@ -31,6 +34,12 @@ public class User {
     @JoinTable(name = "user_tenants", schema = "master",
         joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "tenant_id"))
     private Set<Tenant> tenants;
+
+    @CreationTimestamp
+    private Date createdOn;
+
+    @UpdateTimestamp
+    private Date modifiedOn;
 
     public long getId() {
         return id;
@@ -96,6 +105,14 @@ public class User {
         this.tenants = tenants;
     }
 
+    public Date getCreatedOn() {
+        return createdOn;
+    }
+
+    public Date getModifiedOn() {
+        return modifiedOn;
+    }
+
     public UserDto toUserDto() {
         UserDto userDto = new UserDto();
         userDto.setId(this.id);
@@ -105,6 +122,8 @@ public class User {
         userDto.setUsername(this.username);
         userDto.setRoles(this.roles.stream().map(role -> role.getName().toString()).collect(Collectors.toList()));
         userDto.setTenants(this.tenants);
+        userDto.setCreatedOn(this.createdOn);
+        userDto.setModifiedOn(this.modifiedOn);
         return userDto;
     }
 }

@@ -12,8 +12,7 @@ public interface RoleProjection {
 
     String getDescription();
 
-    Long getCreatedOn();
+    Date getCreatedOn();
 
-    Long getModifiedOn();
-
+    Date getModifiedOn();
 }
