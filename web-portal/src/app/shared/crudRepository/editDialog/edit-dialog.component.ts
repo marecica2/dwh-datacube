@@ -46,6 +46,10 @@ export class EditDialogComponent<Entity extends CrudResource> implements OnInit 
     return object.constructor.name;
   }
 
+  getType(object: Object): string {
+    return object.constructor.name;
+  }
+
   ngOnInit(): void {
     Object.keys(this.formTemplate).forEach((formItem: string) => {
       switch (this.getFormItemType(this.formTemplate[formItem])) {

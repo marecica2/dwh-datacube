@@ -21,7 +21,9 @@ export class RolesTableComponent {
 
   columnDefinition: ColumnDefinition = {
     name: new SimpleColumn(
-      'Name'
+      'Name',
+      null,
+      true,
     ),
     description: new SimpleColumn(
       'Description'
@@ -29,10 +31,12 @@ export class RolesTableComponent {
     createdOn: new SimpleColumn(
       'Created',
       (value: string) => moment(value).fromNow().toString(),
+      true,
     ),
     modifiedOn: new SimpleColumn(
       'Updated',
       (value: string) => moment(value).fromNow().toString(),
+      true,
     ),
   };
 
