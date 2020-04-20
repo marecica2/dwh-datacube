@@ -47,7 +47,9 @@ export class EditDialogComponent<Entity extends CrudResource> implements OnInit 
   }
 
   getType(object: Object): string {
-    return object.constructor.name;
+    if(object) {
+      return object.constructor.name;
+    }
   }
 
   ngOnInit(): void {

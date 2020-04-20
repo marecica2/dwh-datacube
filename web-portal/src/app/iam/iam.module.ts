@@ -6,6 +6,7 @@ import { UsersTableComponent } from './users/users-table.component';
 import { TenantsTableComponent } from './tenants/tenants-table.component';
 import { IamComponent } from './iam/iam.component';
 import { RolesTableComponent } from "./roles/roles-table.component";
+import { RoleGuard } from "../auth/role.guard";
 
 const routes: Routes = [
   {
@@ -19,7 +20,8 @@ const routes: Routes = [
       { path: 'roles', component: RolesTableComponent },
       { path: 'apps', component: TenantsTableComponent },
       { path: 'tokens', component: TenantsTableComponent },
-    ]
+    ],
+    canActivate: [RoleGuard], data: {roles: ['ADMIN']},
   },
 ];
 

@@ -42,7 +42,7 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private activatedRoute: ActivatedRoute,
+    private route: ActivatedRoute,
   ) {
     this.token = AuthService.getItem('token');
     if (this.token !== null) {
@@ -58,12 +58,11 @@ export class AuthService {
     return this.fetchToken(username, password)
       .pipe(
         switchMap((token: Token) => this.fetchUserInfo(token)),
+        map(() => {
+          this.handleLoginRedirect();
+        }),
         catchError(AuthService.handleError.bind(this)),
       );
-  }
-
-  public getToken(): string {
-    return this.token.access_token;
   }
 
   public logout() {
@@ -75,7 +74,7 @@ export class AuthService {
   }
 
   public selectTenant(tenant: Tenant) {
-    const route = this.activatedRoute.snapshot;
+    const route = this.route.snapshot;
     const { queryParams: { redirectUri } } = route;
 
     this.selectedTenant = tenant;
@@ -122,6 +121,7 @@ export class AuthService {
           user.token = token.access_token;
           user.expiresIn = token.expires_in;
           user.refreshToken = token.refresh_token;
+          this.user = user;
           this.userSubject.next(user);
         }),
         map((user: UserResponse) => ({
@@ -129,6 +129,21 @@ export class AuthService {
         })),
         catchError(AuthService.handleError.bind(this)),
       );
+  }
+
+  private handleLoginRedirect() {
+    if (this.route.snapshot.queryParams.redirectUri) {
+      window.location.href = this.route.snapshot.queryParams.redirectUri;
+    } else {
+      this.router.navigate(this.resolveLandingPage(), { queryParamsHandling: "merge" })
+    }
+  }
+
+  private resolveLandingPage(): string[] {
+    if(this.user.roles.includes('ADMIN')) {
+      return ['/iam'];
+    }
+    return ['/auth/tenant'];
   }
 
   private static handleError(error) {

@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { AppsComponent } from "./components/pages/apps/apps.component";
+import { RoleGuard } from "./auth/role.guard";
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'apps' },
@@ -12,7 +13,11 @@ const routes: Routes = [
     path: 'iam', loadChildren: () =>
       import("./iam/iam.module").then(m => m.IamModule)
   },
-  { path: 'apps', component: AppsComponent },
+  {
+    path: 'apps',
+    component: AppsComponent,
+    canActivate: [RoleGuard], data: {roles: ['USER']},
+  },
 ];
 
 @NgModule({
