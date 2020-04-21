@@ -3,7 +3,6 @@ package org.bmsource.dwh.migrator;
 import org.bmsource.dwh.common.portal.Tenant;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,7 @@ import java.util.Optional;
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = { MigratorApplication.class })
-@Import(TenantRepositoryImpl.class)
+@Import(MockTenantRepository.class)
 public class MigratorIT {
 
     @Autowired
@@ -33,29 +32,29 @@ public class MigratorIT {
 
     @AfterEach
     public void cleanup() {
-        template.execute(String.format("DROP SCHEMA IF EXISTS %s CASCADE", TenantRepositoryImpl.tenant1.getId()));
-        template.execute(String.format("DROP SCHEMA IF EXISTS %s CASCADE", TenantRepositoryImpl.tenant2.getId()));
-        template.execute(String.format("DROP SCHEMA IF EXISTS %s CASCADE", TenantRepositoryImpl.tenant3.getId()));
+        template.execute(String.format("DROP SCHEMA IF EXISTS %s CASCADE", MockTenantRepository.tenant1.getId()));
+        template.execute(String.format("DROP SCHEMA IF EXISTS %s CASCADE", MockTenantRepository.tenant2.getId()));
+        template.execute(String.format("DROP SCHEMA IF EXISTS %s CASCADE", MockTenantRepository.tenant3.getId()));
     }
 
     @Test
     public void migrateTenants() {
         migrator.migrate();
         List<Map<String, Object>> schemas = querySchemas();
-        Optional<Map<String, Object>> schema1 = findSchema(schemas, TenantRepositoryImpl.tenant1);
-        Optional<Map<String, Object>> schema2 = findSchema(schemas, TenantRepositoryImpl.tenant2);
+        Optional<Map<String, Object>> schema1 = findSchema(schemas, MockTenantRepository.tenant1);
+        Optional<Map<String, Object>> schema2 = findSchema(schemas, MockTenantRepository.tenant2);
         Assertions.assertTrue(schema1.isPresent());
         Assertions.assertTrue(schema2.isPresent());
-        Assertions.assertTrue(countTablesInSchema(TenantRepositoryImpl.tenant1) > 0);
+        Assertions.assertTrue(countTablesInSchema(MockTenantRepository.tenant1) > 0);
     }
 
     @Test
     public void addTenant() {
-        migrator.createNewTenant(TenantRepositoryImpl.tenant3);
+        migrator.createNewTenant(MockTenantRepository.tenant3);
         List<Map<String, Object>> schemas = querySchemas();
-        Optional<Map<String, Object>> schema3 = findSchema(schemas, TenantRepositoryImpl.tenant3);
+        Optional<Map<String, Object>> schema3 = findSchema(schemas, MockTenantRepository.tenant3);
         Assertions.assertTrue(schema3.isPresent());
-        Assertions.assertTrue(countTablesInSchema(TenantRepositoryImpl.tenant3) > 0);
+        Assertions.assertTrue(countTablesInSchema(MockTenantRepository.tenant3) > 0);
     }
 
     private List<Map<String, Object>> querySchemas() {

@@ -3,7 +3,6 @@ package org.bmsource.dwh.common.multitenancy.impl;
 import org.bmsource.dwh.common.multitenancy.Constants;
 import org.bmsource.dwh.common.multitenancy.TenantContext;
 import org.bmsource.dwh.common.multitenancy.TenantNotFoundException;
-import org.bmsource.dwh.common.portal.TenantDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

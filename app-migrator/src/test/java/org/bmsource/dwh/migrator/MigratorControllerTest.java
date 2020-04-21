@@ -1,7 +1,6 @@
 package org.bmsource.dwh.migrator;
 
 import org.bmsource.dwh.common.portal.Tenant;
-import org.bmsource.dwh.common.portal.TenantRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

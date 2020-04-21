@@ -1,7 +1,6 @@
 package org.bmsource.dwh.migrator;
 
 import org.bmsource.dwh.common.portal.Tenant;
-import org.bmsource.dwh.common.portal.TenantRepository;
 import org.flywaydb.core.Flyway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

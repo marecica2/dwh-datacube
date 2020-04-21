@@ -1,5 +1,6 @@
-package org.bmsource.dwh.common.portal;
+package org.bmsource.dwh.common.multitenancy.impl;
 
+import org.bmsource.dwh.common.portal.Tenant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;

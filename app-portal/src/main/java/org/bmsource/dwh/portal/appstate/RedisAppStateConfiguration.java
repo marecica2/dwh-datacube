@@ -2,9 +2,10 @@ package org.bmsource.dwh.portal.appstate;
 
 import org.bmsource.dwh.common.appstate.AppState;
 import org.bmsource.dwh.common.appstate.client.RedisAppStateService;
-import org.bmsource.dwh.common.portal.*;
+import org.bmsource.dwh.common.portal.PortalConfiguration;
+import org.bmsource.dwh.common.portal.ProjectRepository;
+import org.bmsource.dwh.common.portal.Tenant;
 import org.bmsource.dwh.common.redis.RedisConfiguration;
-import org.bmsource.dwh.portal.tenants.TenantRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

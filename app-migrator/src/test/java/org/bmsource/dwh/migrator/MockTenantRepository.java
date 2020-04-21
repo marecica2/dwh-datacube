@@ -1,7 +1,6 @@
 package org.bmsource.dwh.migrator;
 
 import org.bmsource.dwh.common.portal.Tenant;
-import org.bmsource.dwh.common.portal.TenantRepository;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Example;
@@ -16,8 +15,8 @@ import java.util.Optional;
 
 @Primary
 @Profile("integration-test")
-@Repository
-public class TenantRepositoryImpl implements TenantRepository {
+@Repository("tenantRepository")
+public class MockTenantRepository implements TenantRepository {
 
     public static Tenant tenant1 = new Tenant();
     public static Tenant tenant2 = new Tenant();

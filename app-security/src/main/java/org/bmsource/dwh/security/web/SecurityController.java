@@ -1,7 +1,6 @@
 package org.bmsource.dwh.security.web;
 
 import org.bmsource.dwh.security.UserServiceImpl;
-import org.bmsource.dwh.security.model.User;
 import org.bmsource.dwh.security.model.UserDto;
 import org.bmsource.dwh.security.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
