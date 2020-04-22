@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Set;
 
 @Repository
-@RepositoryRestResource(exported = false)
 public interface RoleRepository extends PagingAndSortingRepository<Role, Long> {
 
     @Query(value = "SELECT * FROM master.Roles where name IN (:roles)", nativeQuery = true)

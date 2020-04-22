@@ -38,7 +38,8 @@ public class Tenant {
     public Tenant() {
     }
 
-    public Tenant(String name) {
+    public Tenant(String id, String name) {
+        this.id = id;
         this.name = name;
     }
 

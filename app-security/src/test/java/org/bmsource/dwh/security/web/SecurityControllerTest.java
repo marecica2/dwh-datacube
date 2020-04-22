@@ -1,9 +1,7 @@
 package org.bmsource.dwh.security.web;
 
 import org.bmsource.dwh.security.UserServiceImpl;
-import org.bmsource.dwh.security.repository.RoleRepository;
-import org.bmsource.dwh.security.repository.TenantRestRepository;
-import org.bmsource.dwh.security.repository.UserRepository;
+import org.bmsource.dwh.security.repository.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +22,12 @@ public class SecurityControllerTest {
 
     @MockBean
     private UserServiceImpl userService;
+
+    @MockBean
+    private RoleRestRepository roleRestRepository;
+
+    @MockBean
+    private UserRestRepository userRestRepository;
 
     @MockBean
     private TenantRestRepository tenantRepository;

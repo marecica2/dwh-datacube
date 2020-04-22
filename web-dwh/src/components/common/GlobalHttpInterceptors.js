@@ -11,7 +11,7 @@ import { loginPath } from '../../settings';
 // import renewToken from '../utils/renewToken';
 import { AppContext } from '../context/AppContext';
 
-class GlobalXRayHttpInterceptors extends React.Component {
+class GlobalHttpInterceptors extends React.Component {
   static contextType = AppContext;
 
   redirectToLoginScreen = () => {
@@ -60,7 +60,7 @@ class GlobalXRayHttpInterceptors extends React.Component {
   }
 }
 
-GlobalXRayHttpInterceptors.propTypes = {
+GlobalHttpInterceptors.propTypes = {
   children: CHILDREN.isRequired,
   history: HISTORY.isRequired,
   location: LOCATION.isRequired,
@@ -87,4 +87,4 @@ GlobalXRayHttpInterceptors.propTypes = {
 //   mapDispatchToProps,
 // )(withRouter(GlobalXRayHttpInterceptors));
 
-export default withRouter(GlobalXRayHttpInterceptors);
+export default withRouter(GlobalHttpInterceptors);

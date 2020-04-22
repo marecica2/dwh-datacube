@@ -5,7 +5,7 @@ const INITIAL_APP_STATE = {
   user: null,
   token: sessionStorage.token ? JSON.parse(sessionStorage.token) : null,
   project: sessionStorage.project ? JSON.parse(sessionStorage.project) : { id: '1', name: 'Sample proj 1' },
-  tenant: JSON.parse(sessionStorage.tenant),
+  tenant: sessionStorage.tenant ? JSON.parse(sessionStorage.tenant) : { id: null, name: null },
   importStatus: {
     running: false,
   },
