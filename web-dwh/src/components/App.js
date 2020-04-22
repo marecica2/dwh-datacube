@@ -1,87 +1,195 @@
 import React, { useEffect } from 'react';
-import { Router, Route, Switch } from 'react-router-dom';
+import { NavLink as RouterLink, Route, Router, Switch } from "react-router-dom";
 import { makeStyles, useTheme } from '@material-ui/core/styles';
+import Drawer from '@material-ui/core/Drawer';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import Toolbar from '@material-ui/core/Toolbar';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import ExpandLess from "@material-ui/icons/ExpandLess";
+import ExpandMore from "@material-ui/icons/ExpandMore";
+import Collapse from "@material-ui/core/Collapse";
+import LocalShipping from "@material-ui/icons/LocalShipping";
+import AssessmentIcon from "@material-ui/icons/Assessment";
+import CloudUploadIcon from "@material-ui/icons/CloudUpload";
+import SettingsIcon from "@material-ui/icons/Settings";
 
-import history from './history';
 import Menu from './layout/Menu';
-import Sidebar from './layout/Sidebar';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Settings from './pages/Settings';
 import Supplier from './pages/categories/Supplier';
 import DataPreview from './pages/categories/DataPreview';
 import Import from './pages/Import';
+
+import history from './history';
 import { AppStateProvider } from './context/AppContext';
 import GlobalHttpInterptors from './common/GlobalHttpInterceptors';
-import authApi from '../shared/api/auth.api';
 import Loader from './common/Loader';
+import authApi from '../shared/api/auth.api';
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    display: 'flex',
-  },
-  content: {
-    flexGrow: 1,
-    paddingTop: theme.spacing(11),
-    padding: theme.spacing(3),
-  },
+const drawerWidth = 240;
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+        display: 'flex',
+    },
+    appBar: {
+        zIndex: theme.zIndex.drawer + 1,
+    },
+    drawer: {
+        width: drawerWidth,
+        flexShrink: 0,
+    },
+    drawerPaper: {
+        width: drawerWidth,
+    },
+    drawerContainer: {
+        overflow: 'auto',
+    },
+    content: {
+        flexGrow: 1,
+        padding: theme.spacing(2),
+    },
 }));
 
-function App() {
-  const theme = useTheme();
-  const classes = useStyles(theme);
-  const [isSidebarOpen, setSidebarOpen] = React.useState(true);
-  const [user, setUser] = React.useState(null);
+export default function App() {
+    const theme = useTheme();
+    const classes = useStyles(theme);
 
+    const [isSidebarOpen, setSidebarOpen] = React.useState(true);
+    const [user, setUser] = React.useState(null);
 
-  useEffect(() => {
-    const api = async () => {
-      const loggedUser = await authApi.loggedUser();
-      setUser(loggedUser);
-    };
-    api();
-  }, [setUser]);
+    const [categoryOpen, setCategoryOpen] = React.useState(false);
+    const AdapterLink = React.forwardRef((props, ref) => <RouterLink innerRef={ref} {...props} />);
 
-  function handleDrawerOpen() {
-    setSidebarOpen(true);
-  }
+    useEffect(() => {
+        const api = async () => {
+            const loggedUser = await authApi.loggedUser();
+            setUser(loggedUser);
+        };
+        api();
+    }, [setUser]);
 
-  function handleDrawerClose() {
-    setSidebarOpen(false);
-  }
+    function handleDrawerOpen() {
+        setSidebarOpen(true);
+    }
 
-  return (
-    <div className={classes.root}>
-      <CssBaseline/>
-      <Router history={history}>
-        <AppStateProvider>
-          <GlobalHttpInterptors>
-            {user ? (
-              <div>
-                <Menu open={isSidebarOpen} menuIconClick={handleDrawerOpen}/>
-                <Sidebar handleDrawerClose={handleDrawerClose} isSidebarOpen={isSidebarOpen}/>
-                <main className={classes.content}>
-                  <Switch>
-                    <Route path="/category/supplier" component={Supplier}/>
-                    <Route path="/category/service-type" component={DataPreview}/>
-                    <Route path="/import" component={Import}/>
-                    <Route path="/settings" component={Settings}/>
-                    <Route path="/login" component={Login}/>
-                    <Route path="/" strict component={Home}/>
-                  </Switch>
-                </main>
-              </div>
-            ) : (
-              <>
-                <Loader/>
-              </>
-            )}
-          </GlobalHttpInterptors>
-        </AppStateProvider>
-      </Router>
-    </div>
-  );
+    function handleDrawerClose() {
+        setSidebarOpen(false);
+    }
+
+    return (
+        <div className={classes.root}>
+            <CssBaseline/>
+            <Router history={history}>
+                <AppStateProvider>
+                    <GlobalHttpInterptors>
+                        {user ? (
+                            <>
+                                <Menu open={isSidebarOpen} menuIconClick={handleDrawerOpen}/>
+                                <Drawer
+                                    className={classes.drawer}
+                                    variant="permanent"
+                                    classes={{
+                                        paper: classes.drawerPaper,
+                                    }}
+                                >
+                                    <Toolbar/>
+                                    <div className={classes.drawerContainer}>
+                                        <List>
+                                            <ListItem button onClick={() => setCategoryOpen(!categoryOpen)}>
+                                                <ListItemText primary='Categories'/>
+                                                {categoryOpen ? <ExpandLess/> : <ExpandMore/>}
+                                            </ListItem>
+                                            <Collapse in={categoryOpen} timeout="auto" unmountOnExit>
+                                                <List component="div" disablePadding>
+                                                    <ListItem
+                                                        button
+                                                        key='Categories'
+                                                        className={classes.nested}
+                                                        to='/category/supplier'
+                                                        activeStyle={{
+                                                            color: theme.palette.primary.main,
+                                                        }}
+                                                        component={AdapterLink}
+                                                    >
+                                                        <ListItemIcon><LocalShipping
+                                                            className={classes.iconHover}/></ListItemIcon>
+                                                        <ListItemText primary='Supplier'/>
+                                                    </ListItem>
+                                                    <ListItem
+                                                        button
+                                                        key='Data View'
+                                                        className={classes.nested}
+                                                        to='/category/service-type'
+                                                        activeStyle={{
+                                                            color: theme.palette.primary.main,
+                                                        }}
+                                                        component={AdapterLink}
+                                                    >
+                                                        <ListItemIcon><AssessmentIcon/></ListItemIcon>
+                                                        <ListItemText primary='View Data'/>
+                                                    </ListItem>
+                                                </List>
+                                            </Collapse>
+                                        </List>
+
+                                        <List>
+                                            <ListItem
+                                                button
+                                                key='Import'
+                                                to='/import'
+                                                activeStyle={{
+                                                    color: theme.palette.primary.main,
+                                                }}
+                                                component={AdapterLink}
+                                            >
+                                                <ListItemIcon><CloudUploadIcon/></ListItemIcon>
+                                                <ListItemText primary='Import'/>
+                                            </ListItem>
+
+                                            <ListItem
+                                                button
+                                                key='Settings'
+                                                to='/settings'
+                                                activeStyle={{
+                                                    color: theme.palette.primary.main,
+                                                }}
+                                                component={AdapterLink}
+                                            >
+                                                <ListItemIcon><SettingsIcon/></ListItemIcon>
+                                                <ListItemText primary='Settings'/>
+                                            </ListItem>
+                                        </List>
+                                    </div>
+                                </Drawer>
+                                <main className={classes.content}>
+                                    <Toolbar/>
+                                    <div>
+                                        <main className={classes.content}>
+                                            <Switch>
+                                                <Route path="/category/supplier" component={Supplier}/>
+                                                <Route path="/category/service-type" component={DataPreview}/>
+                                                <Route path="/import" component={Import}/>
+                                                <Route path="/settings" component={Settings}/>
+                                                <Route path="/login" component={Login}/>
+                                                <Route path="/" strict component={Home}/>
+                                            </Switch>
+                                        </main>
+                                    </div>
+                                </main>
+                            </>
+                        ) : (
+                            <>
+                                <Loader/>
+                            </>
+                        )}
+                    </GlobalHttpInterptors>
+                </AppStateProvider>
+            </Router>
+        </div>
+    );
 }
-
-export default App;
