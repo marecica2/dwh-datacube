@@ -66,8 +66,8 @@ function Home() {
 
   return (
     <div>
-      <Typography variant="h6" paragraph>
-        Datacube Dashboard
+      <Typography variant="h3" paragraph>
+        Dashboard
       </Typography>
       <Grid container spacing={3}>
         <Grid item xs={6}>

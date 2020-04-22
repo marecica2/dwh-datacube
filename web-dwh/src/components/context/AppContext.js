@@ -5,7 +5,7 @@ const INITIAL_APP_STATE = {
   user: null,
   token: sessionStorage.token ? JSON.parse(sessionStorage.token) : null,
   project: sessionStorage.project ? JSON.parse(sessionStorage.project) : { id: '1', name: 'Sample proj 1' },
-  tenant: sessionStorage.tenant ? JSON.parse(sessionStorage.tenant) : { id: 'tenant0000000000000001', name: 'demo' },
+  tenant: JSON.parse(sessionStorage.tenant),
   importStatus: {
     running: false,
   },
@@ -18,8 +18,6 @@ sessionStorage.tenant = JSON.stringify(INITIAL_APP_STATE.tenant);
 const reducer = (state, { type, value }) => {
   switch (type) {
     case 'loginSuccess':
-      console.log(type);
-      console.log(value);
       sessionStorage.setItem('token', JSON.stringify(value.token));
       window.location.href = value.redirect;
       return { ...state, user: 'admin', token: value.token };
