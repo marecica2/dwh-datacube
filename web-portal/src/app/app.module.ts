@@ -31,6 +31,9 @@ import { LogoComponent } from './components/layout/logo.component';
     CoreModule,
     AppRoutingModule,
   ],
+  providers: [
+    HttpClientModule,
+  ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

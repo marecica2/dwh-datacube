@@ -9,7 +9,7 @@ import { RegisterComponent } from "./register/register.component";
 import { TenantComponent } from "./tenant/tenant.component";
 import { RoleGuard } from "./role.guard";
 
-const routes: Routes = [
+export const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent,

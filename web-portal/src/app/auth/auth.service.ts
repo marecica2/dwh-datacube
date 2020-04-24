@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
-import { BehaviorSubject, Observable, throwError } from "rxjs";
+import { BehaviorSubject, Observable, of, Subject, throwError } from "rxjs";
 import { catchError, map, switchMap, tap } from "rxjs/operators";
 import { User } from "../shared/user.model";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -9,6 +9,12 @@ import { Tenant } from "../shared/tenant.model";
 const baseUrl = '/api/security';
 const CLIENT_ID = 'dwh-client';
 const CLIENT_SECRET = 'secret';
+
+
+export interface TokenUser {
+  token: Token,
+  user: User,
+}
 
 export interface Token {
   access_token: string,
@@ -33,8 +39,8 @@ export interface UserResponse {
   providedIn: 'root'
 })
 export class AuthService {
-  public userSubject = new BehaviorSubject<User>(null);
-  public tokenSubject = new BehaviorSubject<Token>(null);
+  public userSubject = new Subject<User>();
+  public tokenSubject = new Subject<Token>();
   private user: User;
   private selectedTenant: Tenant;
   private token: Token;
@@ -57,9 +63,10 @@ export class AuthService {
   public login(username: string, password: string): Observable<any> {
     return this.fetchToken(username, password)
       .pipe(
-        switchMap((token: Token) => this.fetchUserInfo(token)),
-        map(() => {
+        switchMap((token: Token) => { return this.fetchUserInfo(token) }),
+        switchMap(user => {
           this.handleLoginRedirect();
+          return of(user);
         }),
         catchError(AuthService.handleError.bind(this)),
       );
@@ -92,6 +99,7 @@ export class AuthService {
     formData.append('username', username);
     formData.append('password', password);
     formData.append('grant_type', 'password');
+
     const headers = {
       'Authorization': `Basic ${btoa(`${CLIENT_ID}:${CLIENT_SECRET}`)}`,
     };
@@ -99,6 +107,7 @@ export class AuthService {
       .post<Token>(`${baseUrl}/oauth/token`, formData, { headers }).pipe(
         tap((token: Token) => {
           this.token = token;
+          console.log('CC' ,this.token);
           this.tokenSubject.next(token);
           AuthService.setItem('token', token);
         }),
@@ -126,7 +135,7 @@ export class AuthService {
         }),
         map((user: UserResponse) => ({
           token, user,
-        })),
+        } as TokenUser)),
         catchError(AuthService.handleError.bind(this)),
       );
   }
@@ -147,7 +156,6 @@ export class AuthService {
   }
 
   private static handleError(error) {
-    console.log(error);
     let errorMessage = 'Error occured';
     if (!error.error || !error.error.error) {
       return throwError(errorMessage);

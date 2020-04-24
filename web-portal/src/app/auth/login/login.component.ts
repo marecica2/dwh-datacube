@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from "@angular/router";
 import { NgForm } from "@angular/forms";
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { AuthService, Token } from "../auth.service";
+import { AuthService } from "../auth.service";
 
 @Component({
   selector: 'app-login',
@@ -20,7 +19,6 @@ export class LoginComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private snackBar: MatSnackBar,
-    private router: Router,
   ) {
   }
 
@@ -37,15 +35,14 @@ export class LoginComponent implements OnInit {
 
     this.authService.login(username, password).subscribe(() => {
       this.isLoading = false;
-    }, errorMessage => {
-      this.error = errorMessage;
-      this.snackBar.open(errorMessage, '', {
+    }, error => {
+      this.error = error;
+      this.snackBar.open(error, '', {
         panelClass: ['mat-toolbar', 'mat-warn'], // mat-accent mat-primary
         duration: 5000
       });
       this.isLoading = false;
+      form.reset();
     });
-    form.reset();
   }
-
 }

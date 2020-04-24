@@ -20,8 +20,8 @@
       <mat-form-field style="width: 100%">
         <mat-label>Select a tenant</mat-label>
         <mat-select (selectionChange)="onSubmit($event)">
-          <mat-option *ngFor="let tenant of tenants" [value]="tenant.id">
-            {{tenant.schemaName}}
+          <mat-option *ngFor="let tenant of tenants" [value]="tenant.id" class="tenant-option">
+            {{tenant.name}}
           </mat-option>
         </mat-select>
       </mat-form-field>

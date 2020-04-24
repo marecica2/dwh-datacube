@@ -9,18 +9,17 @@ import { User } from "../../../shared/user.model";
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit, OnDestroy {
-  @Input()
-  public placeholderRef: TemplateRef<any>;
-
-  userSub: Subscription;
-  user: User;
-  isAuthenticated = false;
+  @Input() public placeholderRef: TemplateRef<any>;
+  public userSub: Subscription;
+  public user: User;
+  public isAuthenticated = false;
 
   constructor(private authService: AuthService) {
   }
 
   ngOnInit(): void {
     this.userSub = this.authService.userSubject.subscribe((user) => {
+      console.log("AAAA");
       this.isAuthenticated = !!user;
       this.user = user;
     });
@@ -33,5 +32,4 @@ export class HeaderComponent implements OnInit, OnDestroy {
   onLogout() {
     this.authService.logout();
   }
-
 }

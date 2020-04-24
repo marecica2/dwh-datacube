@@ -8,9 +8,6 @@ import { Component, OnInit } from '@angular/core';
 
 export class RegisterComponent implements OnInit {
 
-  Roles: any = ['Admin', 'Author', 'Reader'];
-  selected: string;
-
   constructor() { }
 
   ngOnInit() {

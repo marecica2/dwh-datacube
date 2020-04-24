@@ -17,6 +17,7 @@ describe('AppsComponent', () => {
     fixture = TestBed.createComponent(AppsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+    fixture.debugElement.nativeElement.style.visibility = "hidden";
   });
 
   it('should create', () => {

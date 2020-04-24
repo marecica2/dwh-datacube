@@ -1,8 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { NgForm } from "@angular/forms";
+
 import { Subscription } from "rxjs";
 import { AuthService } from "../auth.service";
-import { Router } from "@angular/router";
 
 @Component({
   selector: 'app-tenant',
@@ -14,7 +13,7 @@ export class TenantComponent implements OnInit, OnDestroy {
   tenants = [];
   private tenantSub: Subscription;
 
-  constructor(private authService: AuthService, private router: Router) {
+  constructor(private authService: AuthService) {
   }
 
   ngOnInit(): void {
@@ -33,7 +32,5 @@ export class TenantComponent implements OnInit, OnDestroy {
     const selectedTenant = this.tenants
       .find(tenant => tenant.id === value);
     this.authService.selectTenant(selectedTenant);
-    this.router.navigate(['/apps'], { queryParamsHandling: "merge" });
   }
-
 }
