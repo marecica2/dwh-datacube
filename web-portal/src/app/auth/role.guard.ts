@@ -4,10 +4,16 @@ import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 
 import { AuthService } from './auth.service';
+import { User } from "../shared/user.model";
 
 @Injectable({ providedIn: 'root' })
 export class RoleGuard implements CanActivate {
+  public user: User;
+
   constructor(private authService: AuthService, private router: Router) {
+    this.authService.userSubject.subscribe(user => {
+      this.user = user;
+    });
   }
 
   hasAllRoles(roles, requiredRoles) {
@@ -19,15 +25,10 @@ export class RoleGuard implements CanActivate {
     router: RouterStateSnapshot
   ): boolean | UrlTree | Promise<boolean | UrlTree> | Observable<boolean | UrlTree> {
     const requiredRoles = route.data.roles as Array<string>;
-    return this.authService.userSubject.pipe(
-      take(1),
-      map(user => {
-        const isAuth = !!user;
-        if (isAuth && this.hasAllRoles(user.roles, requiredRoles)) {
-            return true;
-        }
-        return this.router.createUrlTree(['/auth/login']);
-      })
-    );
+    const isAuth = !!this.user;
+    if (isAuth && this.hasAllRoles(this.user.roles, requiredRoles)) {
+      return true;
+    }
+    return this.router.createUrlTree(['/auth/login']);
   }
 }
