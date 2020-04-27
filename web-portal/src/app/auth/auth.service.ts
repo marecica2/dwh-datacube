@@ -107,7 +107,6 @@ export class AuthService {
       .post<Token>(`${baseUrl}/oauth/token`, formData, { headers }).pipe(
         tap((token: Token) => {
           this.token = token;
-          console.log('CC' ,this.token);
           this.tokenSubject.next(token);
           AuthService.setItem('token', token);
         }),
