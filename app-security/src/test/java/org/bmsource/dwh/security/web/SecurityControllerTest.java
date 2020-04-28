@@ -33,10 +33,10 @@ public class SecurityControllerTest {
     private TenantRestRepository tenantRepository;
 
     @MockBean
-    private UserRepository userRepository;
+    private InternalUserRepository userRepository;
 
     @MockBean
-    private RoleRepository roleRepository;
+    private InternalRoleRepository roleRepository;
 
     @Autowired
     private MockMvc mvc;

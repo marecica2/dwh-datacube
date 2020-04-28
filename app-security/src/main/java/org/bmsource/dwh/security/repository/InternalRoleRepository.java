@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 @Repository
-public interface RoleRepository extends PagingAndSortingRepository<Role, Long> {
+public interface InternalRoleRepository extends PagingAndSortingRepository<Role, Long> {
 
     @Query(value = "SELECT * FROM master.Roles where name IN (:roles)", nativeQuery = true)
     Set<Role> find(@Param("roles") List<String> roles);

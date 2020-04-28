@@ -2,7 +2,7 @@ package org.bmsource.dwh.security.web;
 
 import org.bmsource.dwh.security.UserServiceImpl;
 import org.bmsource.dwh.security.model.UserDto;
-import org.bmsource.dwh.security.repository.UserRepository;
+import org.bmsource.dwh.security.repository.InternalUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -16,7 +16,7 @@ public class SecurityController {
 
     UserServiceImpl userService;
 
-    UserRepository userRepository;
+    InternalUserRepository userRepository;
 
     @Autowired
     public void setUserService(UserServiceImpl userService) {
@@ -24,7 +24,7 @@ public class SecurityController {
     }
 
     @Autowired
-    public void setUserRepository(UserRepository userRepository) {
+    public void setUserRepository(InternalUserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

@@ -3,8 +3,8 @@ package org.bmsource.dwh.security;
 import org.bmsource.dwh.security.model.Role;
 import org.bmsource.dwh.security.model.User;
 import org.bmsource.dwh.security.model.UserDto;
-import org.bmsource.dwh.security.repository.RoleRepository;
-import org.bmsource.dwh.security.repository.UserRepository;
+import org.bmsource.dwh.security.repository.InternalRoleRepository;
+import org.bmsource.dwh.security.repository.InternalUserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +27,10 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
-    private UserRepository userRepository;
+    private InternalUserRepository userRepository;
 
     @Autowired
-    private RoleRepository roleRepository;
+    private InternalRoleRepository roleRepository;
 
     @Autowired
     PasswordEncoder encoder;
