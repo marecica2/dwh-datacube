@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
-import { Observable, of, Subject, throwError } from "rxjs";
+import { BehaviorSubject, Observable, of, Subject, throwError } from "rxjs";
 import { catchError, map, switchMap, tap } from "rxjs/operators";
 import { User } from "../shared/user.model";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -39,8 +39,8 @@ export interface UserResponse {
   providedIn: 'root'
 })
 export class AuthService {
-  public userSubject = new Subject<User>();
-  public tokenSubject = new Subject<Token>();
+  public userSubject = new BehaviorSubject<User>(null);
+  public tokenSubject = new BehaviorSubject<Token>(null);
   private user: User;
   private selectedTenant: Tenant;
   private token: Token;
