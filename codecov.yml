@@ -5,6 +5,9 @@ coverage:
       java:
         flags: java
         target: 30%
+      angular:
+        flags: angular
+        target: 30%
 #      react:
 #        flags: react
 #        target: 30%
@@ -17,6 +20,9 @@ flags:
       - app-portal/src/main/java
       - app-security/src/main/java
       - lib-common/src/main/java
+  angular:
+    paths:
+      - web-portal/src
 #  react:
 #    paths:
 #      - web-dwh/src

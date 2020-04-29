@@ -61,4 +61,5 @@ codecov:
     - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f app-portal/target/site/jacoco/jacoco.xml -c -F java
     - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f app-security/target/site/jacoco/jacoco.xml -c -F java
     - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f lib-common/target/site/jacoco/jacoco.xml -c -F java
+    - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f web-portal/coverage/web-admin/lcov.info -c -F angular
     #- bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f web-dwh/coverage/coverage-final.json -c -F react
