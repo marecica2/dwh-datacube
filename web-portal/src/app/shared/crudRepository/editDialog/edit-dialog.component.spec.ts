@@ -1,6 +1,6 @@
-import { ComponentFixture, inject, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RestService } from "@lagoshny/ngx-hal-client";
-import { Injectable, Injector, NgModule } from "@angular/core";
+import { NgModule } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from "@angular/material/dialog";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { OverlayContainer } from "@angular/cdk/overlay";
@@ -9,12 +9,11 @@ import { AngularMaterialModule } from "../../angular-material.module";
 import { ReactiveFormsModule } from "@angular/forms";
 
 import { EditDialogComponent } from "./edit-dialog.component";
-import { ColumnDefinition, CrudResource, MultiSelectColumn, SelectColumn, SimpleColumn } from "../crudRepositoryApi";
+import { ColumnDefinition, CrudResource, MultiSelectColumn, SimpleColumn } from "../crudRepositoryApi";
 import { MatButtonHarness } from "@angular/material/button/testing";
 import { HarnessLoader } from "@angular/cdk/testing";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
-import { Observable, of } from "rxjs";
-import { RoleService } from "../../../iam/roles/role.service";
+import { of } from "rxjs";
 import { MatSelectHarness } from "@angular/material/select/testing";
 import { MatOptionHarness } from "@angular/material/core/testing";
 

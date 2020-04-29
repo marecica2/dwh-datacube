@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, Input, ViewChild } from "@angular/core";
 import { merge, of as observableOf, Subject } from "rxjs";
-import { catchError, map, startWith, switchMap } from "rxjs/operators";
+import { catchError, delay, map, startWith, switchMap } from "rxjs/operators";
 import { RestService } from "@lagoshny/ngx-hal-client";
 
 import { MatPaginator } from "@angular/material/paginator";
@@ -57,6 +57,7 @@ export class CrudTableComponent<Entity extends CrudResource> implements AfterVie
     merge(this.sort.sortChange, this.paginator.page, this.reloadSubject)
       .pipe(
         startWith({}),
+        delay(0), // Fix from https://blog.angular-university.io/angular-debugging/
         switchMap(() => {
           this.isLoadingResults = true;
           const query = [{ key: 'sort', value: `${this.sort.active},${this.sort.direction}` }, {
@@ -76,7 +77,7 @@ export class CrudTableComponent<Entity extends CrudResource> implements AfterVie
           this.isLoadingResults = false;
           return observableOf([]);
         })
-      ).subscribe((data: Entity[]) => this.data = data);
+      ).subscribe((response: Entity[]) => this.data = response);
   }
 
   editEntity(entity: Entity) {
