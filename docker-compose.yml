@@ -23,9 +23,9 @@ services:
   db-test:
     image: postgres:10.3
     container_name: db-test
-    volumes:
-      - ./.db/seeds:/.db/seeds
-      - ./.db/init.sql:/docker-entrypoint-initdb.d/init.sql
+#    volumes:
+#      - ./.db/seeds:/.db/seeds
+#      - ./.db/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - ${PG_TEST_PORT}:5432
     environment:
@@ -51,8 +51,8 @@ services:
     container_name: proxy
     ports:
       - 9000:80
-    volumes:
-      - ./.dev/nginx.local.conf:/etc/nginx/nginx.conf
+#    volumes:
+#      - ./.dev/nginx.local.conf:/etc/nginx/nginx.conf
 
 #  web-dwh:
 #    build:
