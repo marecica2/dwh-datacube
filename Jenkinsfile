@@ -3,9 +3,6 @@ pipeline {
     environment {
         CI = 'true'
     }
-    tools {
-        maven 'M3'
-    }
     stages {
         stage('Build') {
             steps {
