@@ -3,6 +3,10 @@ pipeline {
     environment {
         CI = 'true'
     }
+    tools {
+        maven 'M3'
+        jdk 'jdk8'
+    }
     stages {
         stage('Build java') {
             steps {
