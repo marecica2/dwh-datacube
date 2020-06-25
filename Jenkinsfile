@@ -7,7 +7,12 @@ pipeline {
         maven 'M3'
     }
     stages {
-        stage('Build java') {
+        stage('Build') {
+            steps {
+                sh 'mvn -ntp clean install -DskipTests'
+            }
+        }
+        stage('Test') {
             steps {
                 sh 'docker-compose --version'
                 sh 'pwd'
