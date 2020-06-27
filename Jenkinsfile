@@ -11,7 +11,7 @@ node {
                         '--name pg_ci') { c ->
             sh 'java -version'
             sh 'mvn -version'
-            sh './wait-for.sh localhost:5432 -- echo postgres is ready'
+            sh 'wait-for.sh localhost:5432 -- echo postgres is ready'
         }
     }
 }
