@@ -1,28 +1,41 @@
 node {
-    checkout scm
-    stage("build") {
-        sh 'java -version'
-        sh 'mvn -version'
-    }
-    stage("test") {
-        docker.image('postgres:10.3').withRun(
-                '-e "PG_USER=postgres" ' +
-                        '-e "PG_USER=postgres" ' +
-                        '-e "PG_PASSWORD=postgres" ' +
-                        '-e "POSTGRES_DB=postgres" ' +
-                        '-e "POSTGRES_DB=postgres" ' +
-                        '-p "5432:5432" ' +
-                        '--name pg_ci')
-                { pg ->
+    withEnv([
+            'REDIS_HOST=localhost',
+            'REDIS_PORT=6379',
+            'PG_TEST_HOST=localhost',
+            'PG_TEST_PORT=30002',
+            'PG_TEST_DATABASE=dwh-test',
+            'PG_TEST_USER=local-test',
+            'PG_TEST_PASSWORD=local-test',
+    ]
+    ) {
+        checkout scm
+        stage("build") {
+            sh 'java -version'
+            sh 'mvn -version'
+            sh 'mvn -ntp clean install -DskipTests'
+        }
+        stage("test") {
+            docker.image('postgres:10.3').withRun(
+                    '-e "PG_USER=postgres" ' +
+                            '-e "PG_USER=$PG_TEST_USER" ' +
+                            '-e "PG_PASSWORD=$PG_TEST_PASSWORD" ' +
+                            '-e "POSTGRES_DB=$PG_TEST_DATABASE" ' +
+                            '-p "$PG_TEST_PORT:5432" ' +
+                            '--name pg_ci')
+                    { pg ->
 
-                    sh './wait-for.sh localhost:5432 -- echo postgres is ready'
+                        sh './wait-for.sh localhost:$PG_TEST_PORT -- echo postgres is ready'
 
-                    docker.image('redis:4.0.5-alpine').withRun(
-                            '-p "6379:6379" ' +
-                                    '--name redis_ci')
-                            { redis ->
-                                sh './wait-for.sh localhost:6379 -- echo redis is ready'
-                            }
-                }
+                        docker.image('redis:4.0.5-alpine').withRun(
+                                '-p "$REDIS_PORT:6379" ' +
+                                        '--name redis_ci')
+                                { redis ->
+                                    sh './wait-for.sh localhost:$REDIS_PORT -- echo redis is ready'
+                                    sh 'mvn package -DskipTests -pl app-migrator && mvn exec:java -pl app-migrator  -Dspring.profiles.active=cli'
+                                    sh 'mvn -ntp clean install'
+                                }
+                    }
+        }
     }
 }
