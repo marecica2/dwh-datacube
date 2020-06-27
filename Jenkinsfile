@@ -7,7 +7,7 @@ node {
                         '-e "PG_PASSWORD=postgres" ' +
                         '-e "POSTGRES_DB=postgres" ' +
                         '-e "POSTGRES_DB=postgres" ' +
-                        '-n pg_test') { c ->
+                        '--name pg_ci') { c ->
             sh 'java -version'
             sh 'mvn -version'
             sh './wait-for localhost:5432 -- echo postgres is ready'
