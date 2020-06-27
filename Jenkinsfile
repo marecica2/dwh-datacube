@@ -16,7 +16,7 @@ node {
             sh 'mvn -ntp clean install -DskipTests'
         }
         stage("test") {
-            docker.image('postgres:10.3').withRun(
+            docker.image('postgres:10.3').run(
                     '-e "POSTGRES_USER=$PG_TEST_USER" ' +
                             '-e "POSTGRES_PASSWORD=$PG_TEST_PASSWORD" ' +
                             '-e "POSTGRES_DB=$PG_TEST_DATABASE" ' +
