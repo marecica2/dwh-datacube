@@ -32,7 +32,8 @@ node {
                                         '--name redis_ci')
                                 { redis ->
                                     sh './wait-for.sh localhost:$REDIS_PORT -- echo redis is ready'
-                                    sh 'mvn package -DskipTests -pl app-migrator && mvn exec:java -pl app-migrator  -Dspring.profiles.active=cli'
+                                    sh 'printenv'
+                                    sh 'env $(cat .env) mvn exec:java -pl app-migrator  -Dspring.profiles.active=cli'
                                     sh 'mvn -ntp clean install'
                                 }
                     }
