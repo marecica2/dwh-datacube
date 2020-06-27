@@ -17,9 +17,8 @@ node {
         }
         stage("test") {
             docker.image('postgres:10.3').withRun(
-                    '-e "PG_USER=postgres" ' +
-                            '-e "PG_USER=$PG_TEST_USER" ' +
-                            '-e "PG_PASSWORD=$PG_TEST_PASSWORD" ' +
+                    '-e "POSTGRES_USER=$PG_TEST_USER" ' +
+                            '-e "POSTGRES_PASSWORD=$PG_TEST_PASSWORD" ' +
                             '-e "POSTGRES_DB=$PG_TEST_DATABASE" ' +
                             '-p "$PG_TEST_PORT:5432" ' +
                             '--name pg_ci')
