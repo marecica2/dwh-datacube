@@ -22,7 +22,10 @@ node {
                             '-e "POSTGRES_DB=$PG_TEST_DATABASE" ' +
                             '-p "$PG_TEST_PORT:5432" ' +
                             '-v `./.db/init.sql`:`/docker-entrypoint-initdb.d/init.sql` ' +
-                            '--name pg_ci ')
+                            '--name pg_ci ' +
+                            'postgres ' +
+                            '-c "log_statement=all" '
+            )
                     { pg ->
 
                         sh './wait-for.sh localhost:$PG_TEST_PORT -- echo postgres is ready'
