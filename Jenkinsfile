@@ -21,7 +21,7 @@ node {
                             '-e "POSTGRES_PASSWORD=$PG_TEST_PASSWORD" ' +
                             '-e "POSTGRES_DB=$PG_TEST_DATABASE" ' +
                             '-p "$PG_TEST_PORT:5432" ' +
-                            '-v `./.db/init.sql`:`/docker-entrypoint-initdb.d/init.sql` ' +
+                            '-v /.db/init.sql:/docker-entrypoint-initdb.d/init.sql ' +
                             '--name pg_ci ',
                             'postgres -c log_statement=all '
             )
